@@ -7,8 +7,11 @@ import (
 	"github.com/golobby/container"
 )
 
-func GetDependency() {
+func GetDependency() abstract.DatabaseConnection {
 	container.Singleton(func() abstract.DatabaseConnection {
 		return &sqlserver.SQLServer{}
 	})
+	var dbc abstract.DatabaseConnection
+	container.Make(&dbc)
+	return dbc
 }
