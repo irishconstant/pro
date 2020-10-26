@@ -1,4 +1,4 @@
-package repo
+package sqlserver
 
 import (
 	"database/sql"
@@ -7,18 +7,15 @@ import (
 )
 
 //GetUsers return all users from databases
-func GetUsers(db *sql.DB, dbname string) map[int]*domain.User {
+func (SQLServer) GetUsers(db *sql.DB, dbname string) map[int]*domain.User {
 	db.Ping()
 	fmt.Println("Получение списка Пользователей")
 	users := make(map[int]*domain.User)
-	query := fmt.Sprintf("SELECT Id, C_Name, C_Patronymic_Name, C_Family_Name AS name FROM [%s].dbo.Users", dbname)
-
-	rows, err := db.Query(query)
+	rows, err := db.Query(CreateSelectQuery(dbname, "Users"))
 
 	if err != nil {
-		fmt.Println("Ошибка c запросом", err)
+		fmt.Println("Ошибка c запросом: ", err)
 	}
-
 	defer rows.Close()
 	for rows.Next() {
 		var (
@@ -33,25 +30,6 @@ func GetUsers(db *sql.DB, dbname string) map[int]*domain.User {
 			users[a] = &user
 		}
 	}
+
 	return users
-}
-
-func AddUser() {
-
-}
-
-func DeleteUser() {
-
-}
-
-func EditUser() {
-
-}
-
-func AddContactToUser() {
-
-}
-
-func DeletContactToUser() {
-
 }

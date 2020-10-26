@@ -1,19 +1,25 @@
 package main
 
 import (
+	"dependency"
 	"fmt"
-	"repo"
+	abstract "repo/abstract"
+
+	"github.com/golobby/container"
 )
 
 func main() {
-
-	connection := repo.GetConnectionParams("config.ini")
-	db := connection.ConnectToDatabase()
-	defer repo.CloseConnect(db)
+	dependency.GetDependency()
+	var dbc abstract.DatabaseConnection
+	container.Make(&dbc)
+	a := dbc.GetConnectionParams("config.ini")
+	db := dbc.ConnectToDatabase(a.ConnectionString)
+	defer dbc.CloseConnect(db)
 
 	// Получаем пользователей
-	users := repo.GetUsers(db, connection.Database)
+	users := dbc.GetUsers(db, a.Database)
 	for key, value := range users { // Order not specified
 		fmt.Println(key, *value)
 	}
+
 }
