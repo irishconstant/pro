@@ -2,28 +2,40 @@ package controller
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
-	"repo"
+	"path/filepath"
+	"repo/abstract"
 )
 
-func ViewHandler(writer http.ResponseWriter, request *http.Request) {
+//WebAppMain starts web-app
+func WebAppMain(db abstract.DatabaseConnection, dbname string) {
+	fmt.Println("Web-сервер запущен (CTRL + C для остановки)")
+	http.HandleFunc("/hello", helloHandler)
 
-	connection := repo.GetConnectionParams("config.ini")
-	db := connection.ConnectToDatabase()
-	defer repo.CloseConnect(db)
+	err := http.ListenAndServe("localhost:8080", nil)
+	log.Fatal(err)
+}
 
-	// Получаем пользователей
-	users := repo.GetUsers(db, connection.Database)
-	for key, value := range users { // Order not specified
-		fmt.Println(key, *value)
+func helloHandler(writer http.ResponseWriter, request *http.Request) {
+	// Получаем представление
+	// TODO: Написать отдельную функцию, выдающую абсолютный путь чисто по наименованию (без всякой шняги типа vendor и т.п.)
+	absPath, _ := filepath.Abs("../pro/vendor/view/hello.html")
+	html, err := template.ParseFiles(absPath)
+	check(err)
+	err = html.Execute(writer, nil)
+	check(err)
+}
+
+func write(writer http.ResponseWriter, message string) {
+	_, err := writer.Write([]byte(message))
+	if err != nil {
+		log.Fatal(err)
 	}
+}
 
-	for user := range users {
-		message := []byte("Hello, web!")
-	}
-	message := []byte("Hello, web!")
-	_, err := writer.Write(message)
+func check(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
