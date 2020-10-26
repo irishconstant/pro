@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	// Работаем с подключениями
 	dbc := dependency.GetDependency()
 	connectionParams := dbc.GetConnectionParams("config.ini")
 	db := dbc.ConnectToDatabase(connectionParams.ConnectionString)
