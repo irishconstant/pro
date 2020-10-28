@@ -1,34 +1,25 @@
 package controller
 
 import (
-	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 	"repo/abstract"
 )
 
 //Router starts web-server and route between controllers
 func Router(dbc abstract.DatabaseConnection) {
-
-	fmt.Println("Web-сервер запущен (CTRL + C для остановки)")
-
-	rootHandler := &Handler{name: "root", connection: dbc}
-	http.Handle("/", rootHandler)
-
-	testHandler := &Handler{name: "test", connection: dbc}
-	http.Handle("/users", testHandler)
-
-	fmt.Println("starting server at: 8080")
+	h := Handler{connection: dbc}
+	//http.HandleFunc("/login", h.loginController)
+	//http.HandleFunc("/logout", h.logoutController)
+	http.HandleFunc("/", h.mainController)
 	err := http.ListenAndServe("localhost:8080", nil)
-	log.Fatal(err)
+	if err != nil {
+		fmt.Println("Что-то не так")
+	}
 
 }
 
 //Handler handles something
 type Handler struct {
-	name       string
-	db         *sql.DB
-	database   string
 	connection abstract.DatabaseConnection
 }
