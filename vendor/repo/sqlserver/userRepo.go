@@ -1,20 +1,21 @@
 package sqlserver
 
 import (
-	"database/sql"
-	"domain"
 	"fmt"
+	"model"
+	"repo"
 )
 
 //GetUsers return all users from databases
-func (SQLServer) GetUsers(db *sql.DB, dbname string) map[int]*domain.User {
-	db.Ping()
+func (s *SQLServer) GetUsers() (map[int]*model.User, error) {
 	fmt.Println("Получение списка Пользователей")
-	users := make(map[int]*domain.User)
-	rows, err := db.Query(CreateSelectQuery(dbname, "Users"))
+
+	users := make(map[int]*model.User)
+	rows, err := s.db.Query(repo.CreateSelectQuery(s.dbname, "Users"))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
+		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -25,11 +26,11 @@ func (SQLServer) GetUsers(db *sql.DB, dbname string) map[int]*domain.User {
 			d string
 		)
 		rows.Scan(&a, &b, &c, &d)
-		user := domain.User{a, b, c, d}
+		user := model.User{a, b, c, d}
 		if a != 0 {
 			users[a] = &user
 		}
 	}
 
-	return users
+	return users, nil
 }

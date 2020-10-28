@@ -1,8 +1,7 @@
 package abstract
 
 import (
-	"database/sql"
-	"domain"
+	"model"
 )
 
 //SQLConnect parameters
@@ -14,10 +13,10 @@ type SQLConnect struct {
 
 //DatabaseConnection provides an interface for database connection
 type DatabaseConnection interface {
-	ConnectToDatabase(connectionString string) *sql.DB
-	CloseConnect(db *sql.DB)
-	GetConnectionParams(filePath string) SQLConnect
-	GetUsers(db *sql.DB, dbname string) map[int]*domain.User
+	ConnectToDatabase() error
+	CloseConnect() error
+	GetConnectionParams(filePath string) error
+	GetUsers() (map[int]*model.User, error)
 	//Авторизация является функцией определения прав доступа к ресурсам и управления этим доступом.
 	//Autorisation(user string, password string) string
 

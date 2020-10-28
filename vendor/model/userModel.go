@@ -1,4 +1,4 @@
-package domain
+package model
 
 //User respresents a typical person
 type User struct {
@@ -6,10 +6,16 @@ type User struct {
 	Name           string
 	PatronymicName string
 	FamilyName     string
-	Roles          []Role
+	//Roles          []Role
 }
 
 //Role represents role
 type Role struct {
 	Name string
+}
+
+//Userbook does
+type Userbook struct {
+	UserCount int
+	Users     []string
 }
