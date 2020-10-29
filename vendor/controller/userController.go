@@ -37,7 +37,8 @@ func (h *Handler) mainController(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	inputLogin := r.FormValue("login")
-	fmt.Fprintln(w, "you enter: ", inputLogin)
+	inputPassword := r.FormValue("password")
+	fmt.Fprintln(w, "Your login:  ", inputLogin, "Your password: ", inputPassword)
 }
 
 func (h *Handler) loginController(w http.ResponseWriter, r *http.Request) {
@@ -89,7 +90,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	check(err)
 
 	fmt.Fprintln(w, r.URL.String())
-
+	// Использование параметров
 	myParam := r.URL.Query().Get("param")
 	if myParam != "" {
 		fmt.Fprintln(w, "my Param is", myParam)
@@ -101,8 +102,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func check(err error) {
-	fmt.Println("Ошибочка")
 	if err != nil {
+		fmt.Println("Ошибочка", err)
 		log.Fatal(err)
 	}
 }

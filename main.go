@@ -12,6 +12,6 @@ func main() {
 	dbc.ConnectToDatabase()
 	defer dbc.CloseConnect()
 
-	// Запускаем веб-сервер
+	// Работаем с веб-сервером
 	controller.Router(dbc)
 }
