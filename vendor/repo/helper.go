@@ -4,6 +4,7 @@ import "fmt"
 
 //CreateSelectQuery creates select all columns query
 func CreateSelectQuery(database string, table string) string {
+
 	return fmt.Sprintf("SELECT * FROM [%s].dbo.[%s]", database, table)
 }
 

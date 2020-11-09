@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 
 <head>
     <title>Добро пожаловать</title>
@@ -9,25 +9,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./static/css/styles.css">
 </head>
 
-<div class="jumbotron text-center">
-    <h1>Лучшее приложение на свете</h1>
-    <a href="/">Домой</a> <a href="/logout">Выйти</a>
-
-    <body>
-        <h1>Секретная страница</h1>
-    </body>
-    <img src="./static/img/boobs.jpg" class="mx-auto d-block">
-</div>
-
-<div class="container">
+<body>
+    <a href="/">Home</a> <a href="/logout">Logout</a>
     <h2>Текущие потребители</h2>
-    <p>Текущие потребители в базе данных</p>
-    <table class="table table-hover">
 
-        <!-- Table header -->
-
+    <table id="myTable" class="table table-hover">
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Искать имя..." title="Введите имя">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">Идентификатор</th>
@@ -42,8 +33,6 @@
             </tr>
         </tfoot>
 
-        <!-- Table body -->
-
         <tbody>
             {{range .Customers}}
             <tr>
@@ -55,6 +44,28 @@
             {{ end }}
         </tbody>
     </table>
-</div>
+
+    <script>
+        function myFunction() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
 
 </html>
