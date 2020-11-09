@@ -12,9 +12,12 @@ import (
 
 //Router starts web-server and routes between controllers
 func Router(dbc abstract.DatabaseConnection) {
+	staticDir := "/static/"
 	h := Handler{connection: dbc}
 	//fmt.Println(h.connection)
 	router := mux.NewRouter()
+	router.PathPrefix(staticDir).
+		Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))
 	router.HandleFunc("/", h.index)
 	router.HandleFunc("/login", h.login)
 	router.HandleFunc("/logout", h.logout)
