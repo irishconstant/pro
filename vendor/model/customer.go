@@ -11,5 +11,5 @@ type Customer struct {
 //CustomersBook does
 type CustomersBook struct {
 	CustomerCount int
-	Customers     []string
+	Customers     []Customer
 }

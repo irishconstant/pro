@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"model"
 	"net/http"
 )
@@ -32,7 +31,7 @@ func (h *Handler) secret(w http.ResponseWriter, r *http.Request) {
 	customerBook := model.CustomersBook{CustomerCount: len(customers)}
 	for _, value := range customers { // Порядок вывода случайный
 		//	fmt.Println(key, *value)
-		customerBook.Customers = append(customerBook.Customers, fmt.Sprintf("Имя: %s, Фамилия: %s, Отчество: %s", value.Name, value.FamilyName, value.PatronymicName))
+		customerBook.Customers = append(customerBook.Customers, *value)
 	}
 
 	executeHTML("user", w, customerBook)

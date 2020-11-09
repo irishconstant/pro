@@ -13,18 +13,47 @@
 
 <div class="jumbotron text-center">
     <h1>Лучшее приложение на свете</h1>
+    <a href="/">Домой</a> <a href="/logout">Выйти</a>
 
     <body>
         <h1>Секретная страница</h1>
-        <div>
-            Всего пользователей: {{.CustomerCount}}
-        </div>
-        <div>Текущие пользователи</div>
-        <div class="table">
-            {{range .Customers}} <p>{{.}}</p> {{end}}
-        </div>
-        <a href="/">Домой</a> <a href="/logout">Выйти</a>
     </body>
+</div>
+
+<div class="container">
+    <h2>Текущие потребители</h2>
+    <p>Текущие потребители в базе данных</p>
+    <table class="table table-hover">
+
+        <!-- Table header -->
+
+        <thead>
+            <tr>
+                <th scope="col">Идентификатор</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Имя</th>
+                <th scope="col">Отчество</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <td> Всего пользователей: {{.CustomerCount}}</td>
+            </tr>
+        </tfoot>
+
+        <!-- Table body -->
+
+        <tbody>
+            {{range .Customers}}
+            <tr>
+                <td>{{ .ID }}</td>
+                <td>{{ .FamilyName }}</td>
+                <td>{{ .Name }}</td>
+                <td>{{ .PatronymicName }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
 </div>
 
 </html>
