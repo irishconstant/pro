@@ -14,7 +14,6 @@ import (
 func Router(dbc abstract.DatabaseConnection) {
 	staticDir := "/static/"
 	h := Handler{connection: dbc}
-	//fmt.Println(h.connection)
 	router := mux.NewRouter()
 	router.PathPrefix(staticDir).
 		Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))

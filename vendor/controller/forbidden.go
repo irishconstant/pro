@@ -18,5 +18,5 @@ func (h *Handler) forbidden(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	model.Tpl.ExecuteTemplate(w, "forbidden.gohtml", flashMessages)
+	executeHTML("forbidden", w, flashMessages)
 }

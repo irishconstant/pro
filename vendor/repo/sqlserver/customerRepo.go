@@ -8,7 +8,7 @@ import (
 
 //GetCustomers return all users from databases
 func (s *SQLServer) GetCustomers() (map[int]*model.Customer, error) {
-	fmt.Println("Получение списка Пользователей")
+	//fmt.Println("Получение списка Пользователей")
 
 	customers := make(map[int]*model.Customer)
 	rows, err := s.db.Query(repo.CreateSelectQuery(s.dbname, "Customers"))

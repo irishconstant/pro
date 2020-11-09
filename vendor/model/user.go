@@ -35,8 +35,6 @@ func init() {
 	}
 
 	gob.Register(User{})
-
-	Tpl = template.Must(template.ParseGlob("templates/*.gohtml"))
 }
 
 //GetUser does
