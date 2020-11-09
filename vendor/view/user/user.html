@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title>Добро пожаловать</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<div class="jumbotron text-center">
+    <h1>Лучшее приложение на свете</h1>
+
+    <body>
+        <h1>Секретная страница</h1>
+        <div>
+            Всего пользователей: {{.CustomerCount}}
+        </div>
+        <div>Текущие пользователи</div>
+        <div class="table">
+            {{range .Customers}} <p>{{.}}</p> {{end}}
+        </div>
+        <a href="/">Домой</a> <a href="/logout">Выйти</a>
+    </body>
+</div>
+
+</html>

@@ -6,12 +6,12 @@ import (
 	"repo"
 )
 
-//GetUsers return all users from databases
-func (s *SQLServer) GetUsers() (map[int]*model.User, error) {
+//GetCustomers return all users from databases
+func (s *SQLServer) GetCustomers() (map[int]*model.Customer, error) {
 	fmt.Println("Получение списка Пользователей")
 
-	users := make(map[int]*model.User)
-	rows, err := s.db.Query(repo.CreateSelectQuery(s.dbname, "Users"))
+	customers := make(map[int]*model.Customer)
+	rows, err := s.db.Query(repo.CreateSelectQuery(s.dbname, "Customers"))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
@@ -26,11 +26,11 @@ func (s *SQLServer) GetUsers() (map[int]*model.User, error) {
 			d string
 		)
 		rows.Scan(&a, &b, &c, &d)
-		user := model.User{a, b, c, d}
+		customer := model.Customer{a, b, c, d}
 		if a != 0 {
-			users[a] = &user
+			customers[a] = &customer
 		}
 	}
 
-	return users, nil
+	return customers, nil
 }
