@@ -1,28 +1,36 @@
 package controller
 
 import (
-	"fmt"
-	"log"
+	"model"
 	"net/http"
 )
 
 func (h *Handler) customer(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Fprintln(w, r.URL.String())
-	// Использование параметров
-	myParam := r.URL.Query().Get("param")
-	if myParam != "" {
-		fmt.Fprintln(w, "my Param is", myParam)
-	}
-	key := r.FormValue("key")
-	if key != "" {
-		fmt.Fprintln(w, "key is", key)
-	}
-}
-
-func check(err error) {
+	session, err := model.Store.Get(r, "cookie-name")
 	if err != nil {
-		fmt.Println("Ошибочка", err)
-		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	user := model.GetUser(session)
+
+	if auth := user.Authenticated; !auth {
+		session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")
+		err = session.Save(r, w)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/forbidden", http.StatusFound)
+		return
+	}
+
+	customers, err := h.connection.GetCustomers()
+	check(err)
+	customerBook := model.CustomersBook{CustomerCount: len(customers)}
+	for _, value := range customers {
+		customerBook.Customers = append(customerBook.Customers, *value)
+	}
+
+	executeHTML("customer", w, customerBook)
 }

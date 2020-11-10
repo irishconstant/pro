@@ -13,10 +13,10 @@
 
 <body>
     <div class="jumbotron text-center">
-        <h1>Лучшее приложение на свете</h1>
+        <h1>Самая лучшая Система в мире</h1>
         <img src="./static/img/boobs.jpg" class="mx-auto d-block">
         {{if .Authenticated }}
-        <a href="/secret">Добро пожаловать! {{.Username}}</a>
+        <a href="/customer">Wake up! {{.Username}}. The matrix has you</a>
         {{end}}
         {{ if not .Authenticated }}
         <p>Пожалуйста введите логин и пароль для доступа</p>
@@ -25,6 +25,7 @@
             <input type="password" name="code" placeholder="Пароль" required>
             <input type="submit" value="Войти">
         </form>
+        <a href="/reg">Зарегистрироваться</a>
         {{ end }}
     </div>
 </body>

@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 	"repo/abstract"
@@ -21,7 +22,9 @@ func Router(dbc abstract.DatabaseConnection) {
 	router.HandleFunc("/login", h.login)
 	router.HandleFunc("/logout", h.logout)
 	router.HandleFunc("/forbidden", h.forbidden)
-	router.HandleFunc("/secret", h.secret)
+	router.HandleFunc("/customer", h.customer)
+	router.HandleFunc("/reg", h.reg)
+	router.Use(loggingMiddleware)
 	http.ListenAndServe(":8080", router)
 }
 
@@ -39,4 +42,13 @@ func executeHTML(page string, w http.ResponseWriter, param someAttribute) {
 	check(err)
 	err = html.Execute(w, param)
 	check(err)
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Do stuff here
+		log.Println(r.RequestURI, r.Method)
+		// Call the next handler, which can be another middleware in the chain, or the final handler.
+		next.ServeHTTP(w, r)
+	})
 }

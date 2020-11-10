@@ -16,5 +16,11 @@ type DatabaseConnection interface {
 	ConnectToDatabase() error
 	CloseConnect() error
 	GetConnectionParams(filePath string) error
+
+	// Работа с Потребителями
 	GetCustomers() (map[int]*model.Customer, error)
+
+	// Подсистема авторизации и аутентификации
+	CreateUser(login string, password string) bool
+	CheckPassword(a string, b string) bool
 }

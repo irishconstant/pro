@@ -13,7 +13,8 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		if r.FormValue("code") != "code" {
+
+		if h.connection.CheckPassword(r.FormValue("username"), r.FormValue("code")) == false {
 			if r.FormValue("code") == "" {
 				session.AddFlash("Необходимо ввести пароль")
 			}
@@ -27,22 +28,23 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/forbidden", http.StatusFound)
 			return
 		}
-	}
-	username := r.FormValue("username")
 
-	user := &model.User{
-		Username:      username,
-		Authenticated: true,
-	}
+		username := r.FormValue("username")
 
-	session.Values["user"] = user
+		user := &model.User{
+			Username:      username,
+			Authenticated: true,
+		}
 
-	err = session.Save(r, w)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		session.Values["user"] = user
+
+		err = session.Save(r, w)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/customer", http.StatusFound)
 	}
-	http.Redirect(w, r, "/secret", http.StatusFound)
 }
 
 func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
