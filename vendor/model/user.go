@@ -2,32 +2,38 @@ package model
 
 import (
 	"encoding/gob"
-	"text/template"
 
-	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 )
 
-// User holds a users account information
+// User хранит информацию о пользователях
 type User struct {
-	Username      string
+	Key           string
+	Password      string
+	Name          string
+	FamilyName    string
 	Authenticated bool
+	Roles         map[int]*Role
 }
 
-// Store will hold all session data
+// Role хранит информацию о конкретной роли
+type Role struct {
+	Key  int
+	Name string
+}
+
+// Store хранит данные обо всех сессиях
 var Store *sessions.CookieStore
 
-// Tpl holds all parsed templates
-var Tpl *template.Template
-
 func init() {
-	authKeyOne := securecookie.GenerateRandomKey(64)
-	encryptionKeyOne := securecookie.GenerateRandomKey(32)
-
-	Store = sessions.NewCookieStore(
-		authKeyOne,
-		encryptionKeyOne,
-	)
+	// Временно закомментировал. Надоело куки чистить
+	authKeyOne := []byte("1234546789012345678901234567890121234546789012345678901234567890") // securecookie.GenerateRandomKey(64)
+	encryptionKeyOne := []byte("12345467890123456789012345678901")                           //securecookie.GenerateRandomKey(32)
+	Store =
+		sessions.NewCookieStore(
+			authKeyOne,
+			encryptionKeyOne,
+		)
 
 	Store.Options = &sessions.Options{
 		MaxAge:   60 * 15,
@@ -37,7 +43,7 @@ func init() {
 	gob.Register(User{})
 }
 
-//GetUser does
+//GetUser получет пользователя текущей сессии (авторизован он или нет)
 func GetUser(s *sessions.Session) User {
 	val := s.Values["user"]
 	var user = User{}
@@ -45,5 +51,6 @@ func GetUser(s *sessions.Session) User {
 	if !ok {
 		return User{Authenticated: false}
 	}
+
 	return user
 }

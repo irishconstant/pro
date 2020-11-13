@@ -1,11 +1,12 @@
 package model
 
-//Customer respresents a typical person
+//Customer respresents a typical person TODO: Переделать в лицевые счета
 type Customer struct {
-	ID             int
+	Key            int
 	Name           string
 	PatronymicName string
 	FamilyName     string
+	User           User // Ответственный пользователь
 }
 
 //CustomersBook does

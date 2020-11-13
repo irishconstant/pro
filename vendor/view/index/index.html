@@ -16,18 +16,23 @@
         <h1>Самая лучшая Система в мире</h1>
         <img src="./static/img/boobs.jpg" class="mx-auto d-block">
         {{if .Authenticated }}
-        <a href="/customer">Wake up! {{.Username}}. The matrix has you</a>
+        <div class="alert alert-primary">
+            <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.Key}}!</a>
+        </div>
+        <a class="nav-link" href="/customer">Потребители</a>
+        <a class="nav-link" href="/logout">Выйти</a>
         {{end}}
         {{ if not .Authenticated }}
         <p>Пожалуйста введите логин и пароль для доступа</p>
         <form action="/login" method="POST">
-            <input type="text" name="username" placeholder="Имя пользователя">
-            <input type="password" name="code" placeholder="Пароль" required>
+            <input type="text" name="login" placeholder="Имя пользователя">
+            <input type="password" name="password" placeholder="Пароль" required>
             <input type="submit" value="Войти">
         </form>
         <a href="/reg">Зарегистрироваться</a>
         {{ end }}
     </div>
+    <script src="./static/scripts/main.js"></script>
 </body>
 
 </html>

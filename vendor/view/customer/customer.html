@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Добро пожаловать</title>
+    <title>Добро пожаловать, {{.User.Key}}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -14,6 +14,9 @@
 </head>
 
 <body>
+    <div class="alert alert-primary">
+        <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.User.Key}}!</a>
+    </div>
     <nav class="navbar navbar-expand-sm bg-light">
         <ul class="navbar-nav">
             <li class="nav-item">
@@ -40,14 +43,14 @@
         </thead>
         <tfoot>
             <tr>
-                <td> Всего пользователей: {{.CustomerCount}}</td>
+                <td> Всего пользователей: {{.Attribute.CustomerCount}}</td>
             </tr>
         </tfoot>
 
         <tbody>
-            {{range .Customers}}
+            {{range .Attribute.Customers}}
             <tr>
-                <td>{{ .ID }}</td>
+                <td>{{ .Key }}</td>
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>

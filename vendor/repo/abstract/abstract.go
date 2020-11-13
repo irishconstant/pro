@@ -18,9 +18,10 @@ type DatabaseConnection interface {
 	GetConnectionParams(filePath string) error
 
 	// Работа с Потребителями
-	GetCustomers() (map[int]*model.Customer, error)
+	GetUserCustomers(u model.User) (map[int]*model.Customer, error)
 
 	// Подсистема авторизации и аутентификации
 	CreateUser(login string, password string) bool
 	CheckPassword(a string, b string) bool
+	GetUserRoles(user *model.User) (*model.User, error)
 }

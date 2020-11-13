@@ -17,4 +17,5 @@ func main() {
 	// Работаем с веб-сервером
 	controller.Router(dbc)
 
+	//dep init
 }

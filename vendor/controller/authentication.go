@@ -14,8 +14,8 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 
-		if h.connection.CheckPassword(r.FormValue("username"), r.FormValue("code")) == false {
-			if r.FormValue("code") == "" {
+		if h.connection.CheckPassword(r.FormValue("login"), r.FormValue("password")) == false {
+			if r.FormValue("password") == "" {
 				session.AddFlash("Необходимо ввести пароль")
 			}
 			session.AddFlash("Неправильное имя пользователя или пароль")
@@ -29,10 +29,10 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		username := r.FormValue("username")
+		login := r.FormValue("login")
 
 		user := &model.User{
-			Username:      username,
+			Key:           login,
 			Authenticated: true,
 		}
 
