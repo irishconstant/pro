@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// forbidden обрабатывает попытку получить доступ туда, куда нельзя
 func (h *Handler) forbidden(w http.ResponseWriter, r *http.Request) {
 	session, err := model.Store.Get(r, "cookie-name")
 	if err != nil {
@@ -18,5 +19,5 @@ func (h *Handler) forbidden(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	executeHTML("forbidden", w, flashMessages)
+	executeHTML("index", "forbidden", w, flashMessages)
 }

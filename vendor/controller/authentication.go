@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// login обрабатывает попытку залогиниться
 func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	session, err := model.Store.Get(r, "cookie-name")
 	if err != nil {
@@ -47,6 +48,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// logout обрабывает попытку разлогиниться
 func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
 	session, err := model.Store.Get(r, "cookie-name")
 	if err != nil {

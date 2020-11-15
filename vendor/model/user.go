@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-// User хранит информацию о пользователях
+// User хранит информацию о Пользователях
 type User struct {
 	Key           string
 	Password      string
@@ -16,17 +16,17 @@ type User struct {
 	Roles         map[int]*Role
 }
 
-// Role хранит информацию о конкретной роли
+// Role хранит информацию о конкретной Роли
 type Role struct {
 	Key  int
 	Name string
 }
 
-// Store хранит данные обо всех сессиях
+// Store хранит данные о сессиях
 var Store *sessions.CookieStore
 
 func init() {
-	// Временно закомментировал. Надоело куки чистить
+	// Временно закомментировал. Надоело куки чистить. Для продакшн версии - раскомментировать!
 	authKeyOne := []byte("1234546789012345678901234567890121234546789012345678901234567890") // securecookie.GenerateRandomKey(64)
 	encryptionKeyOne := []byte("12345467890123456789012345678901")                           //securecookie.GenerateRandomKey(32)
 	Store =
@@ -43,7 +43,7 @@ func init() {
 	gob.Register(User{})
 }
 
-//GetUser получет пользователя текущей сессии (авторизован он или нет)
+//GetUser получает пользователя текущей сессии и проверяет авторизован он или нет
 func GetUser(s *sessions.Session) User {
 	val := s.Values["user"]
 	var user = User{}

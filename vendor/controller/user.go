@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"model"
 	"net/http"
 )
@@ -18,16 +19,23 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 		if auth := user.Authenticated; auth {
 			http.Redirect(w, r, "/", http.StatusFound)
 		} else {
-			executeHTML("reg", w, nil)
+			executeHTML("user", "reg", w, nil)
 		}
 	}
 
 	if r.Method == http.MethodPost {
 		login := r.FormValue("login")
 		password := r.FormValue("password")
+		name := r.FormValue("name")
+		roles := r.FormValue("role")
+		fmt.Println(roles)
+		for key, value := range roles {
+			fmt.Println(name, key, value)
+		}
+
 		result := h.connection.CreateUser(login, password)
 		if result != true {
-			executeHTML("reg", w, "Ошибка при создании пользователя")
+			executeHTML("user", "reg", w, "Ошибка при создании пользователя")
 		}
 
 		user := &model.User{

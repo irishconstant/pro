@@ -4,15 +4,16 @@ import (
 	"model"
 )
 
-//SQLConnect parameters
+//SQLConnect параметры для соединения с СУБД
 type SQLConnect struct {
 	//comment
 	ConnectionString string
 	Database         string
 }
 
-//DatabaseConnection provides an interface for database connection
+//DatabaseConnection обеспечивает интерфейс для соединения с СУБД (набор методов, который должен быть реализован для утиной типизации)
 type DatabaseConnection interface {
+	// Работа с соединением БД
 	ConnectToDatabase() error
 	CloseConnect() error
 	GetConnectionParams(filePath string) error

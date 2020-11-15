@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"model"
 	"net/http"
 	"path/filepath"
@@ -12,33 +11,40 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//Router запускае web-сервер и настраивает маршрутизацию
+//Router запускает web-сервер и настраивает маршрутизацию
 func Router(dbc abstract.DatabaseConnection) {
 	staticDir := "/static/"
 	h := Handler{connection: dbc}
 	router := mux.NewRouter()
-	router.PathPrefix(staticDir).
-		Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))
-	router.HandleFunc("/", h.index)
-	router.HandleFunc("/login", h.login)
-	router.HandleFunc("/logout", h.logout)
-	router.HandleFunc("/forbidden", h.forbidden)
-	router.HandleFunc("/customer", h.customer)
-	router.HandleFunc("/reg", h.reg)
-	//router.Use(authMiddleware)
+	// Обработка статичных файлов
+	router.PathPrefix(staticDir).Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))
 
-	//corsOrigins := handlers.AllowedOrigins([]string{"*"}) // Для работы с AJAX
+	// Те, кто НЕ попадают под middleware проверку аутентификации
+	router.Path("/forbidden").Handler(http.HandlerFunc(h.forbidden))
+	router.Path("/user/reg").Handler(http.HandlerFunc(h.reg))
+	router.Path("/login").Handler(http.HandlerFunc(h.login))
+	router.Path("/logout").Handler(http.HandlerFunc(h.logout))
+	router.Path("/").Handler(http.HandlerFunc(h.index))
 
-	http.ListenAndServe(":8080", router) // handlers.CORS(corsOrigins)(router))
+	// Те, кто попадают под middleware проверку аутентификации
+	api := router.PathPrefix("/").Subrouter()
+	api.Use(authMiddleware)
+	api.HandleFunc("/customer", h.customer)
+	api.Path("/customer").Handler(http.HandlerFunc(h.customer))
+
+	http.ListenAndServe(":8080", router)
+	//corsOrigins := handlers.AllowedOrigins([]string{"*"}) // TODO: для работы с AJAX
+	// handlers.CORS(corsOrigins)(router))
 }
 
-//Handler тип мне нужен для того, чтобы было общее соединение с БД
+//Handler тип мне нужен для того, чтобы было общее соединение с БД у всех обработчиков
 type Handler struct {
 	connection abstract.DatabaseConnection
 }
 
-func executeHTML(page string, w http.ResponseWriter, param interface{}) {
-	absPath, _ := filepath.Abs(fmt.Sprintf("../pro/vendor/view/%s/%s.html", page, page))
+// executeHTML инкапсулирует работу с шаблонами и генерацию html
+func executeHTML(folder string, page string, w http.ResponseWriter, param interface{}) {
+	absPath, _ := filepath.Abs(fmt.Sprintf("../pro/vendor/view/%s/%s.html", folder, page))
 	html, err := template.ParseFiles(absPath)
 	check(err)
 	err = html.Execute(w, param)
@@ -50,9 +56,26 @@ type sessionInformation struct {
 	Attribute interface{}
 }
 
+// authMiddleware выполняется для проверки аутентифицирован ли пользователь. TODO: сделать доступ к определенным разделам по ролям
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Промежуточный слой", r.RequestURI, r.Method)
+		session, err := model.Store.Get(r, "cookie-name")
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		user := model.GetUser(session)
+
+		if auth := user.Authenticated; !auth {
+			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")
+			err = session.Save(r, w)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			http.Redirect(w, r, "/forbidden", http.StatusFound)
+		}
 		next.ServeHTTP(w, r)
 	})
 }

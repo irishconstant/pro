@@ -7,7 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//CheckPassword checks password
+//CheckPassword проверят пароль
 func (s *SQLServer) CheckPassword(login string, password string) bool {
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT TOP 1 Password FROM %s.dbo.Users WHERE Login = '%s'", s.dbname, login))
@@ -22,14 +22,14 @@ func (s *SQLServer) CheckPassword(login string, password string) bool {
 	}
 
 	if CheckPasswordHash(password, passwordDB) {
-		fmt.Println(fmt.Sprintf("Пользователь %s прошел процедуру аутентификации", login))
+		fmt.Println(fmt.Sprintf("Успешная аутентификация пользователя %s", login))
 		return true
 	}
-	fmt.Println("Пароль не совпал")
+	fmt.Println(fmt.Sprintf("Провалена аутентификация пользователя %s", login))
 	return false
 }
 
-//CreateUser creates new user in SQL Server
+//CreateUser создает нового Пользователя
 func (s *SQLServer) CreateUser(login string, password string) bool {
 
 	hashedPassword, err := HashPassword(password)
@@ -42,7 +42,7 @@ func (s *SQLServer) CreateUser(login string, password string) bool {
 	return true
 }
 
-//CreateUserWithRoles creates new user with role in SQL Server
+//CreateUserWithRoles создает нового Пользователя с ролью
 func (s *SQLServer) CreateUserWithRoles(u model.User) bool {
 
 	hashedPassword, err := HashPassword(u.Password)
@@ -60,19 +60,19 @@ func (s *SQLServer) CreateUserWithRoles(u model.User) bool {
 	return true
 }
 
-//HashPassword hashes
+//HashPassword хэширует пароль
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
-//CheckPasswordHash checks
+//CheckPasswordHash проверят соответствие пароля и хэша
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
-// GetUserRoles возвращает всех пользователей из БД
+// GetUserRoles возвращает все роли Пользователя из БД
 func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
 
 	roles := make(map[int]*model.Role)

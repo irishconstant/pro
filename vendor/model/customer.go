@@ -1,6 +1,6 @@
 package model
 
-//Customer respresents a typical person TODO: Переделать в лицевые счета
+//Customer представляет из себя типичного Потребителя
 type Customer struct {
 	Key            int
 	Name           string
@@ -9,7 +9,7 @@ type Customer struct {
 	User           User // Ответственный пользователь
 }
 
-//CustomersBook does
+//CustomersBook представляет из себя набор Потребителей определённого Пользователя
 type CustomersBook struct {
 	CustomerCount int
 	Customers     []Customer

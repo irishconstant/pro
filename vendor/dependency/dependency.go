@@ -7,10 +7,10 @@ import (
 	"github.com/golobby/container"
 )
 
-//GetDependency creates binding between interface and implementation
+//GetDependency создаёт привязку между интерфейсом и реализацией (IoC)
 func GetDependency() abstract.DatabaseConnection {
 
-	// Если надо изменить реализацию на другую БД, достаточно реализовать её в repo и сослаться на новую реализацию здесь. Логика не поменяется
+	// Если надо изменить реализацию на другую БД, достаточно реализовать её в repo и сослаться на новую реализацию здесь
 	container.Singleton(func() abstract.DatabaseConnection {
 		return &sqlserver.SQLServer{}
 	})

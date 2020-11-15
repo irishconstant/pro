@@ -18,7 +18,7 @@ type SQLServer struct {
 	connectionString string  // Строка подключения из конфиг.файла
 }
 
-//ConnectToDatabase does
+//ConnectToDatabase соединяет непосредственно с экземпляром СУБД
 func (s *SQLServer) ConnectToDatabase() error {
 	var err error
 	s.db, err = sql.Open("mssql", s.connectionString)
@@ -31,7 +31,7 @@ func (s *SQLServer) ConnectToDatabase() error {
 	return err
 }
 
-//CloseConnect closes connection to db
+//CloseConnect закрывает соединение (используется через defer)
 func (s *SQLServer) CloseConnect() error {
 	var err error
 	fmt.Println("Закрыто соединение с сервером баз данных")
@@ -42,7 +42,7 @@ func (s *SQLServer) CloseConnect() error {
 	return err
 }
 
-//GetConnectionParams returns params from config file
+//GetConnectionParams получает параметры для Системы из конфигурационного файла
 func (s *SQLServer) GetConnectionParams(filePath string) error {
 	fmt.Println("Получен путь конфигурационного файла:", filePath)
 	file, err := os.Open(filePath)
