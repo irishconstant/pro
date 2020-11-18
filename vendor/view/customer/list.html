@@ -32,13 +32,12 @@
     <h2>Текущие потребители</h2>
 
     <table id="myTable" class="table table-hover">
-        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Искать имя..." title="Введите имя">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">Идентификатор</th>
                 <th scope="col">Фамилия</th>
                 <th scope="col">Имя</th>
                 <th scope="col">Отчество</th>
+                <th scope="col">Действия</th>
             </tr>
         </thead>
         <tfoot>
@@ -48,12 +47,21 @@
         </tfoot>
 
         <tbody>
+            <tr>
+                <th><input class="form-control form-control-sm" id="myInput" onkeyup="findFamilyName()"
+                        placeholder="Фамилия" title="Введите фамилию"> </th>
+                <th><input class="form-control form-control-sm" id="myInput2" onkeyup="findName()" placeholder="Имя"
+                        title="Введите имя"> </th>
+                <th><input class="form-control form-control-sm" id="myInput3" onkeyup="findPatronymicName()"
+                        placeholder="Отчество" title="Введите отчество"> </th>
+                <th scope="col"></th>
+            </tr>
             {{range .Attribute.Customers}}
-            <tr onclick="location.href = '/customer/edit/{{ .Key }}'" style="cursor: pointer;">
-                <td>{{ .Key }}</td>
+            <tr onclick="location.href = '/customer/edit?key={{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>
+                <td><a href="/customer/delete?key={{ .Key }}" class="btn btn-info" role="button">Удалить</a></td>
             </tr>
             {{else}}
             <tr>Отсутсвуют потребители</tr>
@@ -62,9 +70,46 @@
     </table>
 
     <script>
-        function myFunction() {
+
+        function findFamilyName() {
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("myInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+        function findName() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput2");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+        function findPatronymicName() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("myInput3");
             filter = input.value.toUpperCase();
             table = document.getElementById("myTable");
             tr = table.getElementsByTagName("tr");

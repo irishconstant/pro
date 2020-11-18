@@ -25,5 +25,5 @@ func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
 
 	currentInformation := sessionInformation{user, customerBook, ""}
 
-	executeHTML("customer", "customer", w, currentInformation)
+	executeHTML("customer", "list", w, currentInformation)
 }

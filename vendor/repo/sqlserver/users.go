@@ -8,8 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-
 //CheckPassword проверят пароль
 func (s *SQLServer) CheckPassword(login string, password string) bool {
 
@@ -84,19 +82,23 @@ func (s *SQLServer) CreateUser(login string, password string) bool {
 //CreateUserWithRoles создает нового Пользователя с ролью
 func (s *SQLServer) CreateUserWithRoles(u model.User) bool {
 
+	// Создаём самого пользователя
 	hashedPassword, err := HashPassword(u.Password)
 	_, err = s.db.Query(fmt.Sprintf("INSERT INTO %s.dbo.Users (Login, Password, C_Family_Name, C_Name) SELECT '%s', '%s', '%s', '%s'",
-		s.dbname, u.Key, hashedPassword, u.FamilyName, u.Name)) // Создаём самого пользователя
+		s.dbname, u.Key, hashedPassword, u.FamilyName, u.Name))
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
 		return false
 	}
 
-	// Закладываю на будущее, вдруг ролей будет несколько. Пока же - одна.
-	/*
-		_, err = s.db.Query(fmt.Sprintf("INSERT INTO %s.dbo.User_Roles (F_Users, F_Roles) SELECT '%s', '%s'",
-			s.dbname, fmt.Sprint(.Key), value.Name))
-	*/
+	// Создаём его роль (сделано через отдельную таблицу. Т.к. заложено на будущее. когда ролей будет много)
+	_, err = s.db.Query(fmt.Sprintf("INSERT INTO %s.dbo.User_Roles (F_User, F_Roles) SELECT '%s', %s",
+		s.dbname, u.Key, strconv.FormatInt(int64(u.Role.Key), 10)))
+	if err != nil {
+		fmt.Println("Ошибка c запросом: ", err)
+		return false
+	}
+
 	return true
 }
 

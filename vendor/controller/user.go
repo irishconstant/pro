@@ -15,7 +15,7 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		user := model.GetUser(session)
-		possibleRoles := h.connection.GetAllRoles()
+		possibleRoles := h.connection.GetAllRoles() // TODO: Изменить в будущем на возможность присваивать определенные роли в зависимости от роли авторизованного пользователя
 		roleBook := model.RoleBook{RoleCount: len(possibleRoles)}
 		for _, value := range possibleRoles {
 			roleBook.Roles = append(roleBook.Roles, *value)
@@ -23,7 +23,6 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 
 		currentInformation := sessionInformation{user, roleBook, ""}
 
-		//fmt.Println(possibleRoles)
 		if auth := user.Authenticated; auth {
 			http.Redirect(w, r, "/", http.StatusFound)
 		} else {
@@ -37,9 +36,18 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 		name := r.FormValue("name")
 		// Из интерфейса приходит идентификатор (value)
 		roleID, err := strconv.Atoi(r.FormValue("role"))
-
-		result := h.connection.CreateUser(login, password)
 		role, err := h.connection.GetRoleByID(roleID)
+
+		user := &model.User{
+			Key:           login,
+			Name:          name,
+			Role:          role,
+			Authenticated: false,
+		}
+
+		//result := h.connection.CreateUser(login, password)
+
+		result := h.connection.CreateUserWithRoles(*user)
 
 		if result != true {
 			errorUser := model.User{Key: login, Password: password, Name: "", FamilyName: "", Authenticated: false, Role: role}
@@ -47,12 +55,8 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 			executeHTML("user", "reg", w, currentInformation)
 		}
 
-		user := &model.User{
-			Key:           login,
-			Name:          name,
-			Authenticated: true,
-		}
-
+		// Автоматически аутентифицируем пользователя
+		user.Authenticated = true
 		session.Values["user"] = user
 
 		err = session.Save(r, w)

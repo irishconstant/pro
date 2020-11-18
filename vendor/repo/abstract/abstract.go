@@ -23,6 +23,7 @@ type DatabaseConnection interface {
 
 	// Подсистема авторизации и аутентификации
 	CreateUser(login string, password string) bool
+	CreateUserWithRoles(user model.User) bool
 	CheckPassword(a string, b string) bool
 	GetUserRoles(user *model.User) (*model.User, error)
 	GetAllRoles() map[int]*model.Role

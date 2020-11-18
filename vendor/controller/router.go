@@ -41,7 +41,6 @@ func Router(dbc abstract.DatabaseConnection) {
 //Handler тип мне нужен для того, чтобы было что-то общее у всех обработчиков
 type Handler struct {
 	connection abstract.DatabaseConnection
-	areas      map[int]model.Area
 }
 
 // executeHTML инкапсулирует работу с шаблонами и генерацию html
@@ -71,14 +70,16 @@ func authMiddleware(next http.Handler) http.Handler {
 		}
 		user := model.GetUser(session)
 
-		if auth := user.Authenticated; !auth {
+		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")
 			err = session.Save(r, w)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Redirect(w, r, "/forbidden", http.StatusFound)
 				return
 			}
 			http.Redirect(w, r, "/forbidden", http.StatusFound)
+			return
 		}
 		next.ServeHTTP(w, r)
 	})
