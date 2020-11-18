@@ -76,7 +76,7 @@
                     {{ if eq .Error "Ошибка при создании пользователя" }}
                     <div class="alert alert-danger alert-dismissible">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong></strong>
+                        <strong>{{ .Error}}</strong>
                     </div>
                     {{ end }}
             </div>

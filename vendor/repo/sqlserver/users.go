@@ -81,21 +81,22 @@ func (s *SQLServer) CreateUser(login string, password string) bool {
 
 //CreateUserWithRoles создает нового Пользователя с ролью
 func (s *SQLServer) CreateUserWithRoles(u model.User) bool {
-
 	// Создаём самого пользователя
 	hashedPassword, err := HashPassword(u.Password)
-	_, err = s.db.Query(fmt.Sprintf("INSERT INTO %s.dbo.Users (Login, Password, C_Family_Name, C_Name) SELECT '%s', '%s', '%s', '%s'",
-		s.dbname, u.Key, hashedPassword, u.FamilyName, u.Name))
+	query := fmt.Sprintf("INSERT INTO %s.dbo.Users (Login, Password, C_Family_Name, C_Name) SELECT '%s', '%s', '%s', '%s'",
+		s.dbname, u.Key, hashedPassword, u.FamilyName, u.Name)
+	_, err = s.db.Query(query)
 	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
+		fmt.Println("Ошибка c запросом в CreateUserWithRoles: ", query, "Ошибка", err)
 		return false
 	}
 
 	// Создаём его роль (сделано через отдельную таблицу. Т.к. заложено на будущее. когда ролей будет много)
-	_, err = s.db.Query(fmt.Sprintf("INSERT INTO %s.dbo.User_Roles (F_User, F_Roles) SELECT '%s', %s",
-		s.dbname, u.Key, strconv.FormatInt(int64(u.Role.Key), 10)))
+	query = fmt.Sprintf("INSERT INTO %s.dbo.User_Roles (F_Users, F_Roles) SELECT '%s', %s",
+		s.dbname, u.Key, strconv.FormatInt(int64(u.Role.Key), 10))
+	_, err = s.db.Query(query)
 	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
+		fmt.Println("Ошибка c запросом в CreateUserWithRoles: ", query, "Ошибка", err)
 		return false
 	}
 
@@ -121,7 +122,7 @@ func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
 		s.dbname, s.dbname, user.Key))
 
 	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
+		fmt.Println("Ошибка c запросом в GetUserRoles: ", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -144,13 +145,13 @@ func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
 //GetRoleByID возвращает роль и её возможности по идентификатору
 func (s *SQLServer) GetRoleByID(id int) (*model.Role, error) {
 	// Получаем роль из БД
-	rows, err := s.db.Query(fmt.Sprintf("SELECT r.ID, r.C_Name [%s].dbo.Roles WHERE r.ID = %s",
+	rows, err := s.db.Query(fmt.Sprintf("SELECT r.ID, r.C_Name FROM [%s].dbo.Roles AS r WHERE r.ID = %s",
 		s.dbname, strconv.FormatInt(int64(id), 10)))
 
 	var role model.Role
 
 	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
+		fmt.Println("Ошибка c запросом в GetRoleByID: ", err)
 		return nil, err
 	}
 
@@ -172,11 +173,11 @@ func (s *SQLServer) GetRoleByID(id int) (*model.Role, error) {
 // GetRoleAbilities получает данные о возможностях роли
 func (s SQLServer) GetRoleAbilities(role *model.Role) (bool, error) {
 
-	rows, err := s.db.Query(fmt.Sprintf("SELECT a.ID, a.C_Name, ar.B_Create, ar.B_Read, ar.B_Update, ar.B_Delete FROM [%s].dbo.Area_Roles AS ar INNER JOIN [%s].dbo.Areas AS a ON a.ID = ar.F_Areas WHERE ar. F_Roles = %s",
+	rows, err := s.db.Query(fmt.Sprintf("SELECT a.ID, a.C_Name, ar.B_Create, ar.B_Read, ar.B_Update, ar.B_Delete FROM [%s].dbo.Area_Roles AS ar INNER JOIN [%s].dbo.Areas AS a ON a.ID = ar.F_Areas WHERE ar.F_Roles = %s",
 		s.dbname, s.dbname, strconv.FormatInt(int64(role.Key), 10)))
 
 	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
+		fmt.Println("Ошибка c получение возможностей роли: ", err)
 		return false, err
 	}
 	defer rows.Close()

@@ -48,11 +48,11 @@
 
         <tbody>
             <tr>
-                <th><input class="form-control form-control-sm" id="myInput" onkeyup="findFamilyName()"
-                        placeholder="Фамилия" title="Введите фамилию"> </th>
-                <th><input class="form-control form-control-sm" id="myInput2" onkeyup="findName()" placeholder="Имя"
+                <th><input class="form-control form-control-sm" id="myInput" onkeyup="findName()" placeholder="Фамилия"
+                        title="Введите фамилию"> </th>
+                <th><input class="form-control form-control-sm" id="myInput2" onkeyup="findName2()" placeholder="Имя"
                         title="Введите имя"> </th>
-                <th><input class="form-control form-control-sm" id="myInput3" onkeyup="findPatronymicName()"
+                <th><input class="form-control form-control-sm" id="myInput3" onkeyup="findName3()"
                         placeholder="Отчество" title="Введите отчество"> </th>
                 <th scope="col"></th>
             </tr>
@@ -70,8 +70,7 @@
     </table>
 
     <script>
-
-        function findFamilyName() {
+        function findName() {
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("myInput");
             filter = input.value.toUpperCase();
@@ -89,7 +88,7 @@
                 }
             }
         }
-        function findName() {
+        function findName2() {
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("myInput2");
             filter = input.value.toUpperCase();
@@ -107,7 +106,7 @@
                 }
             }
         }
-        function findPatronymicName() {
+        function findName3() {
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("myInput3");
             filter = input.value.toUpperCase();
