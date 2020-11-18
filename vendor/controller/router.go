@@ -22,6 +22,7 @@ func Router(dbc abstract.DatabaseConnection) {
 	// Те, кто НЕ попадают под middleware проверку аутентификации
 	router.Path("/forbidden").Handler(http.HandlerFunc(h.forbidden))
 	router.Path("/user/reg").Handler(http.HandlerFunc(h.reg))
+	router.Path("/user/edit").Handler(http.HandlerFunc(h.forbidden))
 	router.Path("/login").Handler(http.HandlerFunc(h.login))
 	router.Path("/logout").Handler(http.HandlerFunc(h.logout))
 	router.Path("/").Handler(http.HandlerFunc(h.index))
@@ -37,9 +38,10 @@ func Router(dbc abstract.DatabaseConnection) {
 	// handlers.CORS(corsOrigins)(router))
 }
 
-//Handler тип мне нужен для того, чтобы было общее соединение с БД у всех обработчиков
+//Handler тип мне нужен для того, чтобы было что-то общее у всех обработчиков
 type Handler struct {
 	connection abstract.DatabaseConnection
+	areas      map[int]model.Area
 }
 
 // executeHTML инкапсулирует работу с шаблонами и генерацию html
@@ -51,9 +53,11 @@ func executeHTML(folder string, page string, w http.ResponseWriter, param interf
 	check(err)
 }
 
+// sessionInformation общая структура для шаблонов html
 type sessionInformation struct {
 	User      model.User
 	Attribute interface{}
+	Error     string
 }
 
 // authMiddleware выполняется для проверки аутентифицирован ли пользователь. TODO: сделать доступ к определенным разделам по ролям

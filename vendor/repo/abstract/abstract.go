@@ -25,4 +25,7 @@ type DatabaseConnection interface {
 	CreateUser(login string, password string) bool
 	CheckPassword(a string, b string) bool
 	GetUserRoles(user *model.User) (*model.User, error)
+	GetAllRoles() map[int]*model.Role
+	GetRoleAbilities(role *model.Role) (bool, error)
+	GetRoleByID(int) (*model.Role, error)
 }

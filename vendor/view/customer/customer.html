@@ -15,7 +15,7 @@
 
 <body>
     <div class="alert alert-primary">
-        <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.User.Key}}!</a>
+        <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.User.Role.Name}} {{.User.Key}}!</a>
     </div>
     <nav class="navbar navbar-expand-sm bg-light">
         <ul class="navbar-nav">
@@ -49,12 +49,14 @@
 
         <tbody>
             {{range .Attribute.Customers}}
-            <tr>
+            <tr onclick="location.href = '/customer/edit/{{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .Key }}</td>
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>
             </tr>
+            {{else}}
+            <tr>Отсутсвуют потребители</tr>
             {{ end }}
         </tbody>
     </table>

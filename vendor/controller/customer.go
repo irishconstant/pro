@@ -23,7 +23,7 @@ func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
 		customerBook.Customers = append(customerBook.Customers, *value)
 	}
 
-	currentInformation := sessionInformation{user, customerBook}
+	currentInformation := sessionInformation{user, customerBook, ""}
 
 	executeHTML("customer", "customer", w, currentInformation)
 }

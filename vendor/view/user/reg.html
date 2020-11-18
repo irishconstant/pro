@@ -25,7 +25,7 @@
         <div class="row justify-content-center align-items-center h-100">
             <div class="col col-sm-6 col-md-6 col-lg-4 col-xl-3">
                 <a href="/">Я уже зарегистрирован</a>
-                <form action="/reg" class="needs-validation" novalidate method="POST">
+                <form action="/user/reg" class="needs-validation" novalidate method="POST">
                     <div class="form-group">
                         <label for="uname">Логин:</label>
                         <input type="text" class="form-control" placeholder="Логин" name="login" required>
@@ -53,12 +53,13 @@
                     <div class="form-group" data-width='auto'>
                         <label>Выберите роль:</label>
                         <select name="role" required data-style="btn-primary" class="selectpicker"
-                            data-live-search="true" multiple noneSelectedText="Ничего не выбрано"
-                            noneResultsText="Нет совпадений" size="auto" width="auto">
-                            <option value=1>Администратор</option>
-                            <option value=2>Пользователь</option>
+                            data-live-search="true" title="Ничего не выбрано" noneResultsText="Нет совпадений"
+                            data-size="10" width="auto">
+                            {{range .Attribute.Roles}}
+                            <option value={{.Key}}>{{.Name}}</option>
+                            {{else}}
                             <option value=3>Гость</option>
-                            <div class="invalid-feedback">Пожалуйста выберите как минимум одну роль</div>
+                            {{ end }}
                         </select>
                     </div>
                     <div class="form-group form-check">
@@ -71,12 +72,13 @@
                         </label>
                     </div>
                     <button type="submit" class="btn btn-primary">Регистрация в матрице</button>
-                    {{if .}}
+
+                    {{ if eq .Error "Ошибка при создании пользователя" }}
                     <div class="alert alert-danger alert-dismissible">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>{{.}}</strong>
+                        <strong></strong>
                     </div>
-                    {{end}}
+                    {{ end }}
             </div>
             </form>
         </div>

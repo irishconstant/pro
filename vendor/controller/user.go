@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"fmt"
 	"model"
 	"net/http"
+	"strconv"
 )
 
 func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
@@ -12,14 +12,22 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	if r.Method == http.MethodGet {
-
 		user := model.GetUser(session)
+		possibleRoles := h.connection.GetAllRoles()
+		roleBook := model.RoleBook{RoleCount: len(possibleRoles)}
+		for _, value := range possibleRoles {
+			roleBook.Roles = append(roleBook.Roles, *value)
+		}
 
+		currentInformation := sessionInformation{user, roleBook, ""}
+
+		//fmt.Println(possibleRoles)
 		if auth := user.Authenticated; auth {
 			http.Redirect(w, r, "/", http.StatusFound)
 		} else {
-			executeHTML("user", "reg", w, nil)
+			executeHTML("user", "reg", w, currentInformation)
 		}
 	}
 
@@ -27,19 +35,21 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 		login := r.FormValue("login")
 		password := r.FormValue("password")
 		name := r.FormValue("name")
-		roles := r.FormValue("role")
-		fmt.Println(roles)
-		for key, value := range roles {
-			fmt.Println(name, key, value)
-		}
+		// Из интерфейса приходит идентификатор (value)
+		roleID, err := strconv.Atoi(r.FormValue("role"))
 
 		result := h.connection.CreateUser(login, password)
+		role, err := h.connection.GetRoleByID(roleID)
+
 		if result != true {
-			executeHTML("user", "reg", w, "Ошибка при создании пользователя")
+			errorUser := model.User{Key: login, Password: password, Name: "", FamilyName: "", Authenticated: false, Role: role}
+			currentInformation := sessionInformation{errorUser, nil, "Ошибка при создании пользователя"}
+			executeHTML("user", "reg", w, currentInformation)
 		}
 
 		user := &model.User{
 			Key:           login,
+			Name:          name,
 			Authenticated: true,
 		}
 

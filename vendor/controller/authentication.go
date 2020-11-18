@@ -31,11 +31,19 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		login := r.FormValue("login")
-
+		/*
+			roles := h.connection.GetAllRoles()
+			for key, value := range roles {
+				h.connection.GetRoleAbilities(value)
+			}
+		*/
 		user := &model.User{
 			Key:           login,
 			Authenticated: true,
 		}
+
+		h.connection.GetUserRoles(user)
+		//fmt.Println("Роль пользователя (вызов из контроллера login)", user.Role.CreateAbility)
 
 		session.Values["user"] = user
 
@@ -64,5 +72,6 @@ func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	http.Redirect(w, r, "/", http.StatusFound)
 }

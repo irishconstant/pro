@@ -18,6 +18,7 @@
         {{if .Authenticated }}
         <div class="alert alert-primary">
             <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.Key}}!</a>
+            Ваша роль: {{.Role.Name}}
         </div>
         <a class="nav-link" href="/customer">Потребители</a>
         <a class="nav-link" href="/logout">Выйти</a>

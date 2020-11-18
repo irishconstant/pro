@@ -3,9 +3,12 @@ package sqlserver
 import (
 	"fmt"
 	"model"
+	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+
 
 //CheckPassword проверят пароль
 func (s *SQLServer) CheckPassword(login string, password string) bool {
@@ -27,6 +30,42 @@ func (s *SQLServer) CheckPassword(login string, password string) bool {
 	}
 	fmt.Println(fmt.Sprintf("Провалена аутентификация пользователя %s", login))
 	return false
+}
+
+//GetPossibleRoles возвращает роли, которые может присваивать Пользователь с определенной ролью (неавторизованный = Гость)
+func (s *SQLServer) GetPossibleRoles(model.Role) map[int]model.Role {
+	var roles = make(map[int]model.Role) ///!!!
+	return roles                         ///!!!
+}
+
+//GetAllRoles возвращает все роли, возможные в Системе
+func (s *SQLServer) GetAllRoles() map[int]*model.Role {
+	var roles = make(map[int]*model.Role)
+
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID, C_Name, B_Admin_Only FROM %s.dbo.Roles", s.dbname))
+	defer rows.Close()
+	if err != nil {
+		fmt.Println("Ошибка c запросом: ", err)
+		return nil
+	}
+
+	for rows.Next() {
+		var (
+			Key       int
+			Name      string
+			AdminOnly bool
+		)
+
+		rows.Scan(&Key, &Name, &AdminOnly)
+		role := model.Role{
+			Key:       Key,
+			Name:      Name,
+			AdminOnly: AdminOnly}
+		if Key != 0 {
+			roles[Key] = &role
+		}
+	}
+	return roles
 }
 
 //CreateUser создает нового Пользователя
@@ -53,10 +92,11 @@ func (s *SQLServer) CreateUserWithRoles(u model.User) bool {
 		return false
 	}
 
-	for _, value := range u.Roles {
+	// Закладываю на будущее, вдруг ролей будет несколько. Пока же - одна.
+	/*
 		_, err = s.db.Query(fmt.Sprintf("INSERT INTO %s.dbo.User_Roles (F_Users, F_Roles) SELECT '%s', '%s'",
-			s.dbname, fmt.Sprint(value.Key), value.Name))
-	}
+			s.dbname, fmt.Sprint(.Key), value.Name))
+	*/
 	return true
 }
 
@@ -75,8 +115,8 @@ func CheckPasswordHash(password, hash string) bool {
 // GetUserRoles возвращает все роли Пользователя из БД
 func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
 
-	roles := make(map[int]*model.Role)
-	rows, err := s.db.Query(fmt.Sprintf("SELECT Id, Name FROM [%s].dbo.Users WHERE F_Users = '%s'", s.dbname, user.Key))
+	rows, err := s.db.Query(fmt.Sprintf("SELECT TOP 1 r.ID, r.C_Name FROM [%s].dbo.User_Roles AS ur INNER JOIN [%s].dbo.Roles AS r ON r.ID = ur.F_Roles  WHERE ur.F_Users = '%s'",
+		s.dbname, s.dbname, user.Key))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
@@ -90,10 +130,95 @@ func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
 		)
 		rows.Scan(&a, &b)
 		role := model.Role{Key: a, Name: b}
-		if a != 0 {
-			roles[a] = &role
-		}
+		user.Role = &role
 	}
-	user.Roles = roles
+
+	// Получаем возможности для роли Пользователя
+	s.GetRoleAbilities(user.Role)
+
 	return user, nil
+}
+
+//GetRoleByID возвращает роль и её возможности по идентификатору
+func (s *SQLServer) GetRoleByID(id int) (*model.Role, error) {
+	// Получаем роль из БД
+	rows, err := s.db.Query(fmt.Sprintf("SELECT r.ID, r.C_Name [%s].dbo.Roles WHERE r.ID = %s",
+		s.dbname, strconv.FormatInt(int64(id), 10)))
+
+	var role model.Role
+
+	if err != nil {
+		fmt.Println("Ошибка c запросом: ", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			a int
+			b string
+		)
+		rows.Scan(&a, &b)
+		role = model.Role{Key: a, Name: b}
+	}
+
+	s.GetRoleAbilities(&role)
+
+	return &role, nil
+}
+
+// GetRoleAbilities получает данные о возможностях роли
+func (s SQLServer) GetRoleAbilities(role *model.Role) (bool, error) {
+
+	rows, err := s.db.Query(fmt.Sprintf("SELECT a.ID, a.C_Name, ar.B_Create, ar.B_Read, ar.B_Update, ar.B_Delete FROM [%s].dbo.Area_Roles AS ar INNER JOIN [%s].dbo.Areas AS a ON a.ID = ar.F_Areas WHERE ar. F_Roles = %s",
+		s.dbname, s.dbname, strconv.FormatInt(int64(role.Key), 10)))
+
+	if err != nil {
+		fmt.Println("Ошибка c запросом: ", err)
+		return false, err
+	}
+	defer rows.Close()
+
+	createMap := make(map[int]*model.Area)
+	readMap := make(map[int]*model.Area)
+	updateMap := make(map[int]*model.Area)
+	deleteMap := make(map[int]*model.Area)
+
+	for rows.Next() {
+		var (
+			ID     int
+			name   string
+			create bool
+			read   bool
+			update bool
+			delete bool
+		)
+		rows.Scan(&ID, &name, &create, &read, &update, &delete)
+
+		area := model.Area{
+			Key:  ID,
+			Name: name,
+		}
+
+		// Код ниже выглядит странно, но там приходится делать, т.к. при изначальной инициализации структуры создаётся nil мапа
+		if create {
+			createMap[area.Key] = &area
+		}
+		if read {
+			readMap[area.Key] = &area
+		}
+		if update {
+			updateMap[area.Key] = &area
+		}
+		if delete {
+			deleteMap[area.Key] = &area
+		}
+
+	}
+	role.CreateAbility = createMap
+	role.ReadAbility = readMap
+	role.UpdateAbility = updateMap
+	role.DeleteAbility = deleteMap
+
+	return true, nil
 }
