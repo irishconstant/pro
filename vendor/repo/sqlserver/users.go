@@ -66,21 +66,8 @@ func (s *SQLServer) GetAllRoles() map[int]*model.Role {
 	return roles
 }
 
-//CreateUser создает нового Пользователя
-func (s *SQLServer) CreateUser(login string, password string) bool {
-
-	hashedPassword, err := HashPassword(password)
-	_, err = s.db.Query(fmt.Sprintf("INSERT INTO %s.dbo.Users (Login, Password) SELECT '%s', '%s'", s.dbname, login, hashedPassword)) // Создаём самого пользователя
-	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
-		return false
-	}
-
-	return true
-}
-
-//CreateUserWithRoles создает нового Пользователя с ролью
-func (s *SQLServer) CreateUserWithRoles(u model.User) bool {
+//CreateUser создает нового Пользователя с ролью
+func (s *SQLServer) CreateUser(u model.User) bool {
 	// Создаём самого пользователя
 	hashedPassword, err := HashPassword(u.Password)
 	query := fmt.Sprintf("INSERT INTO %s.dbo.Users (Login, Password, C_Family_Name, C_Name) SELECT '%s', '%s', '%s', '%s'",
@@ -91,7 +78,7 @@ func (s *SQLServer) CreateUserWithRoles(u model.User) bool {
 		return false
 	}
 
-	// Создаём его роль (сделано через отдельную таблицу. Т.к. заложено на будущее. когда ролей будет много)
+	// Создаём его роль (сделано через отдельную таблицу. Т.к. заложено на будущее. что ролей у одного Пользователя будет много)
 	query = fmt.Sprintf("INSERT INTO %s.dbo.User_Roles (F_Users, F_Roles) SELECT '%s', %s",
 		s.dbname, u.Key, strconv.FormatInt(int64(u.Role.Key), 10))
 	_, err = s.db.Query(query)
@@ -222,6 +209,24 @@ func (s SQLServer) GetRoleAbilities(role *model.Role) (bool, error) {
 	role.ReadAbility = readMap
 	role.UpdateAbility = updateMap
 	role.DeleteAbility = deleteMap
+
+	return true, nil
+}
+
+// GetUserAttributes выдает атрибуты пользователя из БД
+func (s SQLServer) GetUserAttributes(user *model.User) (bool, error) {
+	rows, err := s.db.Query(fmt.Sprintf("SELECT u.C_Name, u.C_Family_Name FROM [%s].dbo.Users AS u WHERE u.Login = '%s'",
+		s.dbname, user.Key))
+
+	if err != nil {
+		fmt.Println("Ошибка c запросом в GetUserAttributes: ", err)
+		return false, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		rows.Scan(&user.Name, &user.FamilyName)
+	}
 
 	return true, nil
 }

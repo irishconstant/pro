@@ -22,11 +22,11 @@ type DatabaseConnection interface {
 	GetUserCustomers(u model.User) (map[int]*model.Customer, error)
 
 	// Подсистема авторизации и аутентификации
-	CreateUser(login string, password string) bool
-	CreateUserWithRoles(user model.User) bool
+	CreateUser(user model.User) bool
 	CheckPassword(a string, b string) bool
 	GetUserRoles(user *model.User) (*model.User, error)
 	GetAllRoles() map[int]*model.Role
 	GetRoleAbilities(role *model.Role) (bool, error)
 	GetRoleByID(int) (*model.Role, error)
+	GetUserAttributes(user *model.User) (bool, error)
 }

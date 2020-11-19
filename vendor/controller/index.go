@@ -13,6 +13,9 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user := model.GetUser(session)
+	if user.Authenticated {
+		h.connection.GetUserAttributes(&user)
+	}
 	executeHTML("index", "index", w, user)
 
 }

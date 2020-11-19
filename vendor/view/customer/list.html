@@ -17,7 +17,7 @@
 
 <body>
     <div class="alert alert-primary">
-        <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.User.Key}} (роль
+        <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.User.Name}} {{.User.FamilyName}} (роль
             "{{.User.Role.Name}}")!</a>
         <a href="/logout" class="link">Выйти</a>
     </div>
@@ -62,7 +62,7 @@
 
         <tbody>
             <tr>
-                <th><a href="/customer/create" class="btn btn-outline-success">>Добавить</a>
+                <th><a href="/customer/create" class="btn btn-outline-success">Добавить</a>
                 </th>
             </tr>
             <tr>
@@ -80,7 +80,8 @@
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>
-                <td><a href="/customer/delete?key={{ .Key }}" class="btn btn-info" role="button">Удалить</a></td>
+                <td><a href="/customer/delete?key={{ .Key }}" class="btn btn-outline-danger" role="button">Удалить</a>
+                </td>
             </tr>
             {{else}}
             <tr>

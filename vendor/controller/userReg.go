@@ -50,7 +50,7 @@ func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
 			Authenticated: false,
 		}
 		//result := h.connection.CreateUser(login, password)
-		result := h.connection.CreateUserWithRoles(newUser)
+		result := h.connection.CreateUser(newUser)
 
 		if result != true {
 			errorUser := model.User{Key: login, Password: password, Name: "", FamilyName: "", Authenticated: false, Role: role}
