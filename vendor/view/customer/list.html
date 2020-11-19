@@ -42,8 +42,6 @@
 
     </nav>
 
-    <h2>Текущие потребители</h2>
-
 
     <table id="myTable" class="table table-hover">
         <thead class="thead-dark">
@@ -59,22 +57,26 @@
                 <td> Всего пользователей: {{.Attribute.CustomerCount}}</td>
             </tr>
         </tfoot>
-
+        <h2>Текущие потребители</h2>
         <tbody>
-            <tr>
-                <th><a href="/customer/create" class="btn btn-outline-success">Добавить</a>
-                </th>
-            </tr>
-            <tr>
-                <th> <input class="form-control form-control-sm" type="text" id="myInput1" onkeyup="findName()"
-                        placeholder="Фамилия" title="Введите фамилию"></th>
-                <th> <input class="form-control form-control-sm" type="text" id="myInput2" onkeyup="findName2()"
-                        placeholder="Имя" title="Введите имя"></th>
-                <th> <input class="form-control form-control-sm" type="text" id="myInput3" onkeyup="findName3()"
-                        placeholder="Отчество" title="Введите отчество"></th>
+            <th>
+                <a href="/customer/create" class="btn btn-outline-success">Добавить</a>
 
-                <th scope="col"></th>
-            </tr>
+
+
+                <a href="#demo" class="btn btn-outline-info" data-toggle="collapse">Фильтры</a>
+                <div id="demo" class="collapse">
+                    <input class="form-control form-control-sm" type="text" id="myInput1" onkeyup="findName()"
+                        placeholder="Фамилия" title="Введите фамилию">
+                    <input class="form-control form-control-sm" type="text" id="myInput2" onkeyup="findName2()"
+                        placeholder="Имя" title="Введите имя">
+                    <input class="form-control form-control-sm" type="text" id="myInput3" onkeyup="findName3()"
+                        placeholder="Отчество" title="Введите отчество">
+
+
+                </div>
+            </th>
+
             {{range .Attribute.Customers}}
             <tr onclick="location.href = '/customer/edit?key={{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .FamilyName }}</td>
