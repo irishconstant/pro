@@ -16,6 +16,7 @@ type SQLServer struct {
 	db               *sql.DB // Драйвер подключения к СУБД
 	dbname           string  // Имя БД из конфиг.файла
 	connectionString string  // Строка подключения из конфиг.файла
+	pageSize         int
 }
 
 //ConnectToDatabase соединяет непосредственно с экземпляром СУБД

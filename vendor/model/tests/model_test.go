@@ -3,7 +3,7 @@ package model
 import "testing"
 
 // Пока бесполезный тест, просто чтобы не забыть, что теоретически у нас TDD
-func TestCreateSelectQuery(t *testing.T) {
+func TestModel(t *testing.T) {
 	var result string
 	expectedResult := "OK"
 	result = "OK"

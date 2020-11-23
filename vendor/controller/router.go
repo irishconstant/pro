@@ -10,7 +10,7 @@ import (
 //Router запускает web-сервер и настраивает маршрутизацию
 func Router(dbc abstract.DatabaseConnection) {
 	staticDir := "/static/"
-	h := Handler{connection: dbc}
+	h := Handler{connection: dbc, pageSize: 3}
 	router := mux.NewRouter()
 	// Обработка статичных файлов
 	router.PathPrefix(staticDir).Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))
@@ -38,4 +38,5 @@ func Router(dbc abstract.DatabaseConnection) {
 //Handler тип мне нужен для того, чтобы было что-то общее у всех обработчиков
 type Handler struct {
 	connection abstract.DatabaseConnection
+	pageSize   int //Максимальное количество записей на странице
 }

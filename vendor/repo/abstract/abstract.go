@@ -4,13 +4,6 @@ import (
 	"model"
 )
 
-//SQLConnect параметры для соединения с СУБД
-type SQLConnect struct {
-	//comment
-	ConnectionString string
-	Database         string
-}
-
 //DatabaseConnection обеспечивает интерфейс для соединения с СУБД (набор методов, который должен быть реализован для утиной типизации)
 type DatabaseConnection interface {
 	// Работа с соединением БД
@@ -19,7 +12,8 @@ type DatabaseConnection interface {
 	GetConnectionParams(filePath string) error
 
 	// Работа с Потребителями
-	GetUserCustomers(u model.User) (map[int]*model.Customer, error)
+	GetUserCustomersAll(u model.User) (map[int]*model.Customer, error)
+	GetUserCustomersPagination(u model.User, currentPage int) (map[int]*model.Customer, error)
 
 	// Подсистема авторизации и аутентификации
 	CreateUser(user model.User) bool
