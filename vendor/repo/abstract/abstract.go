@@ -13,7 +13,7 @@ type DatabaseConnection interface {
 
 	// Работа с Потребителями
 	GetUserCustomersAll(u model.User) (map[int]*model.Customer, error)
-	GetUserCustomersPagination(u model.User, currentPage int) (map[int]*model.Customer, error)
+	GetUserCustomersPagination(u model.User, currentPage int, pageSize int) (map[int]*model.Customer, error)
 
 	// Подсистема авторизации и аутентификации
 	CreateUser(user model.User) bool

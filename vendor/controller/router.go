@@ -10,7 +10,7 @@ import (
 //Router запускает web-сервер и настраивает маршрутизацию
 func Router(dbc abstract.DatabaseConnection) {
 	staticDir := "/static/"
-	h := Handler{connection: dbc, pageSize: 3}
+	h := Handler{connection: dbc, pageSize: 7}
 	router := mux.NewRouter()
 	// Обработка статичных файлов
 	router.PathPrefix(staticDir).Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))

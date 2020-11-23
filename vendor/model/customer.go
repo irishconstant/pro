@@ -21,7 +21,10 @@ type CustomersBook struct {
 
 //Page представляет для любых представлений
 type Page struct {
-	Number int
+	Number       int
+	PreviousPage bool
+	NextPage     bool
+	CurrentPage  bool
 }
 
 //MakePages генерирует последовательности страниц
@@ -31,6 +34,21 @@ func MakePages(min, max, current int) []Page {
 		if i == 0 || math.Abs(float64(current-min-i)) <= 2 || i == max-1 {
 			pages[i].Number = min + i
 		}
+
+		if current == min+i {
+			pages[i].CurrentPage = true
+		}
+
+		if current-min-i == -2 && current < max-min+1 {
+			//pages[i].Number = current - 1
+			pages[i].NextPage = true
+		}
+
+		if current-min-i == 2 && current > 1 {
+			//pages[i].Number = current + 1
+			pages[i].PreviousPage = true
+		}
+
 	}
 	return pages
 }

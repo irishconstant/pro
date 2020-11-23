@@ -32,7 +32,7 @@ func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
 	customerBook := model.CustomersBook{CustomerCount: len(customers)}
 	// Если необходима пагинация
 	if customerBook.CustomerCount > h.pageSize {
-		customersPerPage, err := h.connection.GetUserCustomersPagination(user, page)
+		customersPerPage, err := h.connection.GetUserCustomersPagination(user, page, h.pageSize)
 		check(err)
 		for _, value := range customersPerPage {
 			customerBook.Customers = append(customerBook.Customers, *value)

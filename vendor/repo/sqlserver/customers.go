@@ -6,9 +6,9 @@ import (
 )
 
 //GetUserCustomersPagination возвращает всех Потребителей конкретного Пользователя для страницы
-func (s *SQLServer) GetUserCustomersPagination(u model.User, currentPage int) (map[int]*model.Customer, error) {
+func (s *SQLServer) GetUserCustomersPagination(u model.User, currentPage int, pageSize int) (map[int]*model.Customer, error) {
 	customers := make(map[int]*model.Customer)
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "Customers", "ID", u.Key, 3, currentPage))
+	rows, err := s.db.Query(selectWithPagination(s.dbname, "Customers", "ID", u.Key, pageSize, currentPage))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
