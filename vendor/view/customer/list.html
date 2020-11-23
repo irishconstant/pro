@@ -86,8 +86,13 @@
             <tr>
                 <td> Всего пользователей: {{.Attribute.CustomerCount}}</td>
                 <td>Страницы:
+
                     {{range .Attribute.Pages}}
-                    <a href="/customer?page={{.}}" class="btn btn-outline-info">{{.}}</a>
+                    {{if ne .Number 0}}
+                    <a href="/customer?page={{.Number}}" class="btn btn-outline-info">{{.Number}}</a>
+                    {{else}}
+                    .
+                    {{end}}
                     {{else}}
                     Нет деления на страницы
                     {{end}}

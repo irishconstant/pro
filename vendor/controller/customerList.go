@@ -37,7 +37,11 @@ func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
 		for _, value := range customersPerPage {
 			customerBook.Customers = append(customerBook.Customers, *value)
 		}
-		customerBook.Pages = customerBook.MakeRange(1, int(math.Ceil(float64(customerBook.CustomerCount)/float64(h.pageSize)))) // Округляем число страниц в большую сторону
+		customerBook.CurrentPage = page
+
+		// Создаем страницы для показа (1, одна слева от текущей, одна справа от текущей, последняя)
+		customerBook.Pages = model.MakePages(1, int(math.Ceil(float64(customerBook.CustomerCount)/float64(h.pageSize))), page)
+
 		currentInformation := sessionInformation{user, customerBook, ""}
 		executeHTML("customer", "list", w, currentInformation)
 

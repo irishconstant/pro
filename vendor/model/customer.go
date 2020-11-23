@@ -1,5 +1,7 @@
 package model
 
+import "math"
+
 //Customer представляет из себя типичного Потребителя
 type Customer struct {
 	Key            int
@@ -12,15 +14,23 @@ type Customer struct {
 //CustomersBook представляет из себя набор Потребителей определённого Пользователя
 type CustomersBook struct {
 	CustomerCount int
-	Pages         []int // Приходится хранить слайс данных для генерации из шаблона
+	CurrentPage   int
+	Pages         []Page // Приходится хранить слайс данных для генерации из шаблона
 	Customers     []Customer
 }
 
-//Для генерации последовательности страниц
-func (c CustomersBook) MakeRange(min, max int) []int {
-	a := make([]int, max-min+1)
-	for i := range a {
-		a[i] = min + i
+//Page представляет для любых представлений
+type Page struct {
+	Number int
+}
+
+//MakePages генерирует последовательности страниц
+func MakePages(min, max, current int) []Page {
+	pages := make([]Page, max-min+1)
+	for i := range pages {
+		if i == 0 || math.Abs(float64(current-min-i)) <= 2 || i == max-1 {
+			pages[i].Number = min + i
+		}
 	}
-	return a
+	return pages
 }
