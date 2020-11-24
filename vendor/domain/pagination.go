@@ -2,15 +2,17 @@ package domain
 
 import "math"
 
-//Page представляет для любых представлений
+//Page представляет страницу любых представлений
 type Page struct {
 	Number       int
+	FirstPage    bool
+	LastPage     bool
 	PreviousPage bool
 	NextPage     bool
 	CurrentPage  bool
 }
 
-//MakePages генерирует последовательности страниц
+//MakePages генерирует последовательности страниц для отображения
 func MakePages(first, last, current int) []Page {
 	var pages []Page
 
@@ -19,9 +21,15 @@ func MakePages(first, last, current int) []Page {
 		if i == first || math.Abs(float64(current-i)) <= 2 || i == last {
 			page := Page{Number: i}
 
-			if current == i {
+			switch i {
+			case current:
 				page.CurrentPage = true
+			case first:
+				page.FirstPage = true
+			case last:
+				page.LastPage = true
 			}
+
 			if current-i == -1 && current < last {
 				page.NextPage = true
 			}

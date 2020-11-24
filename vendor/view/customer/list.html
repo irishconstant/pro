@@ -86,26 +86,31 @@
             <tr>
                 <td class="text-success"> Всего пользователей: {{.Attribute.CustomerCount}}</td>
                 <td>Страницы:
-
                     {{range .Attribute.Pages}}
-                    {{if ne .Number 0}}
+
                     {{if .PreviousPage}}
-                    <a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>...
+                    <a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
                     {{end}}
+
                     {{if .NextPage}}
-                    ...<a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
+                    <a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
                     {{end}}
+
                     {{if .CurrentPage}}
                     <a href="/customer?page={{.Number}}" class="btn btn-outline-success">{{.Number}}</a>
-                    {{else}}
+                    {{end}}
+
                     {{if ne .NextPage true}}
                     {{if ne .PreviousPage true}}
-                    <a href="/customer?page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>
+                    {{if .FirstPage}}
+                    <a href="/customer?page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>...
+                    {{end}}
+                    {{if .LastPage}}
+                    ...<a href="/customer?page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>
                     {{end}}
                     {{end}}
                     {{end}}
-                    {{else}}
-                    {{end}}
+
                     {{else}}
                     Нет деления на страницы
                     {{end}}
