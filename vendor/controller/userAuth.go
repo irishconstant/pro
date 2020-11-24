@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"model"
+	"domain"
 	"net/http"
 )
 
 // login обрабатывает попытку залогиниться
 func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
-	session, err := model.Store.Get(r, "cookie-name")
+	session, err := domain.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -37,7 +37,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 				h.connection.GetRoleAbilities(value)
 			}
 		*/
-		user := &model.User{
+		user := &domain.User{
 			Key:           login,
 			Authenticated: true,
 		}
@@ -58,13 +58,13 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 
 // logout обрабывает попытку разлогиниться
 func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
-	session, err := model.Store.Get(r, "cookie-name")
+	session, err := domain.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	session.Values["user"] = model.User{}
+	session.Values["user"] = domain.User{}
 	session.Options.MaxAge = -1
 
 	err = session.Save(r, w)
@@ -78,7 +78,7 @@ func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
 
 // sessionInformation общая структура для шаблонов html
 type sessionInformation struct {
-	User      model.User
+	User      domain.User
 	Attribute interface{}
 	Error     string
 }
@@ -86,13 +86,13 @@ type sessionInformation struct {
 // authMiddleware выполняется для проверки аутентифицирован ли пользователь. TODO: сделать доступ к определенным разделам по ролям
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := model.Store.Get(r, "cookie-name")
+		session, err := domain.Store.Get(r, "cookie-name")
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		user := model.GetUser(session)
+		user := domain.GetUser(session)
 
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")

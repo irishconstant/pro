@@ -90,10 +90,10 @@
                     {{range .Attribute.Pages}}
                     {{if ne .Number 0}}
                     {{if .PreviousPage}}
-                    <a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">Назад</a>...
+                    <a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>...
                     {{end}}
                     {{if .NextPage}}
-                    ...<a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">Вперед</a>
+                    ...<a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
                     {{end}}
                     {{if .CurrentPage}}
                     <a href="/customer?page={{.Number}}" class="btn btn-outline-success">{{.Number}}</a>

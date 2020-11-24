@@ -1,4 +1,4 @@
-package model
+package domain
 
 // User хранит информацию о Пользователях
 type User struct {

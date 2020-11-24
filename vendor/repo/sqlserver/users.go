@@ -1,8 +1,8 @@
 package sqlserver
 
 import (
+	"domain"
 	"fmt"
-	"model"
 	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
@@ -31,14 +31,14 @@ func (s *SQLServer) CheckPassword(login string, password string) bool {
 }
 
 //GetPossibleRoles возвращает роли, которые может присваивать Пользователь с определенной ролью (неавторизованный = Гость)
-func (s *SQLServer) GetPossibleRoles(model.Role) map[int]model.Role {
-	var roles = make(map[int]model.Role) ///!!!
-	return roles                         ///!!!
+func (s *SQLServer) GetPossibleRoles(domain.Role) map[int]domain.Role {
+	var roles = make(map[int]domain.Role) ///!!!
+	return roles                          ///!!!
 }
 
 //GetAllRoles возвращает все роли, возможные в Системе
-func (s *SQLServer) GetAllRoles() map[int]*model.Role {
-	var roles = make(map[int]*model.Role)
+func (s *SQLServer) GetAllRoles() map[int]*domain.Role {
+	var roles = make(map[int]*domain.Role)
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT ID, C_Name, B_Admin_Only FROM %s.dbo.Roles", s.dbname))
 	defer rows.Close()
@@ -55,7 +55,7 @@ func (s *SQLServer) GetAllRoles() map[int]*model.Role {
 		)
 
 		rows.Scan(&Key, &Name, &AdminOnly)
-		role := model.Role{
+		role := domain.Role{
 			Key:       Key,
 			Name:      Name,
 			AdminOnly: AdminOnly}
@@ -67,7 +67,7 @@ func (s *SQLServer) GetAllRoles() map[int]*model.Role {
 }
 
 //CreateUser создает нового Пользователя с ролью
-func (s *SQLServer) CreateUser(u model.User) bool {
+func (s *SQLServer) CreateUser(u domain.User) bool {
 	// Создаём самого пользователя
 	hashedPassword, err := HashPassword(u.Password)
 	query := fmt.Sprintf("INSERT INTO %s.dbo.Users (Login, Password, C_Family_Name, C_Name) SELECT '%s', '%s', '%s', '%s'",
@@ -103,7 +103,7 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 // GetUserRoles возвращает все роли Пользователя из БД
-func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
+func (s *SQLServer) GetUserRoles(user *domain.User) (*domain.User, error) {
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT TOP 1 r.ID, r.C_Name FROM [%s].dbo.User_Roles AS ur INNER JOIN [%s].dbo.Roles AS r ON r.ID = ur.F_Roles  WHERE ur.F_Users = '%s'",
 		s.dbname, s.dbname, user.Key))
@@ -119,7 +119,7 @@ func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
 			b string
 		)
 		rows.Scan(&a, &b)
-		role := model.Role{Key: a, Name: b}
+		role := domain.Role{Key: a, Name: b}
 		user.Role = &role
 	}
 
@@ -130,12 +130,12 @@ func (s *SQLServer) GetUserRoles(user *model.User) (*model.User, error) {
 }
 
 //GetRoleByID возвращает роль и её возможности по идентификатору
-func (s *SQLServer) GetRoleByID(id int) (*model.Role, error) {
+func (s *SQLServer) GetRoleByID(id int) (*domain.Role, error) {
 	// Получаем роль из БД
 	rows, err := s.db.Query(fmt.Sprintf("SELECT r.ID, r.C_Name FROM [%s].dbo.Roles AS r WHERE r.ID = %s",
 		s.dbname, strconv.FormatInt(int64(id), 10)))
 
-	var role model.Role
+	var role domain.Role
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом в GetRoleByID: ", err)
@@ -149,7 +149,7 @@ func (s *SQLServer) GetRoleByID(id int) (*model.Role, error) {
 			b string
 		)
 		rows.Scan(&a, &b)
-		role = model.Role{Key: a, Name: b}
+		role = domain.Role{Key: a, Name: b}
 	}
 
 	s.GetRoleAbilities(&role)
@@ -158,7 +158,7 @@ func (s *SQLServer) GetRoleByID(id int) (*model.Role, error) {
 }
 
 // GetRoleAbilities получает данные о возможностях роли
-func (s SQLServer) GetRoleAbilities(role *model.Role) (bool, error) {
+func (s SQLServer) GetRoleAbilities(role *domain.Role) (bool, error) {
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT a.ID, a.C_Name, ar.B_Create, ar.B_Read, ar.B_Update, ar.B_Delete FROM [%s].dbo.Area_Roles AS ar INNER JOIN [%s].dbo.Areas AS a ON a.ID = ar.F_Areas WHERE ar.F_Roles = %s",
 		s.dbname, s.dbname, strconv.FormatInt(int64(role.Key), 10)))
@@ -169,10 +169,10 @@ func (s SQLServer) GetRoleAbilities(role *model.Role) (bool, error) {
 	}
 	defer rows.Close()
 
-	createMap := make(map[int]*model.Area)
-	readMap := make(map[int]*model.Area)
-	updateMap := make(map[int]*model.Area)
-	deleteMap := make(map[int]*model.Area)
+	createMap := make(map[int]*domain.Area)
+	readMap := make(map[int]*domain.Area)
+	updateMap := make(map[int]*domain.Area)
+	deleteMap := make(map[int]*domain.Area)
 
 	for rows.Next() {
 		var (
@@ -185,7 +185,7 @@ func (s SQLServer) GetRoleAbilities(role *model.Role) (bool, error) {
 		)
 		rows.Scan(&ID, &name, &create, &read, &update, &delete)
 
-		area := model.Area{
+		area := domain.Area{
 			Key:  ID,
 			Name: name,
 		}
@@ -214,7 +214,7 @@ func (s SQLServer) GetRoleAbilities(role *model.Role) (bool, error) {
 }
 
 // GetUserAttributes выдает атрибуты пользователя из БД
-func (s SQLServer) GetUserAttributes(user *model.User) (bool, error) {
+func (s SQLServer) GetUserAttributes(user *domain.User) (bool, error) {
 	rows, err := s.db.Query(fmt.Sprintf("SELECT u.C_Name, u.C_Family_Name FROM [%s].dbo.Users AS u WHERE u.Login = '%s'",
 		s.dbname, user.Key))
 

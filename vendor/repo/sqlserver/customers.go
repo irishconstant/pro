@@ -2,12 +2,12 @@ package sqlserver
 
 import (
 	"fmt"
-	"model"
+	"domain"
 )
 
 //GetUserCustomersPagination возвращает всех Потребителей конкретного Пользователя для страницы
-func (s *SQLServer) GetUserCustomersPagination(u model.User, currentPage int, pageSize int) (map[int]*model.Customer, error) {
-	customers := make(map[int]*model.Customer)
+func (s *SQLServer) GetUserCustomersPagination(u domain.User, currentPage int, pageSize int) (map[int]*domain.Customer, error) {
+	customers := make(map[int]*domain.Customer)
 	rows, err := s.db.Query(selectWithPagination(s.dbname, "Customers", "ID", u.Key, pageSize, currentPage))
 
 	if err != nil {
@@ -24,7 +24,7 @@ func (s *SQLServer) GetUserCustomersPagination(u model.User, currentPage int, pa
 			e string
 		)
 		rows.Scan(&a, &b, &c, &d, &e)
-		customer := model.Customer{
+		customer := domain.Customer{
 			Key:            a,
 			Name:           b,
 			PatronymicName: c,
@@ -39,8 +39,8 @@ func (s *SQLServer) GetUserCustomersPagination(u model.User, currentPage int, pa
 }
 
 //GetUserCustomersAll возвращает всех Потребителей Пользователя
-func (s *SQLServer) GetUserCustomersAll(u model.User) (map[int]*model.Customer, error) {
-	customers := make(map[int]*model.Customer)
+func (s *SQLServer) GetUserCustomersAll(u domain.User) (map[int]*domain.Customer, error) {
+	customers := make(map[int]*domain.Customer)
 	rows, err := s.db.Query(selectWithPagination(s.dbname, "Customers", "ID", u.Key, 0, 0))
 
 	if err != nil {
@@ -57,7 +57,7 @@ func (s *SQLServer) GetUserCustomersAll(u model.User) (map[int]*model.Customer, 
 			e string
 		)
 		rows.Scan(&a, &b, &c, &d, &e)
-		customer := model.Customer{
+		customer := domain.Customer{
 			Key:            a,
 			Name:           b,
 			PatronymicName: c,
@@ -85,4 +85,9 @@ func selectWithPagination(databaseName string, tableName string, orderParam stri
 			databaseName, whereParam)
 	}
 	return ""
+}
+
+//CreateCustomer создаёт нового Потребителя
+func (s SQLServer) CreateCustomer(u domain.Customer) int {
+	return 1
 }

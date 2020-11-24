@@ -28,6 +28,7 @@ func Router(dbc abstract.DatabaseConnection) {
 	api.Use(authMiddleware)
 	api.HandleFunc("/customer", h.customer)
 	api.HandleFunc("/customer/edit", h.customerEdit)
+	api.HandleFunc("/customer/create", h.customerCreate)
 	//api.Path("/customer").Handler(http.HandlerFunc(h.customer))
 
 	http.ListenAndServe(":8080", router)

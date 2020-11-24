@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"domain"
 	"math"
-	"model"
 	"net/http"
 	"strconv"
 )
@@ -19,17 +19,17 @@ func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
 		page = 1
 	}
 
-	session, err := model.Store.Get(r, "cookie-name")
+	session, err := domain.Store.Get(r, "cookie-name")
 	check(err)
 
-	user := model.GetUser(session)
+	user := domain.GetUser(session)
 	_, err = h.connection.GetUserAttributes(&user)
 	check(err)
 
 	customers, err := h.connection.GetUserCustomersAll(user)
 	check(err)
 
-	customerBook := model.CustomersBook{CustomerCount: len(customers)}
+	customerBook := domain.CustomersBook{CustomerCount: len(customers)}
 	// Если необходима пагинация
 	if customerBook.CustomerCount > h.pageSize {
 		customersPerPage, err := h.connection.GetUserCustomersPagination(user, page, h.pageSize)
@@ -40,7 +40,7 @@ func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
 		customerBook.CurrentPage = page
 
 		// Создаем страницы для показа (1, одна слева от текущей, одна справа от текущей, последняя)
-		customerBook.Pages = model.MakePages(1, int(math.Ceil(float64(customerBook.CustomerCount)/float64(h.pageSize))), page)
+		customerBook.Pages = domain.MakePages(1, int(math.Ceil(float64(customerBook.CustomerCount)/float64(h.pageSize))), page)
 
 		currentInformation := sessionInformation{user, customerBook, ""}
 		executeHTML("customer", "list", w, currentInformation)
