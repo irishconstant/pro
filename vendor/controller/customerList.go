@@ -23,7 +23,7 @@ func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
 	check(err)
 
 	user := domain.GetUser(session)
-	_, err = h.connection.GetUserAttributes(&user)
+	err = h.connection.GetUserAttributes(&user)
 	check(err)
 
 	customers, err := h.connection.GetUserCustomersAll(user)

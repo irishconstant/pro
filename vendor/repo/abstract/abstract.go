@@ -14,14 +14,15 @@ type DatabaseConnection interface {
 	// Работа с Потребителями
 	GetUserCustomersAll(u domain.User) (map[int]*domain.Customer, error)
 	GetUserCustomersPagination(u domain.User, currentPage int, pageSize int) (map[int]*domain.Customer, error)
-	CreateCustomer(u domain.Customer) int
+	CreateCustomer(u *domain.Customer) error
 
 	// Подсистема авторизации и аутентификации
-	CreateUser(user domain.User) bool
+	CreateUser(user domain.User) error
+	GetAllUsers() ([]domain.User, error)
 	CheckPassword(a string, b string) bool
-	GetUserRoles(user *domain.User) (*domain.User, error)
-	GetAllRoles() map[int]*domain.Role
-	GetRoleAbilities(role *domain.Role) (bool, error)
+	GetUserRoles(user *domain.User) error
+	GetAllRoles() (map[int]*domain.Role, error)
+	GetRoleAbilities(role *domain.Role) error
 	GetRoleByID(int) (*domain.Role, error)
-	GetUserAttributes(user *domain.User) (bool, error)
+	GetUserAttributes(user *domain.User) error
 }

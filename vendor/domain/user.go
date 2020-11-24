@@ -10,6 +10,14 @@ type User struct {
 	Role          *Role
 }
 
+//UserBook хранит информацию наборе Пользователей
+type UserBook struct {
+	UserCount   int
+	CurrentPage int
+	Pages       []Page
+	Users       []User
+}
+
 // Role хранит информацию о конкретной Роли
 type Role struct {
 	Key           int

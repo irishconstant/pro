@@ -13,6 +13,6 @@ type Customer struct {
 type CustomersBook struct {
 	CustomerCount int
 	CurrentPage   int
-	Pages         []Page // Приходится хранить слайс данных для генерации из шаблона
+	Pages         []Page
 	Customers     []Customer
 }
