@@ -84,7 +84,6 @@ func (s SQLServer) CreateCustomer(c *domain.Customer) error {
 	for rows.Next() {
 		rows.Scan(&c.Key)
 	}
-	fmt.Println(c.Key)
 
 	return nil
 }

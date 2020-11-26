@@ -31,19 +31,13 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		}
 
 		login := r.FormValue("login")
-		/*
-			roles := h.connection.GetAllRoles()
-			for key, value := range roles {
-				h.connection.GetRoleAbilities(value)
-			}
-		*/
+
 		user := &domain.User{
 			Key:           login,
 			Authenticated: true,
 		}
 
 		h.connection.GetUserRoles(user)
-		//fmt.Println("Роль пользователя (вызов из контроллера login)", user.Role.CreateAbility)
 
 		session.Values["user"] = user
 
@@ -93,7 +87,6 @@ func authMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		user := domain.GetUser(session)
-
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")
 			err = session.Save(r, w)
