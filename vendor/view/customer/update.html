@@ -20,43 +20,47 @@
 <body>
     <div class="jumbotron text-center">
 
-        <h1>Создать нового Потребителя</h1>
+        <h1>Редактирование Потребителя</h1>
 
         <div class="row justify-content-center align-items-center h-100">
             <div class="col col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                <form action="/customer/create" class="needs-validation" novalidate method="POST">
+                <form action="/customer/update?key={{.Attribute.Key}}" class="needs-validation" novalidate
+                    method="POST">
                     <div class="form-group">
                         <label for="uname">Имя:</label>
-                        <input type="text" class="form-control" placeholder="Имя" name="name" required>
+                        <input value={{.Attribute.Name}} type="text" class="form-control" placeholder="Имя" name="name"
+                            required>
                         <div class="valid-feedback">добро</div>
                         <div class="invalid-feedback">Пожалуйста укажите имя</div>
                     </div>
                     <div class="form-group">
                         <label for="uname">Фамилия:</label>
-                        <input type="text" class="form-control" placeholder="Фамилия" name="familyname" required>
+                        <input value={{.Attribute.FamilyName}} type="text" class="form-control" placeholder="Фамилия"
+                            name="familyname" required>
                         <div class="valid-feedback">добро</div>
                         <div class="invalid-feedback">Пожалуйста укажите фамилию</div>
                     </div>
                     <div class="form-group">
                         <label for="uname">Отчество:</label>
-                        <input type="text" class="form-control" placeholder="Отчество" name="patronymicname" required>
+                        <input value={{.Attribute.PatronymicName}} type="text" class="form-control"
+                            placeholder="Отчество" name="patronymicname" required>
                         <div class="valid-feedback">добро</div>
                         <div class="invalid-feedback">Пожалуйста укажите фамилию</div>
                     </div>
 
                     <div class="form-group" data-width='auto'>
                         <label>Выберите Пользователя:</label>
-                        <select name="user" required data-style="btn-primary" class="selectpicker"
-                            data-live-search="true" title="Ничего не выбрано" noneResultsText="Нет совпадений"
-                            data-size="10" width="auto">
-                            {{range .Attribute.Users}}
+                        <select value={{.Attribute.Key}} name="user" required data-style="btn-primary"
+                            class="selectpicker" data-live-search="true" title="Ничего не выбрано"
+                            noneResultsText="Нет совпадений" data-size="10" width="auto">
+                            {{range .Attribute.PossibleUsers}}
                             <option value={{.Key}}>{{.Name}} {{.FamilyName}} (Логин {{.Key}})</option>
                             {{ end }}
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Создать Потребителя</button>
-
+                    <button type="submit" class="btn btn-primary">Отредактировать Потребителя</button>
+                    <a href="/customer/" class="btn btn-outline-danger" role="button">Отменить изменения</a>
                     {{ if eq .Error "Ошибка при создании Потребителя" }}
                     <div class="alert alert-danger alert-dismissible">
                         <button type="button" class="close" data-dismiss="alert">&times;</button>

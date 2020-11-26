@@ -15,6 +15,8 @@ type DatabaseConnection interface {
 	GetUserCustomersAll(u domain.User) (map[int]*domain.Customer, error)
 	GetUserCustomersPagination(u domain.User, currentPage int, pageSize int) (map[int]*domain.Customer, error)
 	CreateCustomer(u *domain.Customer) error
+	GetCustomer(id int) (*domain.Customer, error)
+	UpdateCustomer(customer *domain.Customer) error
 
 	// Подсистема авторизации и аутентификации
 	CreateUser(user domain.User) error

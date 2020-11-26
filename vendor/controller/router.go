@@ -27,7 +27,7 @@ func Router(dbc abstract.DatabaseConnection) {
 	api := router.PathPrefix("/").Subrouter()
 	api.Use(authMiddleware)
 	api.HandleFunc("/customer", h.customer)
-	api.HandleFunc("/customer/edit", h.customerEdit)
+	api.HandleFunc("/customer/update", h.customerUpdate)
 	api.HandleFunc("/customer/create", h.customerCreate)
 	//api.Path("/customer").Handler(http.HandlerFunc(h.customer))
 

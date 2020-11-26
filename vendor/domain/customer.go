@@ -6,7 +6,8 @@ type Customer struct {
 	Name           string
 	PatronymicName string
 	FamilyName     string
-	User           User // Ответственный пользователь
+	User           User   // Ответственный пользователь
+	PossibleUsers  []User // Возможные пользователи для назначения ответственными
 }
 
 //CustomersBook представляет из себя набор Потребителей определённого Пользователя

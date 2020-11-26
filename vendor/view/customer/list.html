@@ -69,7 +69,7 @@
             </th>
 
             {{range .Attribute.Customers}}
-            <tr onclick="location.href = '/customer/edit?key={{ .Key }}'" style="cursor: pointer;">
+            <tr onclick="location.href = '/customer/update?key={{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>
