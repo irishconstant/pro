@@ -23,7 +23,6 @@ type SQLServer struct {
 func (s *SQLServer) ConnectToDatabase() error {
 	var err error
 	s.db, err = sql.Open("mssql", s.connectionString)
-	//fmt.Println(reflect.TypeOf(db))
 	if err != nil {
 		fmt.Println("Не подключается к серверу баз данных: ", err.Error())
 		panic(err)

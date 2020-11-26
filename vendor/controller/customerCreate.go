@@ -2,7 +2,6 @@ package controller
 
 import (
 	"domain"
-	"fmt"
 	"net/http"
 )
 
@@ -12,20 +11,14 @@ func (h *Handler) customerCreate(w http.ResponseWriter, r *http.Request) {
 	session, err := domain.Store.Get(r, "cookie-name")
 	check(err)
 	user := domain.GetUser(session)
-
-	/*
-		possibleRoles := h.connection.GetAllRoles()
-		roleBook := domain.RoleBook{RoleCount: len(possibleRoles)}
-		for _, value := range possibleRoles {
-			roleBook.Roles = append(roleBook.Roles, *value)
-		}
-	*/
+	err = h.connection.GetUserAttributes(&user)
+	check(err)
 
 	var userBook domain.UserBook
 	userBook.Users, err = h.connection.GetAllUsers()
 	check(err)
-	if r.Method == http.MethodGet {
 
+	if r.Method == http.MethodGet {
 		currentInformation := sessionInformation{user, userBook, ""}
 		executeHTML("customer", "create", w, currentInformation)
 	}
@@ -34,13 +27,16 @@ func (h *Handler) customerCreate(w http.ResponseWriter, r *http.Request) {
 		name := r.FormValue("name")
 		familyName := r.FormValue("familyname")
 		patronymicName := r.FormValue("patronymicname")
+
 		user := r.FormValue("user")
-		fmt.Println(user)
+
+		newUser, err := h.connection.GetUser(user)
+
 		newCustomer := domain.Customer{
 			Name:           name,
 			FamilyName:     familyName,
 			PatronymicName: patronymicName,
-			//User:           user,
+			User:           *newUser,
 		}
 
 		err = h.connection.CreateCustomer(&newCustomer)
@@ -48,7 +44,8 @@ func (h *Handler) customerCreate(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			executeHTML("customer", "create", w, nil)
 		}
-		http.Redirect(w, r, "/Customer", http.StatusFound)
+		http.Redirect(w, r, "/customer", http.StatusFound)
+
 	}
 
 }

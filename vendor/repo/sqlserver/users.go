@@ -32,19 +32,9 @@ func (s *SQLServer) CreateUser(u domain.User) error {
 
 // GetUser получает данные Пользователя из БД
 func (s SQLServer) GetUser(login string) (*domain.User, error) {
-	rows, err := s.db.Query(fmt.Sprintf("SELECT u.C_Name, u.C_Family_Name FROM [%s].dbo.Users AS u WHERE u.Login = '%s'",
-		s.dbname, login))
-
-	if err != nil {
-		fmt.Println("Ошибка c запросом в GetUserByLogin: ", err)
-		return nil, err
-	}
-
 	user := domain.User{Key: login}
-	defer rows.Close()
-	for rows.Next() {
-		rows.Scan(&user.Name, &user.FamilyName)
-	}
+	s.GetUserAttributes(&user)
+	s.GetUserRoles(&user)
 
 	return &user, nil
 }
@@ -96,8 +86,7 @@ func (s SQLServer) GetUserAttributes(user *domain.User) error {
 
 //GetAllUsers возвращает всех Пользователей
 func (s *SQLServer) GetAllUsers() ([]domain.User, error) {
-	rows, err := s.db.Query(fmt.Sprintf("SELECT Login, C_Family_Name, C_Name FROM %s.dbo.Users",
-		s.dbname))
+	rows, err := s.db.Query(fmt.Sprintf("SELECT Login FROM %s.dbo.Users WHERE Login != ''", s.dbname))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом в GetAllUsers: ", err)
@@ -109,13 +98,18 @@ func (s *SQLServer) GetAllUsers() ([]domain.User, error) {
 
 	for rows.Next() {
 		var (
-			login      string
-			familyName string
-			name       string
+			login string
 		)
-		rows.Scan(&login, &familyName, &name)
-		user := domain.User{Key: login, Name: name, FamilyName: familyName}
-		users = append(users, user)
+		rows.Scan(&login)
+
+		user, err := s.GetUser(login)
+		if err != nil {
+			fmt.Println("Ошибка c запросом в GetAllUsers: ", err)
+			return nil, err
+		}
+
+		users = append(users, *user)
 	}
+
 	return users, nil
 }

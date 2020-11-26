@@ -18,6 +18,7 @@ type DatabaseConnection interface {
 
 	// Подсистема авторизации и аутентификации
 	CreateUser(user domain.User) error
+	GetUser(login string) (*domain.User, error)
 	GetAllUsers() ([]domain.User, error)
 	CheckPassword(a string, b string) bool
 	GetUserRoles(user *domain.User) error

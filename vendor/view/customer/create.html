@@ -24,7 +24,7 @@
 
         <div class="row justify-content-center align-items-center h-100">
             <div class="col col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                <form action="/user/reg" class="needs-validation" novalidate method="POST">
+                <form action="/customer/create" class="needs-validation" novalidate method="POST">
                     <div class="form-group">
                         <label for="uname">Имя:</label>
                         <input type="text" class="form-control" placeholder="Имя" name="name" required>
@@ -43,6 +43,18 @@
                         <div class="valid-feedback">добро</div>
                         <div class="invalid-feedback">Пожалуйста укажите фамилию</div>
                     </div>
+
+                    <div class="form-group" data-width='auto'>
+                        <label>Выберите Пользователя:</label>
+                        <select name="user" required data-style="btn-primary" class="selectpicker"
+                            data-live-search="true" title="Ничего не выбрано" noneResultsText="Нет совпадений"
+                            data-size="10" width="auto">
+                            {{range .Attribute.Users}}
+                            <option value={{.Key}}>{{.Name}} {{.FamilyName}} (Логин {{.Key}})</option>
+                            {{ end }}
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Создать Потребителя</button>
 
                     {{ if eq .Error "Ошибка при создании Потребителя" }}
