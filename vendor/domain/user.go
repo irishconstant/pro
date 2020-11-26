@@ -10,7 +10,7 @@ type User struct {
 	Role          *Role
 }
 
-//UserBook хранит информацию наборе Пользователей
+// UserBook хранит информацию наборе Пользователей
 type UserBook struct {
 	UserCount   int
 	CurrentPage int
@@ -40,4 +40,16 @@ type Area struct {
 	Key  int
 	Name string
 	Type int // 1 - Системный раздел 2 - Операция
+}
+
+// Contact контакт
+type Contact struct {
+	Type  ContactType
+	Value string
+}
+
+// ContactType Тип контакта
+type ContactType struct {
+	Name       string
+	Validation string
 }

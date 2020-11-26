@@ -28,15 +28,15 @@ func (h *Handler) customerCreate(w http.ResponseWriter, r *http.Request) {
 		familyName := r.FormValue("familyname")
 		patronymicName := r.FormValue("patronymicname")
 
-		user := r.FormValue("user")
+		userID := r.FormValue("user")
 
-		newUser, err := h.connection.GetUser(user)
+		User, err := h.connection.GetUser(userID)
 
 		newCustomer := domain.Customer{
 			Name:           name,
 			FamilyName:     familyName,
 			PatronymicName: patronymicName,
-			User:           *newUser,
+			User:           *User,
 		}
 
 		err = h.connection.CreateCustomer(&newCustomer)
