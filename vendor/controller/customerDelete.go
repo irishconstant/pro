@@ -6,11 +6,10 @@ import (
 	"strconv"
 )
 
-func (h *Handler) customerUpdate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) customerDelete(w http.ResponseWriter, r *http.Request) {
 	keyCustomer, err := strconv.Atoi(r.URL.Query().Get("key"))
 
 	customer, err := h.connection.GetCustomer(keyCustomer)
-
 	session, err := domain.Store.Get(r, "cookie-name")
 	check(err)
 	user := domain.GetUser(session)

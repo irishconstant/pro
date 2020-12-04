@@ -45,8 +45,8 @@
 
     <table id="myTable" class="table table-hover">
         <thead class="thead-dark">
-            <tr>
-                <th scope="col">Фамилия</th>
+            <tr onclick="location.href = '/customer'" style="cursor: pointer;">
+                <th scope=" col">Фамилия</th>
                 <th scope="col">Имя</th>
                 <th scope="col">Отчество</th>
                 <th scope="col">Действия</th>
@@ -54,22 +54,21 @@
         </thead>
         <h2>Текущие потребители</h2>
         <tbody>
-            <th>
-                <a href="/customer/create" class="btn btn-outline-success">Добавить</a>
-
-                <a href="#demo" class="btn btn-outline-info" data-toggle="collapse">Фильтры</a>
-                <div id="demo" class="collapse">
-                    <input class="form-control form-control-sm" type="text" id="myInput1" onkeyup="findName()"
-                        placeholder="Фамилия" title="Введите фамилию">
-                    <input class="form-control form-control-sm" type="text" id="myInput2" onkeyup="findName2()"
-                        placeholder="Имя" title="Введите имя">
-                    <input class="form-control form-control-sm" type="text" id="myInput3" onkeyup="findName3()"
-                        placeholder="Отчество" title="Введите отчество">
-                </div>
-            </th>
-
+            <tr>
+                <td><a href="/customer/create" class="btn btn-outline-success">Добавить</a>
+                    <a href="#demo" class="btn btn-outline-info" data-toggle="collapse">Фильтрация</a>
+                    <div id="demo" class="collapse">
+                        <input class="form-control form-control-sm" type="text" id="myInput1" placeholder=" Фамилия"
+                            title="Введите фамилию">
+                        <input class="form-control form-control-sm" type="text" id="myInput2" placeholder=" Имя"
+                            title="Введите имя">
+                        <input class="form-control form-control-sm" type="text" id="myInput3" placeholder=" Отчество"
+                            title="Введите отчество">
+                    </div>
+                </td>
+            </tr>
             {{range .Attribute.Customers}}
-            <tr onclick="location.href = '/customer/update?key={{ .Key }}'" style="cursor: pointer;">
+            <tr class=" = " onclick="location.href = '/customer/update?key={{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>
@@ -118,63 +117,6 @@
             </tr>
         </tfoot>
     </table>
-
-    <script>
-        function findName() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("myInput1");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-        function findName2() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("myInput2");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-        function findName3() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("myInput3");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[2];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
 
 </body>
 

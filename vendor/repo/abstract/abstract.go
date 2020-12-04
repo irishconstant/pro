@@ -17,6 +17,7 @@ type DatabaseConnection interface {
 	CreateCustomer(u *domain.Customer) error
 	GetCustomer(id int) (*domain.Customer, error)
 	UpdateCustomer(customer *domain.Customer) error
+	DeleteCustomer(customer *domain.Customer) error
 
 	// Подсистема авторизации и аутентификации
 	CreateUser(user domain.User) error

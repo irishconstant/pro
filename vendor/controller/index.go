@@ -16,6 +16,7 @@ func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
 	if user.Authenticated {
 		h.connection.GetUserAttributes(&user)
 	}
+
 	executeHTML("index", "index", w, user)
 
 }

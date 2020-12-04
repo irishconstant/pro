@@ -42,14 +42,3 @@ type Area struct {
 	Type int // 1 - Системный раздел 2 - Операция
 }
 
-// Contact контакт
-type Contact struct {
-	Type  ContactType
-	Value string
-}
-
-// ContactType Тип контакта
-type ContactType struct {
-	Name       string
-	Validation string
-}
