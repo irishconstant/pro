@@ -123,6 +123,7 @@ func (s SQLServer) GetCustomer(id int) (*domain.Customer, error) {
 			Name:           Name,
 			PatronymicName: PatronymicName,
 			FamilyName:     FamilyName,
+			Sex:            Sex,
 			User:           *user}
 
 	}
