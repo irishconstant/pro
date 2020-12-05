@@ -3,6 +3,7 @@ package controller
 import (
 	"domain"
 	"net/http"
+	"strconv"
 )
 
 // customer обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
@@ -27,6 +28,7 @@ func (h *DecoratedHandler) customerCreate(w http.ResponseWriter, r *http.Request
 		name := r.FormValue("name")
 		familyName := r.FormValue("familyname")
 		patronymicName := r.FormValue("patronymicname")
+		sex, err := strconv.ParseBool(r.FormValue("sex"))
 
 		userID := r.FormValue("user")
 
@@ -36,6 +38,7 @@ func (h *DecoratedHandler) customerCreate(w http.ResponseWriter, r *http.Request
 			Name:           name,
 			FamilyName:     familyName,
 			PatronymicName: patronymicName,
+			Sex:            sex,
 			User:           *User,
 		}
 

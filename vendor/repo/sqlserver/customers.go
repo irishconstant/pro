@@ -135,8 +135,13 @@ func (s *SQLServer) GetUserCustomersAll(u domain.User) (map[int]*domain.Customer
 
 //CreateCustomer создаёт нового Потребителя
 func (s SQLServer) CreateCustomer(c *domain.Customer) error {
-
-	rows, err := s.db.Query(fmt.Sprintf("INSERT INTO Customers (C_Name, C_Family_Name, C_Patronymic_Name, F_Users) SELECT '%s', '%s', '%s', '%s' SELECT SCOPE_IDENTITY()", c.Name, c.FamilyName, c.PatronymicName, c.User.Key))
+	var bSex int
+	if strconv.FormatBool(c.Sex) == "true" {
+		bSex = 1
+	} else {
+		bSex = 0
+	}
+	rows, err := s.db.Query(fmt.Sprintf("INSERT INTO Customers (C_Name, C_Family_Name, C_Patronymic_Name, B_Sex, F_Users) SELECT '%s', '%s', '%s', %d, '%s' SELECT SCOPE_IDENTITY()", c.Name, c.FamilyName, c.PatronymicName, bSex, c.User.Key))
 	defer rows.Close()
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)

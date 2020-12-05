@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"domain"
 	"fmt"
 	"html/template"
 	"log"
@@ -35,4 +36,11 @@ func check(err error) {
 		fmt.Println("Ошибочка", err)
 		log.Fatal(err)
 	}
+}
+
+// sessionInformation общая структура для шаблонов html
+type sessionInformation struct {
+	User      domain.User
+	Attribute interface{}
+	Error     string
 }

@@ -70,13 +70,6 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-// sessionInformation общая структура для шаблонов html
-type sessionInformation struct {
-	User      domain.User
-	Attribute interface{}
-	Error     string
-}
-
 // authMiddleware выполняется для проверки аутентифицирован ли пользователь. TODO: сделать доступ к определенным разделам по ролям
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

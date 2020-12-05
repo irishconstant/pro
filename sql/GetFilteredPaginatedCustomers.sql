@@ -5,7 +5,7 @@ GO
 -- =============================================
 -- Author:		ai
 -- Create date: 2020.12.05
--- Description:	Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕС‚С„РёР»СЊС‚СЂРѕРІР°РЅРЅС‹С… РџРѕС‚СЂРµР±РёС‚РµР»РµР№ РІ РїСЂРµРґРµР»Р°С… РѕРґРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹
+-- Description:	Возвращает отфильтрованных Потребителей в пределах одной страницы
 -- =============================================
 ALTER PROCEDURE dbo.GetFilteredPaginatedCustomers -- EXEC dbo.GetFilteredPaginatedCustomers 'rode_orm', '', '', '', true, 0, 7
 	@Login NVARCHAR(100)

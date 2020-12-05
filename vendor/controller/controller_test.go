@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestMakePages(t *testing.T) {
+func TestMakeURLs(t *testing.T) {
 	// Организация
 	var testParams = map[string]string{
 		"name":       "имя",
