@@ -8,7 +8,7 @@ import (
 )
 
 // customer обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
-func (h *Handler) customer(w http.ResponseWriter, r *http.Request) { //
+func (h *DecoratedHandler) customer(w http.ResponseWriter, r *http.Request) { //
 
 	// Получаем страницы из параметров
 	key := r.URL.Query().Get("page")

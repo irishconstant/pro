@@ -11,7 +11,7 @@ import (
 func Router(dbc abstract.DatabaseConnection) {
 
 	staticDir := "/static/"
-	h := Handler{connection: dbc, pageSize: 7}
+	h := DecoratedHandler{connection: dbc, pageSize: 7}
 	router := mux.NewRouter()
 	// Обработка статичных файлов
 	router.PathPrefix(staticDir).Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))
@@ -32,16 +32,14 @@ func Router(dbc abstract.DatabaseConnection) {
 	api.HandleFunc("/customer/update", h.customerUpdate)
 	api.HandleFunc("/customer/create", h.customerCreate)
 	api.HandleFunc("/customer/delete", h.customerDelete)
-	//api.Path("/customer").Handler(http.HandlerFunc(h.customer))
-
 	http.ListenAndServe(":8080", router)
 	//corsOrigins := handlers.AllowedOrigins([]string{"*"}) // TODO: для работы с AJAX
 	// handlers.CORS(corsOrigins)(router))
 
 }
 
-//Handler тип мне нужен для того, чтобы было что-то общее у всех обработчиков
-type Handler struct {
+//DecoratedHandler реализует методы обработки (контроля) маршрутизации
+type DecoratedHandler struct {
 	connection abstract.DatabaseConnection
 	pageSize   int //Максимальное количество записей на странице
 }

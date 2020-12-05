@@ -22,92 +22,104 @@
 
         <h1>Редактирование Потребителя</h1>
 
-        <div class="row justify-content-center align-items-center h-100">
+        <div class="row justify-content-center  h-100">
             <div class="col col-sm-6 col-md-6 col-lg-4 col-xl-3">
                 <form action="/customer/update?key={{.Attribute.Key}}" class="needs-validation" novalidate
                     method="POST">
                     <div class="form-group">
-                        <label for="uname">Имя:</label>
-                        <input value={{.Attribute.Name}} type="text" class="form-control" placeholder="Имя" name="name"
-                            required>
-                        <div class="valid-feedback">добро</div>
+                        Фамилия:<input value={{.Attribute.FamilyName}} type="text" class="form-control"
+                            placeholder="Фамилия" name="familyname" required>
+                        <div class="valid-feedback">ОК</div>
+                        <div class="invalid-feedback">Пожалуйста укажите фамилию</div>
+                    </div>
+                    <div class="form-group">
+                        Имя:<input value={{.Attribute.Name}} type="text" class="form-control" placeholder="Имя"
+                            name="name" required>
+                        <div class="valid-feedback">ОК</div>
                         <div class="invalid-feedback">Пожалуйста укажите имя</div>
                     </div>
                     <div class="form-group">
-                        <label for="uname">Фамилия:</label>
-                        <input value={{.Attribute.FamilyName}} type="text" class="form-control" placeholder="Фамилия"
-                            name="familyname" required>
-                        <div class="valid-feedback">добро</div>
-                        <div class="invalid-feedback">Пожалуйста укажите фамилию</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="uname">Отчество:</label>
-                        <input value={{.Attribute.PatronymicName}} type="text" class="form-control"
+                        Отчество:<input value={{.Attribute.PatronymicName}} type="text" class="form-control"
                             placeholder="Отчество" name="patronymicname" required>
-                        <div class="valid-feedback">добро</div>
-                        <div class="invalid-feedback">Пожалуйста укажите фамилию</div>
+                        <div class="valid-feedback">ОК</div>
+                        <div class="invalid-feedback">Пожалуйста укажите отчество</div>
                     </div>
-                    {{.Attribute.Sex}}
+                    Пол:
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="Sex" id="inlineRadio1" value="true"
+                        <input class="form-check-input" type="radio" name="Sex" id="sexRadio" value="true"
                             {{ if eq .Attribute.Sex true}} checked {{ end}}>
-                        <label class="form-check-label" for="inlineRadio1">Мужской</label>
+                        <label class="form-check-label" for="sexRadio">Мужской</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="Sex" id="inlineRadio2" value="false"
+                        <input class="form-check-input" type="radio" name="Sex" id="sexRadio" value="false"
                             {{ if eq .Attribute.Sex false}} checked {{ end}}>
-                        <label class="form-check-label" for="inlineRadio2">Женский</label>
+                        <label class="form-check-label" for="sexRadio">Женский</label>
                     </div>
-
                     <div class="form-group" data-width='auto'>
-                        <label>Выберите Пользователя:</label>
-                        <select value={{.Attribute.Key}} name="user" required class="selectpicker"
-                            data-live-search="true" title="Ничего не выбрано" noneResultsText="Нет совпадений"
-                            data-size="10" width="auto">
+                        Выберите Пользователя: <select value={{.Attribute.Key}} name="user" required
+                            class="selectpicker" data-live-search="true" title="Ничего не выбрано"
+                            noneResultsText="Нет совпадений" data-size="10" width="auto">
                             {{range .Attribute.PossibleUsers}}
                             <option value={{.Key}}>{{.Name}} {{.FamilyName}} (Логин {{.Key}})</option>
                             {{ end }}
                         </select>
                     </div>
-                    <div> <button type="submit" class="btn btn-outline-primary">Отредактировать Потребителя</button>
-                        <a href="/customer" class="btn btn-outline-danger" role="button">Отменить изменения</a></div>
-
-                    {{ if eq .Error "Ошибка при создании Потребителя" }}
-                    <div class="alert alert-danger alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <strong>{{ .Error}}</strong>
-                    </div>
-                    {{ end }}
-            </div>
-
-            </form>
-        </div>
-        <table id="myTable" class="table table-hover">
-            <thead class="thead-light">
-                <tr onclick="location.href = '/'" style="cursor: pointer;">
-                    <th scope="col">ID Контакта</th>
-                    <th scope="col">Значение</th>
-                    <th scope="col">Действия</th>
-                </tr>
-            </thead>
-            <h2>Контакты Пользователя</h2>
-            <tbody>
-                {{range .Attribute.Contacts}}
-                <tr class=" = " onclick="location.href = '/customer/contact/update?key={{ .Key }}'"
-                    style="cursor: pointer;">
-                    <td>{{ .Key }}</td>
-                    <td>{{ .Value }}</td>
-                    <td><a href="/customer/contact/delete?key={{ .Key }}" class="btn btn-outline-danger"
-                            role="button">Удалить</a>
-                    </td>
-                </tr>
-                {{else}}
-                <tr>
-                    <td>Отсутствуют контакты</td>
-                </tr>
+                    <button href="/customer" class="btn btn-outline-danger">Отменить изменения</button>
+                    <button type="submit" class="btn btn-outline-success">Отредактировать Потребителя</button>
+                </form>
+                {{ if eq .Error "Ошибка при создании Потребителя" }}
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>{{ .Error}}</strong>
+                </div>
                 {{ end }}
-            </tbody>
+            </div>
+        </div>
     </div>
+    <div class="d-flex flex-row">
+        <div class="btn-group" role="group" aria-label="Attributes">
+            <button class="btn btn-outline-info" data-toggle="collapse" href="#collapseContacts" aria-expanded="false"
+                aria-controls="collapseExample">
+                Контакты
+            </button>
+            <button class="btn btn-outline-success" data-toggle="collapse" href="#collapseContacts"
+                aria-expanded="false" aria-controls="collapseExample">
+                Документы
+            </button>
+            <button class="btn btn-outline-info" data-toggle="collapse" href="#collapseContacts" aria-expanded="false"
+                aria-controls="collapseExample">
+                Лицевые счета
+            </button>
+        </div>
+    </div>
+    <div class="collapse" id="collapseContacts">
+        <div class="card card-body">
+            <table id="contactTable" class="table">
+                <thead class="thead-light">
+                    <tr onclick="location.href = '/'" style="cursor: pointer;">
+                        <th scope="col">ID Контакта</th>
+                        <th scope="col">Значение</th>
+                        <th scope="col">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Attribute.Contacts}}
+                    <tr class=" = " onclick="location.href = '/customer/contact/update?key={{ .Key }}'"
+                        style="cursor: pointer;">
+                        <td>{{ .Key }}</td>
+                        <td>{{ .Value }}</td>
+                        <td><a href="/customer/contact/delete?key={{ .Key }}" class="btn btn-outline-danger"
+                                role="button">Удалить</a>
+                        </td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td>Отсутствуют контакты</td>
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
+        </div>
     </div>
     <script>
         // Disable form submissions if there are invalid fields

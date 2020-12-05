@@ -6,7 +6,7 @@ import (
 )
 
 // login обрабатывает попытку залогиниться
-func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
+func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 	session, err := domain.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -40,8 +40,8 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		h.connection.GetUserRoles(user)
 
 		session.Values["user"] = user
-
 		err = session.Save(r, w)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -51,7 +51,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 }
 
 // logout обрабывает попытку разлогиниться
-func (h *Handler) logout(w http.ResponseWriter, r *http.Request) {
+func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 	session, err := domain.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,12 +81,14 @@ type sessionInformation struct {
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := domain.Store.Get(r, "cookie-name")
-
+		//	fmt.Println("Сессия в мидл", *session)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		user := domain.GetUser(session)
+		//fmt.Println("Пользователь в мидл", user)
+
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")
 			err = session.Save(r, w)

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func (h *Handler) reg(w http.ResponseWriter, r *http.Request) {
+func (h *DecoratedHandler) reg(w http.ResponseWriter, r *http.Request) {
 	session, err := domain.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

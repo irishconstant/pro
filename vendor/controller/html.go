@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 )
 
-
 // executeHTML инкапсулирует работу с шаблонами и генерацию html
 func executeHTML(folder string, page string, w http.ResponseWriter, param interface{}) {
 	absPath, _ := filepath.Abs(fmt.Sprintf("../pro/vendor/view/%s/%s.html", folder, page))

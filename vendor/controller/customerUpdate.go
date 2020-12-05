@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (h *Handler) customerUpdate(w http.ResponseWriter, r *http.Request) {
+func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request) {
 	keyCustomer, err := strconv.Atoi(r.URL.Query().Get("key"))
 
 	customer, err := h.connection.GetCustomer(keyCustomer)

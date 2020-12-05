@@ -6,7 +6,7 @@ import (
 )
 
 //index обрабывате запросы к стартовой странице
-func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
+func (h *DecoratedHandler) index(w http.ResponseWriter, r *http.Request) {
 	session, err := domain.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

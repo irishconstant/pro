@@ -6,8 +6,8 @@ import (
 )
 
 // customer обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
-func (h *Handler) customerCreate(w http.ResponseWriter, r *http.Request) {
-
+func (h *DecoratedHandler) customerCreate(w http.ResponseWriter, r *http.Request) {
+	// Работа с куками
 	session, err := domain.Store.Get(r, "cookie-name")
 	check(err)
 	user := domain.GetUser(session)
@@ -40,7 +40,6 @@ func (h *Handler) customerCreate(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = h.connection.CreateCustomer(&newCustomer)
-		err = session.Save(r, w)
 		if err != nil {
 			executeHTML("customer", "create", w, nil)
 		}
