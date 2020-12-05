@@ -51,8 +51,9 @@ type DocBook struct {
 
 //CustomersBook представляет из себя набор Потребителей определённого Пользователя
 type CustomersBook struct {
-	CustomerCount int    // Сколько Потребителей всего в книге
-	CurrentPage   int    // Текущая страница
-	Pages         []Page // Какие страницы отображаются для текущей страницы
-	Customers     []Customer
+	CustomerCount int // Сколько Потребителей всего в книге
+	CurrentPage   int // Текущая страница
+
+	Pages     []Page
+	Customers []Customer
 }

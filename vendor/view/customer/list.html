@@ -71,43 +71,42 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="contactModalLongTitle">Искать Потребителей по...</h5>
+                            <h5 class="modal-title" id="contactModalLongTitle">Искать Потребителей</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="/customer/list" method="POST">
+                            <form action="/customer" method="POST">
                                 <div class="form-group">
-                                    ... фамилии:<input type="text" class="form-control" placeholder="Фамилия"
+                                    По фамилии:<input type="text" class="form-control" placeholder="Фамилия"
                                         name="familyname">
                                 </div>
                                 <div class="form-group">
-                                    ... имени:<input type="text" class="form-control" placeholder="Имя" name="name">
+                                    По имени:<input type="text" class="form-control" placeholder="Имя" name="name">
                                 </div>
                                 <div class="form-group">
-                                    ... отчеству:<input type="text" class="form-control" placeholder="Отчество"
-                                        name="patronymicname">
+                                    По отчеству:<input type="text" class="form-control" placeholder="Отчество"
+                                        name="patrname">
                                 </div>
                                 <div class="card-body">
-                                    ... полу:
+                                    По полу:
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="Sex" id="sexRadio"
-                                            value="true">
+                                        <input class="form-check-input" type="radio" name="sex" id="sex" value="true">
                                         <label class="form-check-label" for="sexRadio">Мужской</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="Sex" id="sexRadio"
-                                            value="false">
+                                        <input class="form-check-input" type="radio" name="sex" id="sex" value="false">
                                         <label class="form-check-label" for="sexRadio">Женский</label>
                                     </div>
                                 </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-danger"
+                                        data-dismiss="modal">Закрыть</button>
+                                    <button type="submit" class="btn btn-outline-success">Применить</button>
+
+                                </div>
+                            </form>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Закрыть</button>
-                            <button type="button" class="btn btn-outline-success"
-                                data-dismiss="modal">Отфильтровать</button>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -136,24 +135,24 @@
                     {{range .Attribute.Pages}}
 
                     {{if .PreviousPage}}
-                    <a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
                     {{end}}
 
                     {{if .NextPage}}
-                    <a href="/customer?page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
                     {{end}}
 
                     {{if .CurrentPage}}
-                    <a href="/customer?page={{.Number}}" class="btn btn-outline-success">{{.Number}}</a>
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-success">{{.Number}}</a>
                     {{end}}
 
                     {{if ne .NextPage true}}
                     {{if ne .PreviousPage true}}
                     {{if .FirstPage}}
-                    <a href="/customer?page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>...
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>...
                     {{end}}
                     {{if .LastPage}}
-                    ...<a href="/customer?page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>
+                    ...<a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>
                     {{end}}
                     {{end}}
                     {{end}}

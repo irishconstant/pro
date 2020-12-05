@@ -6,6 +6,67 @@ import (
 	"strconv"
 )
 
+//GetUserFiltredCustomersPagination возвращает всех Потребителей конкретного Пользователя для страницы с учётом переданных фильтров
+func (s *SQLServer) GetUserFiltredCustomersPagination(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*domain.Customer, error) {
+	customers := make(map[int]*domain.Customer)
+
+	var query string
+	if sex == "" {
+		query =
+			fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedCustomers '%s', '%s', '%s', '%s', NULL, %d, %d, %d",
+				s.dbname, u.Key, familyname, name, patrname, pageSize*currentPage-pageSize, pageSize, regime)
+	} else {
+		query =
+			fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedCustomers '%s', '%s', '%s', '%s', %s, %d, %d, %d",
+				s.dbname, u.Key, familyname, name, patrname, sex, pageSize*currentPage-pageSize, pageSize, regime)
+
+	}
+
+	rows, err := s.db.Query(query)
+
+	if err != nil {
+		fmt.Println("Ошибка c запросом: ", query, err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			ID             int
+			FamilyName     string
+			Name           string
+			PatronymicName string
+			UserKey        string
+			CitizenshipKey int
+			Sex            bool
+			DateBirth      string
+			DateDeath      string
+		)
+		rows.Scan(
+			&ID,
+			&FamilyName,
+			&Name,
+			&PatronymicName,
+			&UserKey,
+			&CitizenshipKey,
+			&Sex,
+			&DateBirth,
+			&DateDeath)
+		customer := domain.Customer{
+			Key:            ID,
+			FamilyName:     FamilyName,
+			Name:           Name,
+			PatronymicName: PatronymicName,
+			Sex:            Sex,
+			DateBirth:      DateBirth,
+			DateDeath:      DateDeath,
+			User:           u}
+		if ID != 0 {
+			customers[ID] = &customer
+		}
+	}
+	return customers, nil
+}
+
 //GetUserCustomersPagination возвращает всех Потребителей конкретного Пользователя для страницы
 func (s *SQLServer) GetUserCustomersPagination(u domain.User, currentPage int, pageSize int) (map[int]*domain.Customer, error) {
 	customers := make(map[int]*domain.Customer)

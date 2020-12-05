@@ -10,6 +10,7 @@ type Page struct {
 	PreviousPage bool
 	NextPage     bool
 	CurrentPage  bool
+	URL          string
 }
 
 //MakePages генерирует последовательности страниц для отображения
