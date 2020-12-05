@@ -15,12 +15,13 @@ ALTER PROCEDURE dbo.GetFilteredPaginatedCustomers -- EXEC dbo.GetFilteredPaginat
 	, @Sex BIT
 	, @OffSetRow INT 
 	, @PageSize  INT
+	, @Regime INT
 WITH EXECUTE AS OWNER
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @OffSetRow <> 0
+	IF @Regime = 1
 	BEGIN
 		SELECT [ID], [C_Family_Name], [C_Name], [C_Patronymic_Name], [F_Users], [F_Citizenship], [B_Sex], [D_Date_Birth], [D_Date_Death]
 		FROM dbo.Customers 
