@@ -55,18 +55,66 @@
         <h2>Текущие потребители</h2>
         <tbody>
             <tr>
-                <td><a href="/customer/create" class="btn btn-outline-success">Добавить</a>
-                    <a href="#demo" class="btn btn-outline-info" data-toggle="collapse">Фильтрация</a>
-                    <div id="demo" class="collapse">
-                        <input class="form-control form-control-sm" type="text" id="myInput1" placeholder=" Фамилия"
-                            title="Введите фамилию">
-                        <input class="form-control form-control-sm" type="text" id="myInput2" placeholder=" Имя"
-                            title="Введите имя">
-                        <input class="form-control form-control-sm" type="text" id="myInput3" placeholder=" Отчество"
-                            title="Введите отчество">
+                <div class="card text-left">
+                    <div class="card-body">
+                        <button type="button" class="btn btn-outline-info" data-toggle="modal"
+                            data-target="#ModalContacts">
+                            Отфильтровать
+                        </button>
+                        <a href="/customer/create" class="btn btn-outline-success">Добавить</a>
                     </div>
-                </td>
+                </div>
             </tr>
+            <!-- Modal -->
+            <div class="modal fade" id="ModalContacts" tabindex="-1" role="dialog"
+                aria-labelledby="contactModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="contactModalLongTitle">Искать Потребителей по...</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/customer/list" method="POST">
+                                <div class="form-group">
+                                    ... фамилии:<input type="text" class="form-control" placeholder="Фамилия"
+                                        name="familyname">
+                                </div>
+                                <div class="form-group">
+                                    ... имени:<input type="text" class="form-control" placeholder="Имя" name="name">
+                                </div>
+                                <div class="form-group">
+                                    ... отчеству:<input type="text" class="form-control" placeholder="Отчество"
+                                        name="patronymicname">
+                                </div>
+                                <div class="card-body">
+                                    ... полу:
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="Sex" id="sexRadio"
+                                            value="true">
+                                        <label class="form-check-label" for="sexRadio">Мужской</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="Sex" id="sexRadio"
+                                            value="false">
+                                        <label class="form-check-label" for="sexRadio">Женский</label>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Закрыть</button>
+                            <button type="button" class="btn btn-outline-success"
+                                data-dismiss="modal">Отфильтровать</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
             {{range .Attribute.Customers}}
             <tr class=" = " onclick="location.href = '/customer/update?key={{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .FamilyName }}</td>

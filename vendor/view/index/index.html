@@ -34,10 +34,11 @@
 
         {{ end }}
     </div>
+    {{ if not .Authenticated }}
     <div class="text-center">Внезапно оказалось, что нет логина? <a href="/user/reg">Немедленно зарегистрироваться</a>
     </div>
     <div class="text-center">Забыл логин или пароль? <a href="/user/reg">Вспомнить всё</a></div>
-    <script src="./static/scripts/main.js"></script>
+    {{ end }}
 </body>
 
 </html>
