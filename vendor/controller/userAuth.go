@@ -80,7 +80,6 @@ func authMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		user := domain.GetUser(session)
-		//fmt.Println("Пользователь в мидл", user)
 
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")

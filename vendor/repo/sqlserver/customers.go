@@ -244,6 +244,7 @@ func (s SQLServer) GetContactType(id int) (*domain.ContactType, error) {
 //UpdateCustomer обновляет данные Потребителя
 func (s SQLServer) UpdateCustomer(customer *domain.Customer) error {
 	var sex string
+
 	if customer.Sex == true {
 		sex = "1"
 	} else {
@@ -251,7 +252,7 @@ func (s SQLServer) UpdateCustomer(customer *domain.Customer) error {
 	}
 
 	_, err := s.db.Query(fmt.Sprintf("UPDATE %s.dbo.Customers"+
-		" SET C_Family_Name = '%s', C_Name = '%s', C_Patronymic_Name = '%s', F_Users = '%s', D_Date_Birth = '%s', D_Date_Death = '%s', B_Sex = '%s'"+
+		" SET C_Family_Name = '%s', C_Name = '%s', C_Patronymic_Name = '%s', F_Users = '%s', D_Date_Birth = '%s', D_Date_Death = '%s', B_Sex = %s"+
 		" WHERE ID =  %s",
 		s.dbname, customer.FamilyName, customer.Name, customer.PatronymicName, customer.User.Key, ConvertDate(customer.DateBirth), ConvertDate(customer.DateDeath), sex, strconv.Itoa(customer.Key)))
 	if err != nil {

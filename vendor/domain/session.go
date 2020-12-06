@@ -3,6 +3,7 @@ package domain
 import (
 	"encoding/gob"
 
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 )
 
@@ -12,8 +13,8 @@ var Store *sessions.CookieStore
 // Инициализирует новый Store c данными сессий
 func init() {
 	// Временно закомментировал. Надоело куки чистить. Для продакшн версии - раскомментировать!
-	authKeyOne := []byte("1234546789012345678901234567890121234546789012345678901234567890") // securecookie.GenerateRandomKey(64)
-	encryptionKeyOne := []byte("12345467890123456789012345678901")                           //securecookie.GenerateRandomKey(32)
+	authKeyOne := securecookie.GenerateRandomKey(64)       // []byte("1234546789012345678901234567890121234546789012345678901234567890") // securecookie.GenerateRandomKey(64)
+	encryptionKeyOne := securecookie.GenerateRandomKey(32) // []byte("12345467890123456789012345678901")                           //securecookie.GenerateRandomKey(32)
 	Store =
 		sessions.NewCookieStore(
 			authKeyOne,
