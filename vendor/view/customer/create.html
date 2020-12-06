@@ -18,6 +18,19 @@
 </head>
 
 <body>
+    <div class="alert alert-primary">
+        <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.User.Name}} {{.User.FamilyName}} (роль
+            "{{.User.Role.Name}}")!</a>
+        <a href="/logout" class="link">Выйти</a>
+    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Стартовая страница</a></li>
+            <li class="breadcrumb-item"><a href="/customer">Потребители</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Создание потребителя
+            </li>
+        </ol>
+    </nav>
     <div class="jumbotron text-center">
 
         <h1>Создать нового Потребителя</h1>
