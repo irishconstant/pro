@@ -12,8 +12,6 @@ type DatabaseConnection interface {
 	GetConnectionParams(filePath string) error
 
 	// Работа с Потребителями
-	GetUserCustomersAll(u domain.User) (map[int]*domain.Customer, error)
-	GetUserCustomersPagination(u domain.User, currentPage int, pageSize int) (map[int]*domain.Customer, error)
 	GetUserFiltredCustomersPagination(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*domain.Customer, error)
 	CreateCustomer(u *domain.Customer) error
 	GetCustomer(id int) (*domain.Customer, error)

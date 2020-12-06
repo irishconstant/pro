@@ -15,7 +15,7 @@ func selectWithPagination(databaseName string, sourceName string, orderParam str
 		return fmt.Sprintf("SELECT [C_Name], [C_Family_Name] FROM [%s].dbo.Users AS u WHERE u.Login = '%s'",
 			databaseName, whereValue)
 	case "Customer":
-		return fmt.Sprintf("SELECT [ID], [C_Family_Name], [C_Name], [C_Patronymic_Name], [F_Users], [F_Citizenship], [B_Sex], [D_Date_Birth], [D_Date_Death] FROM [%s].dbo.Customers WHERE %s = %s",
+		return fmt.Sprintf("SELECT [ID], [C_Family_Name], [C_Name], [C_Patronymic_Name], [F_Users], ISNULL([F_Citizenship],0), CAST(B_Sex AS TINYINT), [D_Date_Birth], [D_Date_Death] FROM [%s].dbo.Customers WHERE %s = %s",
 			databaseName, whereParam, whereValue)
 	case "CustomerContacts": //TODO: Сделать по аналогии этого варианта все остальные, достаточно возвращать идентификаторы
 		return fmt.Sprintf("SELECT [ID] FROM %s.dbo.Contacts WHERE  %s = %s ORDER BY %s",

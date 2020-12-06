@@ -23,10 +23,10 @@ func (s *SQLServer) CheckPassword(login string, password string) bool {
 	}
 
 	if CheckPasswordHash(password, passwordDB) {
-		fmt.Println(fmt.Sprintf("Успешная аутентификация пользователя %s", login))
+		//	fmt.Println(fmt.Sprintf("Успешная аутентификация пользователя %s", login))
 		return true
 	}
-	fmt.Println(fmt.Sprintf("Провалена аутентификация пользователя %s", login))
+	//	fmt.Println(fmt.Sprintf("Провалена аутентификация пользователя %s", login))
 	return false
 }
 

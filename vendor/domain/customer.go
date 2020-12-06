@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 //Customer представляет из себя типичного Потребителя
 type Customer struct {
 	Key int
@@ -10,8 +12,8 @@ type Customer struct {
 	FamilyName     string
 	Citizenship    Citizenship
 	Sex            bool // true - мужчина false - женщина
-	DateBirth      string
-	DateDeath      string
+	DateBirth      time.Time
+	DateDeath      time.Time
 
 	PossibleUsers []User    // Доступные пользователи для привязки
 	Contacts      []Contact // Контакты

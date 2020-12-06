@@ -4,6 +4,7 @@ import (
 	"domain"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +29,13 @@ func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request
 		name := r.FormValue("name")
 		familyName := r.FormValue("familyname")
 		patronymicName := r.FormValue("patronymicname")
+		dateBirth := r.FormValue("datebirth")
+		dateDeath := r.FormValue("datedeath")
+		sex, _ := strconv.ParseBool(r.FormValue("sex"))
 		userLogin := r.FormValue("user")
+
+		dateBirthG, _ := time.Parse("2006-01-02", dateBirth)
+		dateDeathG, _ := time.Parse("2006-01-02", dateDeath)
 
 		user, err := h.connection.GetUser(userLogin)
 		newCustomer := domain.Customer{
@@ -36,6 +43,9 @@ func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request
 			Name:           name,
 			FamilyName:     familyName,
 			PatronymicName: patronymicName,
+			Sex:            sex,
+			DateBirth:      dateBirthG,
+			DateDeath:      dateDeathG,
 			User:           *user,
 		}
 

@@ -6,10 +6,16 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 
 	// импорт пакета с драйвером для дб
 	_ "github.com/denisenkom/go-mssqldb"
 )
+
+// ConvertDate конвертирует дату из формата golang time.Time в формат для записи в БД
+func ConvertDate(d time.Time) string {
+	return d.Format("2006.01.02 15:04:05")
+}
 
 //SQLServer инкапсулирует всё, что нужно для подключения
 type SQLServer struct {
