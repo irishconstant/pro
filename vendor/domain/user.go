@@ -41,4 +41,3 @@ type Area struct {
 	Name string
 	Type int // 1 - Системный раздел 2 - Операция
 }
-

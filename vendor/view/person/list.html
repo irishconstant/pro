@@ -45,10 +45,11 @@
 
     <table id="myTable" class="table table-hover">
         <thead class="thead-dark">
-            <tr onclick="location.href = '/customer'" style="cursor: pointer;">
+            <tr onclick="location.href = '/Person'" style="cursor: pointer;">
                 <th scope=" col">Фамилия</th>
                 <th scope="col">Имя</th>
                 <th scope="col">Отчество</th>
+                <th scope="col">Гражданство</th>
                 <th scope="col">Действия</th>
             </tr>
         </thead>
@@ -61,7 +62,7 @@
                             data-target="#ModalContacts">
                             Отфильтровать
                         </button>
-                        <a href="/customer/create" class="btn btn-outline-success">Добавить</a>
+                        <a href="/Person/create" class="btn btn-outline-success">Добавить</a>
                     </div>
                 </div>
             </tr>
@@ -77,7 +78,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="/customer" method="POST">
+                            <form action="/Person" method="POST">
                                 <div class="form-group">
                                     По фамилии:<input type="text" class="form-control" placeholder="Фамилия"
                                         name="familyname">
@@ -114,12 +115,13 @@
 
 
 
-            {{range .Attribute.Customers}}
-            <tr class=" = " onclick="location.href = '/customer/update?key={{ .Key }}'" style="cursor: pointer;">
+            {{range .Attribute.Persons}}
+            <tr class=" = " onclick="location.href = '/Person/update?key={{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>
-                <td><a href="/customer/delete?key={{ .Key }}" class="btn btn-outline-danger" role="button">Удалить</a>
+                <td>{{ .Citizenship.Name}}</td>
+                <td><a href="/Person/delete?key={{ .Key }}" class="btn btn-outline-danger" role="button">Удалить</a>
                 </td>
             </tr>
             {{else}}
@@ -130,7 +132,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td class="text-success"> Всего пользователей: {{.Attribute.CustomerCount}}</td>
+                <td class="text-success"> Всего пользователей: {{.Attribute.PersonCount}}</td>
                 <td>Страницы:
                     {{range .Attribute.Pages}}
 

@@ -7,18 +7,18 @@ import (
 	"time"
 )
 
-//GetUserFiltredCustomersPagination возвращает всех Потребителей конкретного Пользователя для страницы с учётом переданных фильтров
-func (s *SQLServer) GetUserFiltredCustomersPagination(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*domain.Customer, error) {
-	customers := make(map[int]*domain.Customer)
+//GetUserFiltredPersonsPagination возвращает всех Потребителей конкретного Пользователя для страницы с учётом переданных фильтров
+func (s *SQLServer) GetUserFiltredPersonsPagination(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*domain.Person, error) {
+	Persons := make(map[int]*domain.Person)
 
 	var query string
 	if sex == "" {
 		query =
-			fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedCustomers '%s', '%s', '%s', '%s', NULL, %d, %d, %d",
+			fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedPersons '%s', '%s', '%s', '%s', NULL, %d, %d, %d",
 				s.dbname, u.Key, familyname, name, patrname, pageSize*currentPage-pageSize, pageSize, regime)
 	} else {
 		query =
-			fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedCustomers '%s', '%s', '%s', '%s', %s, %d, %d, %d",
+			fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedPersons '%s', '%s', '%s', '%s', %s, %d, %d, %d",
 				s.dbname, u.Key, familyname, name, patrname, sex, pageSize*currentPage-pageSize, pageSize, regime)
 
 	}
@@ -52,31 +52,26 @@ func (s *SQLServer) GetUserFiltredCustomersPagination(u domain.User, regime int,
 			&Sex,
 			&DateBirth,
 			&DateDeath)
-		customer := domain.Customer{
-			Key:            ID,
-			FamilyName:     FamilyName,
-			Name:           Name,
-			PatronymicName: PatronymicName,
-			Sex:            Sex,
-			//DateBirth:      DateBirth,
-			//DateDeath:      DateDeath,
-			User: u}
+
+		newPerson, _ := s.GetPerson(ID)
+
 		if ID != 0 {
-			customers[ID] = &customer
+			Persons[ID] = newPerson
 		}
 	}
-	return customers, nil
+	return Persons, nil
 }
 
-//CreateCustomer создаёт нового Потребителя
-func (s SQLServer) CreateCustomer(c *domain.Customer) error {
+//CreatePerson создаёт нового Потребителя
+func (s SQLServer) CreatePerson(c *domain.Person) error {
 	var bSex int
 	if strconv.FormatBool(c.Sex) == "true" {
 		bSex = 1
 	} else {
 		bSex = 0
 	}
-	rows, err := s.db.Query(fmt.Sprintf("INSERT INTO Customers (C_Name, C_Family_Name, C_Patronymic_Name, B_Sex, F_Users) SELECT '%s', '%s', '%s', %d, '%s' SELECT SCOPE_IDENTITY()", c.Name, c.FamilyName, c.PatronymicName, bSex, c.User.Key))
+	// TODO: Добавить дату рождения и прочую шнягу
+	rows, err := s.db.Query(fmt.Sprintf("INSERT INTO Persons (C_Name, C_Family_Name, C_Patronymic_Name, B_Sex, F_Users) SELECT '%s', '%s', '%s', %d, '%s' SELECT SCOPE_IDENTITY()", c.Name, c.FamilyName, c.PatronymicName, bSex, c.User.Key))
 	defer rows.Close()
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
@@ -90,16 +85,16 @@ func (s SQLServer) CreateCustomer(c *domain.Customer) error {
 	return nil
 }
 
-//GetCustomer возвращает пользователя по первичному ключу
-func (s SQLServer) GetCustomer(id int) (*domain.Customer, error) {
+//GetPerson возвращает пользователя по первичному ключу
+func (s SQLServer) GetPerson(id int) (*domain.Person, error) {
 
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "Customer", "ID", "ID", strconv.Itoa(id), 0, 0))
+	rows, err := s.db.Query(selectWithPagination(s.dbname, "Person", "ID", "ID", strconv.Itoa(id), 0, 0))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
 		return nil, err
 	}
-	var customer domain.Customer
+	var Person domain.Person
 	defer rows.Close()
 	for rows.Next() {
 		var (
@@ -127,11 +122,11 @@ func (s SQLServer) GetCustomer(id int) (*domain.Customer, error) {
 		} else {
 			sexBool = false
 		}
-
+		citizenship, _ := s.GetCitizenship(CitizenshipKey)
 		DateBirthG, _ := time.Parse(time.RFC3339, DateBirth)
 		DateDeathG, _ := time.Parse(time.RFC3339, DateDeath)
 
-		customer = domain.Customer{
+		Person = domain.Person{
 			Key:            ID,
 			Name:           Name,
 			PatronymicName: PatronymicName,
@@ -139,24 +134,25 @@ func (s SQLServer) GetCustomer(id int) (*domain.Customer, error) {
 			Sex:            sexBool,
 			DateBirth:      DateBirthG,
 			DateDeath:      DateDeathG,
+			Citizenship:    *citizenship,
 			User:           *user}
 
 	}
 
-	err = s.GetCustomerContacts(&customer)
+	err = s.GetPersonContacts(&Person)
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
 		return nil, err
 	}
 
-	return &customer, nil
+	return &Person, nil
 }
 
-// GetCustomerContacts получает Контакты для Пользователя
-func (s SQLServer) GetCustomerContacts(customer *domain.Customer) error {
+// GetPersonContacts получает Контакты для Пользователя
+func (s SQLServer) GetPersonContacts(Person *domain.Person) error {
 	var contacts []domain.Contact
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "CustomerContacts", "ID", "F_Customer", strconv.Itoa(customer.Key), 0, 0))
+	rows, err := s.db.Query(selectWithPagination(s.dbname, "PersonContacts", "ID", "F_Person", strconv.Itoa(Person.Key), 0, 0))
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
 		return err
@@ -172,7 +168,7 @@ func (s SQLServer) GetCustomerContacts(customer *domain.Customer) error {
 			return err
 		}
 	}
-	customer.Contacts = contacts
+	Person.Contacts = contacts
 	return err
 }
 
@@ -211,60 +207,30 @@ func (s SQLServer) GetContact(id int) (*domain.Contact, error) {
 	return &contact, nil
 }
 
-//GetContactType возвращает Тип контакта по его идентификатору
-func (s SQLServer) GetContactType(id int) (*domain.ContactType, error) {
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "ContactType", "ID", "ID", strconv.Itoa(id), 0, 0))
-
-	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
-		return nil, err
-	}
-	defer rows.Close()
-	var contactType domain.ContactType
-	for rows.Next() {
-		var (
-			a int
-			b string
-		)
-		rows.Scan(&a, &b)
-		if err != nil {
-			fmt.Println("Ошибка c получением Типа контакта: ", err)
-			return nil, err
-		}
-
-		contactType = domain.ContactType{
-			Key:  a,
-			Name: b,
-		}
-	}
-
-	return &contactType, nil
-}
-
-//UpdateCustomer обновляет данные Потребителя
-func (s SQLServer) UpdateCustomer(customer *domain.Customer) error {
+//UpdatePerson обновляет данные Потребителя
+func (s SQLServer) UpdatePerson(Person *domain.Person) error {
 	var sex string
 
-	if customer.Sex == true {
+	if Person.Sex == true {
 		sex = "1"
 	} else {
 		sex = "0"
 	}
 
-	_, err := s.db.Query(fmt.Sprintf("UPDATE %s.dbo.Customers"+
+	_, err := s.db.Query(fmt.Sprintf("UPDATE %s.dbo.Persons"+
 		" SET C_Family_Name = '%s', C_Name = '%s', C_Patronymic_Name = '%s', F_Users = '%s', D_Date_Birth = '%s', D_Date_Death = '%s', B_Sex = %s"+
 		" WHERE ID =  %s",
-		s.dbname, customer.FamilyName, customer.Name, customer.PatronymicName, customer.User.Key, ConvertDate(customer.DateBirth), ConvertDate(customer.DateDeath), sex, strconv.Itoa(customer.Key)))
+		s.dbname, Person.FamilyName, Person.Name, Person.PatronymicName, Person.User.Key, ConvertDate(Person.DateBirth), ConvertDate(Person.DateDeath), sex, strconv.Itoa(Person.Key)))
 	if err != nil {
 		fmt.Println("Ошибка при обновлени Пользователя", err)
 	}
 	return err
 }
 
-//DeleteCustomer удаляет Потребителя
-func (s SQLServer) DeleteCustomer(customer *domain.Customer) error {
-	_, err := s.db.Query(fmt.Sprintf("DELETE FROM %s.dbo.Customers WHERE ID =  %s",
-		s.dbname, strconv.Itoa(customer.Key)))
+//DeletePerson удаляет Потребителя
+func (s SQLServer) DeletePerson(Person *domain.Person) error {
+	_, err := s.db.Query(fmt.Sprintf("DELETE FROM %s.dbo.Persons WHERE ID =  %s",
+		s.dbname, strconv.Itoa(Person.Key)))
 	if err != nil {
 		fmt.Println("Ошибка при удалении Пользователя", err)
 	}

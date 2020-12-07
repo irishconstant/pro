@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request) {
-	keyCustomer, err := strconv.Atoi(r.URL.Query().Get("key"))
+func (h *DecoratedHandler) PersonUpdate(w http.ResponseWriter, r *http.Request) {
+	keyPerson, err := strconv.Atoi(r.URL.Query().Get("key"))
 
-	customer, err := h.connection.GetCustomer(keyCustomer)
+	Person, err := h.connection.GetPerson(keyPerson)
 
 	session, err := domain.Store.Get(r, "cookie-name")
 	check(err)
@@ -19,10 +19,10 @@ func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request
 	check(err)
 
 	if r.Method == http.MethodGet {
-		customer.PossibleUsers, err = h.connection.GetAllUsers()
+		Person.PossibleUsers, err = h.connection.GetAllUsers()
 		check(err)
-		currentInformation := sessionInformation{user, customer, ""}
-		executeHTML("customer", "update", w, currentInformation)
+		currentInformation := sessionInformation{user, Person, ""}
+		executeHTML("Person", "update", w, currentInformation)
 	}
 
 	if r.Method == http.MethodPost {
@@ -38,8 +38,8 @@ func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request
 		dateDeathG, _ := time.Parse("2006-01-02", dateDeath)
 
 		user, err := h.connection.GetUser(userLogin)
-		newCustomer := domain.Customer{
-			Key:            customer.Key,
+		newPerson := domain.Person{
+			Key:            Person.Key,
 			Name:           name,
 			FamilyName:     familyName,
 			PatronymicName: patronymicName,
@@ -49,13 +49,13 @@ func (h *DecoratedHandler) customerUpdate(w http.ResponseWriter, r *http.Request
 			User:           *user,
 		}
 
-		err = h.connection.UpdateCustomer(&newCustomer)
+		err = h.connection.UpdatePerson(&newPerson)
 
 		err = session.Save(r, w)
 		if err != nil {
-			executeHTML("customer", "update", w, nil)
+			executeHTML("Person", "update", w, nil)
 		}
-		http.Redirect(w, r, "/customer", http.StatusFound)
+		http.Redirect(w, r, "/Person", http.StatusFound)
 	}
 
 }

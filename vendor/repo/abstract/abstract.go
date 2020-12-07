@@ -11,21 +11,27 @@ type DatabaseConnection interface {
 	CloseConnect() error
 	GetConnectionParams(filePath string) error
 
+	// Работа со справочными данными
+	GetContactType(int) (*domain.ContactType, error)
+	GetAllContactTypes() ([]*domain.ContactType, error)
+	GetCitizenship(int) (*domain.Citizenship, error)
+	GetAllCitizenship() ([]*domain.Citizenship, error)
+
 	// Работа с Потребителями
-	GetUserFiltredCustomersPagination(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*domain.Customer, error)
-	CreateCustomer(u *domain.Customer) error
-	GetCustomer(id int) (*domain.Customer, error)
-	UpdateCustomer(customer *domain.Customer) error
-	DeleteCustomer(customer *domain.Customer) error
+	GetUserFiltredPersonsPagination(domain.User, int, int, int, string, string, string, string) (map[int]*domain.Person, error)
+	CreatePerson(*domain.Person) error
+	GetPerson(int) (*domain.Person, error)
+	UpdatePerson(*domain.Person) error
+	DeletePerson(*domain.Person) error
 
 	// Подсистема авторизации и аутентификации
-	CreateUser(user domain.User) error
-	GetUser(login string) (*domain.User, error)
+	CreateUser(domain.User) error
+	GetUser(string) (*domain.User, error)
 	GetAllUsers() ([]domain.User, error)
-	CheckPassword(a string, b string) bool
-	GetUserRoles(user *domain.User) error
+	CheckPassword(string, b string) bool
+	GetUserRoles(*domain.User) error
 	GetAllRoles() (map[int]*domain.Role, error)
-	GetRoleAbilities(role *domain.Role) error
+	GetRoleAbilities(*domain.Role) error
 	GetRoleByID(int) (*domain.Role, error)
-	GetUserAttributes(user *domain.User) error
+	GetUserAttributes(*domain.User) error
 }

@@ -29,7 +29,7 @@ func init() {
 	gob.Register(User{})
 }
 
-//GetUser получает пользователя текущей сессии и проверяет авторизован он или нет
+//GetUser получает пользователя текущей сессии и проверяет авторизован он или нет (TODO: добавить получение ролей и проверку)
 func GetUser(s *sessions.Session) User {
 	val := s.Values["user"]
 	var user = User{}

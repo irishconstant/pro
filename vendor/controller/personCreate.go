@@ -6,8 +6,8 @@ import (
 	"strconv"
 )
 
-// customer обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
-func (h *DecoratedHandler) customerCreate(w http.ResponseWriter, r *http.Request) {
+// Person обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
+func (h *DecoratedHandler) PersonCreate(w http.ResponseWriter, r *http.Request) {
 	// Работа с куками
 	session, err := domain.Store.Get(r, "cookie-name")
 	check(err)
@@ -21,7 +21,7 @@ func (h *DecoratedHandler) customerCreate(w http.ResponseWriter, r *http.Request
 
 	if r.Method == http.MethodGet {
 		currentInformation := sessionInformation{user, userBook, ""}
-		executeHTML("customer", "create", w, currentInformation)
+		executeHTML("Person", "create", w, currentInformation)
 	}
 
 	if r.Method == http.MethodPost {
@@ -34,7 +34,7 @@ func (h *DecoratedHandler) customerCreate(w http.ResponseWriter, r *http.Request
 
 		User, err := h.connection.GetUser(userID)
 
-		newCustomer := domain.Customer{
+		newPerson := domain.Person{
 			Name:           name,
 			FamilyName:     familyName,
 			PatronymicName: patronymicName,
@@ -42,11 +42,11 @@ func (h *DecoratedHandler) customerCreate(w http.ResponseWriter, r *http.Request
 			User:           *User,
 		}
 
-		err = h.connection.CreateCustomer(&newCustomer)
+		err = h.connection.CreatePerson(&newPerson)
 		if err != nil {
-			executeHTML("customer", "create", w, nil)
+			executeHTML("Person", "create", w, nil)
 		}
-		http.Redirect(w, r, "/customer", http.StatusFound)
+		http.Redirect(w, r, "/Person", http.StatusFound)
 
 	}
 

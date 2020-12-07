@@ -5,6 +5,7 @@ type ContactType struct {
 	Key        int
 	Name       string
 	Validation string
+	IsAddress  bool
 }
 
 // Citizenship Гражданство. Справочник
@@ -25,8 +26,8 @@ type DocType struct {
 	IsDateEnd      bool
 }
 
-// CustomerType Тип потребителя. Справочник
-type CustomerType struct {
+// PersonType Тип потребителя. Справочник
+type PersonType struct {
 	Key  int
 	Name string
 }

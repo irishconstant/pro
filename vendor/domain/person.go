@@ -2,8 +2,8 @@ package domain
 
 import "time"
 
-//Customer представляет из себя типичного Потребителя
-type Customer struct {
+//Person представляет из себя типичного Потребителя
+type Person struct {
 	Key int
 
 	User           User // Ответственный пользователь
@@ -51,11 +51,11 @@ type DocBook struct {
 	Docs     []Doc
 }
 
-//CustomersBook представляет из себя набор Потребителей определённого Пользователя
-type CustomersBook struct {
-	CustomerCount int // Сколько Потребителей всего в книге
-	CurrentPage   int // Текущая страница
+//PersonsBook представляет из себя набор Потребителей определённого Пользователя
+type PersonsBook struct {
+	PersonCount int // Сколько Потребителей всего в книге
+	CurrentPage int // Текущая страница
 
-	Pages     []Page
-	Customers []Customer
+	Pages   []Page
+	Persons []Person
 }
