@@ -1,3 +1,6 @@
+USE [Administratum]
+GO
+/****** Object:  StoredProcedure [dbo].[GetFilteredPaginatedPersons]    Script Date: 07.12.2020 19:13:21 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5,9 +8,10 @@ GO
 -- =============================================
 -- Author:		ai
 -- Create date: 2020.12.05
+-- Alter date: 2020.12.07 Изменения связанные с переименованием таблицы и оптимизации для представлений
 -- Description:	Возвращает отфильтрованных Потребителей в пределах одной страницы
 -- =============================================
-ALTER PROCEDURE dbo.GetFilteredPaginatedCustomers -- EXEC dbo.GetFilteredPaginatedCustomers 'rode_orm', '', '', '', true, 0, 7
+ALTER PROCEDURE [dbo].[GetFilteredPaginatedPersons] -- EXEC dbo.GetFilteredPaginatedPersons 'rode_orm', '', '', '', true, 0, 7, 1
 	@Login NVARCHAR(100)
 	, @FamilyName NVARCHAR(100) 
 	, @Name NVARCHAR(100)
@@ -23,27 +27,29 @@ BEGIN
 
 	IF @Regime = 1
 	BEGIN
-		SELECT [ID], [C_Family_Name], [C_Name], [C_Patronymic_Name], [F_Users], [F_Citizenship], [B_Sex], [D_Date_Birth], [D_Date_Death]
-		FROM dbo.Customers 
-		WHERE	F_Users = @Login
-				AND C_Family_Name LIKE CONCAT('%',ISNULL(@FamilyName, C_Family_Name),'%')
-				AND C_Name LIKE CONCAT('%',ISNULL(@Name, C_Name),'%') 
-				AND C_Patronymic_Name LIKE CONCAT('%',ISNULL(@PatrName,C_Patronymic_Name),'%') 
-				AND B_Sex = ISNULL(@Sex, B_Sex)
+		SELECT p.[ID], p.[C_Family_Name], p.[C_Name], p.[C_Patronymic_Name], p.[F_Users], c.[C_Name] AS [Cit_Name], p.[B_Sex], p.[D_Date_Birth], p.[D_Date_Death]
+		FROM dbo.Persons  AS p
+			INNER JOIN dbo.Citizenships AS c ON c.ID = p.[F_Citizenship]
+		WHERE	p.F_Users = @Login
+				AND p.C_Family_Name LIKE CONCAT('%',ISNULL(@FamilyName, p.C_Family_Name),'%')
+				AND p.C_Name LIKE CONCAT('%',ISNULL(@Name, p.C_Name),'%') 
+				AND p.C_Patronymic_Name LIKE CONCAT('%',ISNULL(@PatrName, p.C_Patronymic_Name),'%') 
+				AND p.B_Sex = ISNULL(@Sex, B_Sex)
 		ORDER BY 1,2
 		OFFSET @OffSetRow ROWS 
 		FETCH NEXT @PageSize ROWS ONLY
 	END
 	ELSE
 	BEGIN
-	SELECT [ID], [C_Family_Name], [C_Name], [C_Patronymic_Name], [F_Users], [F_Citizenship], [B_Sex], [D_Date_Birth], [D_Date_Death]
-		FROM dbo.Customers 
-		WHERE	F_Users = @Login
-				AND C_Family_Name LIKE CONCAT('%',ISNULL(@FamilyName, C_Family_Name),'%')
-				AND C_Name LIKE CONCAT('%',ISNULL(@Name, C_Name),'%') 
-				AND C_Patronymic_Name LIKE CONCAT('%',ISNULL(@PatrName,C_Patronymic_Name),'%') 
-				AND B_Sex = ISNULL(@Sex, B_Sex)
+	SELECT p.[ID], p.[C_Family_Name], p.[C_Name], p.[C_Patronymic_Name], p.[F_Users], c.[C_Name] AS [Cit_Name], p.[B_Sex], p.[D_Date_Birth], p.[D_Date_Death]
+		FROM dbo.Persons AS p
+			INNER JOIN dbo.Citizenships AS c ON c.ID = p.[F_Citizenship]
+		WHERE	p.F_Users = @Login
+				AND p.C_Family_Name LIKE CONCAT('%',ISNULL(@FamilyName, p.C_Family_Name),'%')
+				AND p.C_Name LIKE CONCAT('%',ISNULL(@Name, p.C_Name),'%') 
+				AND p.C_Patronymic_Name LIKE CONCAT('%',ISNULL(@PatrName,p.C_Patronymic_Name),'%') 
+			--	AND B_Sex = ISNULL(@Sex, B_Sex)
+
 		ORDER BY 1,2
 	END
 END
-GO

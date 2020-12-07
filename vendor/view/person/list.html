@@ -45,7 +45,7 @@
 
     <table id="myTable" class="table table-hover">
         <thead class="thead-dark">
-            <tr onclick="location.href = '/Person'" style="cursor: pointer;">
+            <tr onclick="location.href = '/person'" style="cursor: pointer;">
                 <th scope=" col">Фамилия</th>
                 <th scope="col">Имя</th>
                 <th scope="col">Отчество</th>
@@ -62,7 +62,7 @@
                             data-target="#ModalContacts">
                             Отфильтровать
                         </button>
-                        <a href="/Person/create" class="btn btn-outline-success">Добавить</a>
+                        <a href="/person/create" class="btn btn-outline-success">Добавить</a>
                     </div>
                 </div>
             </tr>
@@ -78,7 +78,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="/Person" method="POST">
+                            <form action="/person" method="POST">
                                 <div class="form-group">
                                     По фамилии:<input type="text" class="form-control" placeholder="Фамилия"
                                         name="familyname">
@@ -116,12 +116,12 @@
 
 
             {{range .Attribute.Persons}}
-            <tr class=" = " onclick="location.href = '/Person/update?key={{ .Key }}'" style="cursor: pointer;">
+            <tr class=" = " onclick="location.href = '/person/update?key={{ .Key }}'" style="cursor: pointer;">
                 <td>{{ .FamilyName }}</td>
                 <td>{{ .Name }}</td>
                 <td>{{ .PatronymicName }}</td>
                 <td>{{ .Citizenship.Name}}</td>
-                <td><a href="/Person/delete?key={{ .Key }}" class="btn btn-outline-danger" role="button">Удалить</a>
+                <td><a href="/person/delete?key={{ .Key }}" class="btn btn-outline-danger" role="button">Удалить</a>
                 </td>
             </tr>
             {{else}}

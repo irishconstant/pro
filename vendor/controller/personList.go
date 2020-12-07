@@ -9,7 +9,7 @@ import (
 )
 
 // Person обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
-func (h *DecoratedHandler) Person(w http.ResponseWriter, r *http.Request) { //
+func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 
 	if r.Method == http.MethodPost {
 		params := make(map[string]string)
@@ -41,12 +41,12 @@ func (h *DecoratedHandler) Person(w http.ResponseWriter, r *http.Request) { //
 	check(err)
 
 	user := domain.GetUser(session)
+	check(err)
 	err = h.connection.GetUserAttributes(&user)
 	check(err)
-
-	Persons, err := h.connection.GetUserFiltredPersonsPagination(user, 0, page, h.pageSize, name, familyName, patrName, sex)
+	quantity, err := h.connection.GetUserFiltredResultsQuantity(user, 0, page, h.pageSize, name, familyName, patrName, sex)
 	check(err)
-	PersonBook := domain.PersonsBook{PersonCount: len(Persons)}
+	PersonBook := domain.PersonsBook{PersonCount: quantity}
 
 	// Если необходима пагинация
 	if PersonBook.PersonCount > h.pageSize {
@@ -73,18 +73,19 @@ func (h *DecoratedHandler) Person(w http.ResponseWriter, r *http.Request) { //
 		}
 		PersonBook.Pages = domain.MakePages(1, int(math.Ceil(float64(PersonBook.PersonCount)/float64(h.pageSize))), page)
 		for key := range PersonBook.Pages {
-			PersonBook.Pages[key].URL = fmt.Sprintf("/Person?%s%s%s%s", name, familyName, patrName, sex)
+			PersonBook.Pages[key].URL = fmt.Sprintf("/person?%s%s%s%s", name, familyName, patrName, sex)
 		}
 		currentInformation := sessionInformation{user, PersonBook, ""}
-		executeHTML("Person", "list", w, currentInformation)
+		executeHTML("person", "list", w, currentInformation)
 
 	} else {
+		Persons, _ := h.connection.GetUserFiltredPersonsPagination(user, 0, page, h.pageSize, name, familyName, patrName, sex)
 		for _, value := range Persons {
 			PersonBook.Persons = append(PersonBook.Persons, *value)
 		}
 
 		currentInformation := sessionInformation{user, PersonBook, ""}
 
-		executeHTML("Person", "list", w, currentInformation)
+		executeHTML("person", "list", w, currentInformation)
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (h *DecoratedHandler) PersonUpdate(w http.ResponseWriter, r *http.Request) {
+func (h *DecoratedHandler) personUpdate(w http.ResponseWriter, r *http.Request) {
 	keyPerson, err := strconv.Atoi(r.URL.Query().Get("key"))
 
 	Person, err := h.connection.GetPerson(keyPerson)
@@ -22,7 +22,7 @@ func (h *DecoratedHandler) PersonUpdate(w http.ResponseWriter, r *http.Request) 
 		Person.PossibleUsers, err = h.connection.GetAllUsers()
 		check(err)
 		currentInformation := sessionInformation{user, Person, ""}
-		executeHTML("Person", "update", w, currentInformation)
+		executeHTML("person", "update", w, currentInformation)
 	}
 
 	if r.Method == http.MethodPost {
@@ -53,9 +53,9 @@ func (h *DecoratedHandler) PersonUpdate(w http.ResponseWriter, r *http.Request) 
 
 		err = session.Save(r, w)
 		if err != nil {
-			executeHTML("Person", "update", w, nil)
+			executeHTML("person", "update", w, nil)
 		}
-		http.Redirect(w, r, "/Person", http.StatusFound)
+		http.Redirect(w, r, "/person", http.StatusFound)
 	}
 
 }

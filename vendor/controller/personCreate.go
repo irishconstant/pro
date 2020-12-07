@@ -6,8 +6,8 @@ import (
 	"strconv"
 )
 
-// Person обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
-func (h *DecoratedHandler) PersonCreate(w http.ResponseWriter, r *http.Request) {
+// PersonCreate обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
+func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) {
 	// Работа с куками
 	session, err := domain.Store.Get(r, "cookie-name")
 	check(err)
@@ -21,7 +21,7 @@ func (h *DecoratedHandler) PersonCreate(w http.ResponseWriter, r *http.Request) 
 
 	if r.Method == http.MethodGet {
 		currentInformation := sessionInformation{user, userBook, ""}
-		executeHTML("Person", "create", w, currentInformation)
+		executeHTML("person", "create", w, currentInformation)
 	}
 
 	if r.Method == http.MethodPost {
@@ -44,9 +44,9 @@ func (h *DecoratedHandler) PersonCreate(w http.ResponseWriter, r *http.Request) 
 
 		err = h.connection.CreatePerson(&newPerson)
 		if err != nil {
-			executeHTML("Person", "create", w, nil)
+			executeHTML("person", "create", w, nil)
 		}
-		http.Redirect(w, r, "/Person", http.StatusFound)
+		http.Redirect(w, r, "/person", http.StatusFound)
 
 	}
 

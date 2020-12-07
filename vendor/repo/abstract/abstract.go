@@ -19,6 +19,7 @@ type DatabaseConnection interface {
 
 	// Работа с Потребителями
 	GetUserFiltredPersonsPagination(domain.User, int, int, int, string, string, string, string) (map[int]*domain.Person, error)
+	GetUserFiltredResultsQuantity(domain.User, int, int, int, string, string, string, string) (int, error)
 	CreatePerson(*domain.Person) error
 	GetPerson(int) (*domain.Person, error)
 	UpdatePerson(*domain.Person) error

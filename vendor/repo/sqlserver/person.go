@@ -7,6 +7,37 @@ import (
 	"time"
 )
 
+//GetUserFiltredResultsQuantity возвращает КОЛИЧЕСТВО Потребителей конкретного Пользователя с учётом переданных фильтров
+func (s *SQLServer) GetUserFiltredResultsQuantity(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (int, error) {
+	var query string
+	if sex == "" {
+		query =
+			fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredPaginatedPersons  '%s', '%s', '%s', '%s', NULL, %d, %d, %d",
+				s.dbname, u.Key, familyname, name, patrname, pageSize*currentPage-pageSize, pageSize, regime)
+	} else {
+		query =
+			fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredPaginatedPersons  '%s', '%s', '%s', '%s', %s, %d, %d, %d",
+				s.dbname, u.Key, familyname, name, patrname, sex, pageSize*currentPage-pageSize, pageSize, regime)
+	}
+
+	rows, err := s.db.Query(query)
+
+	if err != nil {
+		fmt.Println("Ошибка c запросом: ", query, err)
+		return 0, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			Num int
+		)
+		rows.Scan(
+			&Num)
+		return Num, nil
+	}
+	return 0, err
+}
+
 //GetUserFiltredPersonsPagination возвращает всех Потребителей конкретного Пользователя для страницы с учётом переданных фильтров
 func (s *SQLServer) GetUserFiltredPersonsPagination(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*domain.Person, error) {
 	Persons := make(map[int]*domain.Person)

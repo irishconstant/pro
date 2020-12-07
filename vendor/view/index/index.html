@@ -21,7 +21,7 @@
             <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.Name}} {{.FamilyName}}! </a>
             Ваш логин: {{.Key}}. Ваша роль: {{.Role.Name}}.
         </div>
-        <a class="nav-link" href="/customer">Потребители</a>
+        <a class="nav-link" href="/person">Потребители</a>
         <a class="nav-link" href="/logout">Выйти</a>
         {{end}}
         {{ if not .Authenticated }}

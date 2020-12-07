@@ -27,7 +27,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Стартовая страница</a></li>
-            <li class="breadcrumb-item"><a href="/Person">Потребители</a></li>
+            <li class="breadcrumb-item"><a href="/person">Потребители</a></li>
             <li class="breadcrumb-item active" aria-current="page">Редактирование потребителя ({{.Attribute.Name}}
                 {{.Attribute.FamilyName}})
             </li>
@@ -38,8 +38,7 @@
         <h1>Редактирование Потребителя</h1>
         <div class="row justify-content-center  h-400">
             <div class="col col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                <form action="/Person/update?key={{.Attribute.Key}}" class="needs-validation" novalidate
-                    method="POST">
+                <form action="/person/update?key={{.Attribute.Key}}" class="needs-validation" novalidate method="POST">
                     <div class="form-group">
                         Фамилия:<input value={{.Attribute.FamilyName}} type="text" class="form-control"
                             placeholder="Фамилия" name="familyname" required>
@@ -89,7 +88,7 @@
                             {{ end }}
                         </select>
                     </div>
-                    <a href="/Person" class="btn btn-outline-danger">Отменить</a> <button type="submit"
+                    <a href="/person" class="btn btn-outline-danger">Отменить</a> <button type="submit"
                         class="btn btn-outline-success">Применить</button>
 
                 </form>
@@ -139,11 +138,11 @@
                         </thead>
                         <tbody>
                             {{range .Attribute.Contacts}}
-                            <tr class=" = " onclick="location.href = '/Person/contact/update?key={{ .Key }}'"
+                            <tr class=" = " onclick="location.href = '/person/contact/update?key={{ .Key }}'"
                                 style="cursor: pointer;">
                                 <td>{{ .Key }}</td>
                                 <td>{{ .Value }}</td>
-                                <td><a href="/Person/contact/delete?key={{ .Key }}" class="btn btn-outline-danger"
+                                <td><a href="/person/contact/delete?key={{ .Key }}" class="btn btn-outline-danger"
                                         role="button">Удалить</a>
                                 </td>
                             </tr>

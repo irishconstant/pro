@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (h *DecoratedHandler) PersonDelete(w http.ResponseWriter, r *http.Request) {
+func (h *DecoratedHandler) personDelete(w http.ResponseWriter, r *http.Request) {
 	keyPerson, err := strconv.Atoi(r.URL.Query().Get("key"))
 
 	Person, err := h.connection.GetPerson(keyPerson)
@@ -42,9 +42,9 @@ func (h *DecoratedHandler) PersonDelete(w http.ResponseWriter, r *http.Request) 
 
 		err = session.Save(r, w)
 		if err != nil {
-			executeHTML("Person", "update", w, nil)
+			executeHTML("person", "update", w, nil)
 		}
-		http.Redirect(w, r, "/Person", http.StatusFound)
+		http.Redirect(w, r, "/person", http.StatusFound)
 	}
 
 }

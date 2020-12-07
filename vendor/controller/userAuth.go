@@ -46,7 +46,7 @@ func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/Person", http.StatusFound)
+		http.Redirect(w, r, "/person", http.StatusFound)
 	}
 }
 

@@ -10,10 +10,13 @@ type Person struct {
 	Name           string
 	PatronymicName string
 	FamilyName     string
-	Citizenship    Citizenship
-	Sex            bool // true - мужчина false - женщина
-	DateBirth      time.Time
-	DateDeath      time.Time
+
+	CitizenshipName string // Опт.массовых представлений
+
+	Citizenship Citizenship
+	Sex         bool
+	DateBirth   time.Time
+	DateDeath   time.Time
 
 	PossibleUsers []User    // Доступные пользователи для привязки
 	Contacts      []Contact // Контакты
