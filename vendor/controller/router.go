@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 	"repo/abstract"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -15,6 +16,7 @@ func Router(dbc abstract.DatabaseConnection) {
 	router := mux.NewRouter()
 	// Обработка статичных файлов
 	router.PathPrefix(staticDir).Handler(http.StripPrefix(staticDir, http.FileServer(http.Dir("."+staticDir))))
+	router.Use(caselessMiddleware)
 
 	// Те, кто НЕ попадают под middleware проверку аутентификации
 	router.Path("/forbidden").Handler(http.HandlerFunc(h.forbidden))
@@ -42,4 +44,12 @@ func Router(dbc abstract.DatabaseConnection) {
 type DecoratedHandler struct {
 	connection abstract.DatabaseConnection
 	pageSize   int //Максимальное количество записей на странице
+}
+
+func caselessMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = strings.ToLower(r.URL.Path)
+		//	log.Println(r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
 }

@@ -73,6 +73,7 @@
                             class="form-control" placeholder="Дата рождения" name="datebirth" required>
                         <div class="invalid-feedback">Пожалуйста укажите Дату рождения</div>
                     </div>
+                    {{.Attribute.DateDeath.Format "2006-01-02"}}
                     <div class="form-group">
                         Дата смерти:<input value={{.Attribute.DateDeath.Format "2006-01-02"}} type="date"
                             class="form-control" placeholder="Дата смерти" name="datedeath">

@@ -249,7 +249,7 @@ func (s SQLServer) UpdatePerson(Person *domain.Person) error {
 	}
 
 	_, err := s.db.Query(fmt.Sprintf("UPDATE %s.dbo.Persons"+
-		" SET C_Family_Name = '%s', C_Name = '%s', C_Patronymic_Name = '%s', F_Users = '%s', D_Date_Birth = '%s', D_Date_Death = '%s', B_Sex = %s"+
+		" SET C_Family_Name = '%s', C_Name = '%s', C_Patronymic_Name = '%s', F_Users = '%s', D_Date_Birth = TRY_CAST('%s' AS DATETIME), D_Date_Death = TRY_CAST('%s' AS DATETIME), B_Sex = %s"+
 		" WHERE ID =  %s",
 		s.dbname, Person.FamilyName, Person.Name, Person.PatronymicName, Person.User.Key, ConvertDate(Person.DateBirth), ConvertDate(Person.DateDeath), sex, strconv.Itoa(Person.Key)))
 	if err != nil {

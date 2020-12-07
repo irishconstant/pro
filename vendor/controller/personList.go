@@ -17,7 +17,7 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 		params["familyname"] = r.FormValue("familyname")
 		params["patrname"] = r.FormValue("patrname")
 		params["sex"] = r.FormValue("sex")
-		filteredAddress := makeURLWithAttributes("Person", params)
+		filteredAddress := makeURLWithAttributes("person", params)
 		http.Redirect(w, r, filteredAddress, http.StatusFound)
 	}
 
