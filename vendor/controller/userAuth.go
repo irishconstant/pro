@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"domain"
+	"domain/auth"
 	"net/http"
 )
 
 // login обрабатывает попытку залогиниться
 func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
-	session, err := domain.Store.Get(r, "cookie-name")
+	session, err := auth.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,7 +32,7 @@ func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 
 		login := r.FormValue("login")
 
-		user := &domain.User{
+		user := &auth.User{
 			Key:           login,
 			Authenticated: true,
 		}
@@ -52,13 +52,13 @@ func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 
 // logout обрабывает попытку разлогиниться
 func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
-	session, err := domain.Store.Get(r, "cookie-name")
+	session, err := auth.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	session.Values["user"] = domain.User{}
+	session.Values["user"] = auth.User{}
 	session.Options.MaxAge = -1
 
 	err = session.Save(r, w)
@@ -73,13 +73,13 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 // authMiddleware выполняется для проверки аутентифицирован ли пользователь. TODO: сделать доступ к определенным разделам по ролям
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := domain.Store.Get(r, "cookie-name")
+		session, err := auth.Store.Get(r, "cookie-name")
 		//	fmt.Println("Сессия в мидл", *session)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		user := domain.GetUser(session)
+		user := auth.GetUser(session)
 
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")

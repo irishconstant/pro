@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"domain"
+	"domain/auth"
 	"net/http"
 )
 
 // forbidden обрабатывает попытку получить доступ туда, куда нельзя
 func (h *DecoratedHandler) forbidden(w http.ResponseWriter, r *http.Request) {
-	session, err := domain.Store.Get(r, "cookie-name")
+	session, err := auth.Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

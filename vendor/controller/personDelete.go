@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"domain"
+	"domain/auth"
+	"domain/contract"
 	"net/http"
 	"strconv"
 )
@@ -10,9 +11,9 @@ func (h *DecoratedHandler) personDelete(w http.ResponseWriter, r *http.Request) 
 	keyPerson, err := strconv.Atoi(r.URL.Query().Get("key"))
 
 	Person, err := h.connection.GetPerson(keyPerson)
-	session, err := domain.Store.Get(r, "cookie-name")
+	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
-	user := domain.GetUser(session)
+	user := auth.GetUser(session)
 	err = h.connection.GetUserAttributes(&user)
 	check(err)
 
@@ -30,7 +31,7 @@ func (h *DecoratedHandler) personDelete(w http.ResponseWriter, r *http.Request) 
 		userLogin := r.FormValue("user")
 
 		user, err := h.connection.GetUser(userLogin)
-		newPerson := domain.Person{
+		newPerson := contract.Person{
 			Key:            Person.Key,
 			Name:           name,
 			FamilyName:     familyName,

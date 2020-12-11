@@ -1,7 +1,8 @@
 package sqlserver
 
 import (
-	"domain"
+	"domain/auth"
+	"domain/sys"
 	"fmt"
 	"strconv"
 
@@ -43,14 +44,14 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 //GetPossibleRoles возвращает роли, которые может присваивать Пользователь с определенной ролью (неавторизованный = Гость)
-func (s *SQLServer) GetPossibleRoles(domain.Role) map[int]domain.Role {
-	var roles = make(map[int]domain.Role) ///!!!
-	return roles                          ///!!!
+func (s *SQLServer) GetPossibleRoles(auth.Role) map[int]auth.Role {
+	var roles = make(map[int]auth.Role) ///!!!
+	return roles                        ///!!!
 }
 
 //GetAllRoles возвращает все роли, возможные в Системе
-func (s *SQLServer) GetAllRoles() (map[int]*domain.Role, error) {
-	var roles = make(map[int]*domain.Role)
+func (s *SQLServer) GetAllRoles() (map[int]*auth.Role, error) {
+	var roles = make(map[int]*auth.Role)
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT ID, C_Name, B_Admin_Only FROM %s.dbo.Roles", s.dbname))
 	defer rows.Close()
@@ -67,7 +68,7 @@ func (s *SQLServer) GetAllRoles() (map[int]*domain.Role, error) {
 		)
 
 		rows.Scan(&Key, &Name, &AdminOnly)
-		role := domain.Role{
+		role := auth.Role{
 			Key:       Key,
 			Name:      Name,
 			AdminOnly: AdminOnly}
@@ -79,12 +80,12 @@ func (s *SQLServer) GetAllRoles() (map[int]*domain.Role, error) {
 }
 
 //GetRoleByID возвращает роль и её возможности по идентификатору
-func (s *SQLServer) GetRoleByID(id int) (*domain.Role, error) {
+func (s *SQLServer) GetRoleByID(id int) (*auth.Role, error) {
 	// Получаем роль из БД
 	rows, err := s.db.Query(fmt.Sprintf("SELECT r.ID, r.C_Name FROM [%s].dbo.Roles AS r WHERE r.ID = %s",
 		s.dbname, strconv.FormatInt(int64(id), 10)))
 
-	var role domain.Role
+	var role auth.Role
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом в GetRoleByID: ", err)
@@ -98,7 +99,7 @@ func (s *SQLServer) GetRoleByID(id int) (*domain.Role, error) {
 			b string
 		)
 		rows.Scan(&a, &b)
-		role = domain.Role{Key: a, Name: b}
+		role = auth.Role{Key: a, Name: b}
 	}
 
 	s.GetRoleAbilities(&role)
@@ -107,7 +108,7 @@ func (s *SQLServer) GetRoleByID(id int) (*domain.Role, error) {
 }
 
 // GetRoleAbilities получает данные о возможностях роли
-func (s SQLServer) GetRoleAbilities(role *domain.Role) error {
+func (s SQLServer) GetRoleAbilities(role *auth.Role) error {
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT a.ID, a.C_Name, ar.B_Create, ar.B_Read, ar.B_Update, ar.B_Delete FROM [%s].dbo.Area_Roles AS ar INNER JOIN [%s].dbo.Areas AS a ON a.ID = ar.F_Areas WHERE ar.F_Roles = %s",
 		s.dbname, s.dbname, strconv.FormatInt(int64(role.Key), 10)))
@@ -118,10 +119,10 @@ func (s SQLServer) GetRoleAbilities(role *domain.Role) error {
 	}
 	defer rows.Close()
 
-	createMap := make(map[int]*domain.Area)
-	readMap := make(map[int]*domain.Area)
-	updateMap := make(map[int]*domain.Area)
-	deleteMap := make(map[int]*domain.Area)
+	createMap := make(map[int]*sys.Area)
+	readMap := make(map[int]*sys.Area)
+	updateMap := make(map[int]*sys.Area)
+	deleteMap := make(map[int]*sys.Area)
 
 	for rows.Next() {
 		var (
@@ -134,7 +135,7 @@ func (s SQLServer) GetRoleAbilities(role *domain.Role) error {
 		)
 		rows.Scan(&ID, &name, &create, &read, &update, &delete)
 
-		area := domain.Area{
+		area := sys.Area{
 			Key:  ID,
 			Name: name,
 		}

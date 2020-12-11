@@ -1,7 +1,9 @@
 package controller
 
 import (
-	"domain"
+	"domain/auth"
+	"domain/contract"
+	"domain/sys"
 	"fmt"
 	"math"
 	"net/http"
@@ -37,16 +39,16 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 	patrName := r.URL.Query().Get("patrname")
 	sex := r.URL.Query().Get("sex")
 
-	session, err := domain.Store.Get(r, "cookie-name")
+	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
 
-	user := domain.GetUser(session)
+	user := auth.GetUser(session)
 	check(err)
 	err = h.connection.GetUserAttributes(&user)
 	check(err)
 	quantity, err := h.connection.GetUserFiltredResultsQuantity(user, 0, page, h.pageSize, name, familyName, patrName, sex)
 	check(err)
-	PersonBook := domain.PersonsBook{PersonCount: quantity}
+	PersonBook := contract.PersonsBook{PersonCount: quantity}
 
 	// Если необходима пагинация
 	if PersonBook.PersonCount > h.pageSize {
@@ -71,7 +73,7 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 		if sex != "" {
 			sex = "&sex=" + sex
 		}
-		PersonBook.Pages = domain.MakePages(1, int(math.Ceil(float64(PersonBook.PersonCount)/float64(h.pageSize))), page)
+		PersonBook.Pages = sys.MakePages(1, int(math.Ceil(float64(PersonBook.PersonCount)/float64(h.pageSize))), page)
 		for key := range PersonBook.Pages {
 			PersonBook.Pages[key].URL = fmt.Sprintf("/person?%s%s%s%s", name, familyName, patrName, sex)
 		}

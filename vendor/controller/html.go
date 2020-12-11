@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"domain"
+	"domain/auth"
 	"fmt"
 	"html/template"
 	"log"
@@ -41,7 +41,7 @@ func check(err error) {
 
 // sessionInformation общая структура для шаблонов html
 type sessionInformation struct {
-	User      domain.User
+	User      auth.User
 	Attribute interface{}
 	Error     string
 }

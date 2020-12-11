@@ -1,14 +1,15 @@
 package sqlserver
 
 import (
-	"domain"
+	"domain/auth"
+	"domain/contract"
 	"fmt"
 	"strconv"
 	"time"
 )
 
 //GetUserFiltredResultsQuantity возвращает КОЛИЧЕСТВО Потребителей конкретного Пользователя с учётом переданных фильтров
-func (s *SQLServer) GetUserFiltredResultsQuantity(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (int, error) {
+func (s *SQLServer) GetUserFiltredResultsQuantity(u auth.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (int, error) {
 	var query string
 	if sex == "" {
 		query =
@@ -34,13 +35,15 @@ func (s *SQLServer) GetUserFiltredResultsQuantity(u domain.User, regime int, cur
 		rows.Scan(
 			&Num)
 		return Num, nil
+
 	}
+
 	return 0, err
 }
 
 //GetUserFiltredPersonsPagination возвращает всех Потребителей конкретного Пользователя для страницы с учётом переданных фильтров
-func (s *SQLServer) GetUserFiltredPersonsPagination(u domain.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*domain.Person, error) {
-	Persons := make(map[int]*domain.Person)
+func (s *SQLServer) GetUserFiltredPersonsPagination(u auth.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*contract.Person, error) {
+	Persons := make(map[int]*contract.Person)
 
 	var query string
 	if sex == "" {
@@ -94,7 +97,7 @@ func (s *SQLServer) GetUserFiltredPersonsPagination(u domain.User, regime int, c
 }
 
 //CreatePerson создаёт нового Потребителя
-func (s SQLServer) CreatePerson(c *domain.Person) error {
+func (s SQLServer) CreatePerson(c *contract.Person) error {
 	var bSex int
 	if strconv.FormatBool(c.Sex) == "true" {
 		bSex = 1
@@ -117,7 +120,7 @@ func (s SQLServer) CreatePerson(c *domain.Person) error {
 }
 
 //GetPerson возвращает пользователя по первичному ключу
-func (s SQLServer) GetPerson(id int) (*domain.Person, error) {
+func (s SQLServer) GetPerson(id int) (*contract.Person, error) {
 
 	rows, err := s.db.Query(selectWithPagination(s.dbname, "Person", "ID", "ID", strconv.Itoa(id), 0, 0))
 
@@ -125,7 +128,7 @@ func (s SQLServer) GetPerson(id int) (*domain.Person, error) {
 		fmt.Println("Ошибка c запросом: ", err)
 		return nil, err
 	}
-	var Person domain.Person
+	var Person contract.Person
 	defer rows.Close()
 	for rows.Next() {
 		var (
@@ -157,7 +160,7 @@ func (s SQLServer) GetPerson(id int) (*domain.Person, error) {
 		DateBirthG, _ := time.Parse(time.RFC3339, DateBirth)
 		DateDeathG, _ := time.Parse(time.RFC3339, DateDeath)
 
-		Person = domain.Person{
+		Person = contract.Person{
 			Key:            ID,
 			Name:           Name,
 			PatronymicName: PatronymicName,
@@ -181,8 +184,8 @@ func (s SQLServer) GetPerson(id int) (*domain.Person, error) {
 }
 
 // GetPersonContacts получает Контакты для Пользователя
-func (s SQLServer) GetPersonContacts(Person *domain.Person) error {
-	var contacts []domain.Contact
+func (s SQLServer) GetPersonContacts(Person *contract.Person) error {
+	var contacts []contract.Contact
 	rows, err := s.db.Query(selectWithPagination(s.dbname, "PersonContacts", "ID", "F_Person", strconv.Itoa(Person.Key), 0, 0))
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
@@ -204,7 +207,7 @@ func (s SQLServer) GetPersonContacts(Person *domain.Person) error {
 }
 
 //GetContact возвращает Контакт по его идентификатору
-func (s SQLServer) GetContact(id int) (*domain.Contact, error) {
+func (s SQLServer) GetContact(id int) (*contract.Contact, error) {
 	//[ID], [F_Contact_Type], [C_Value], [B_Primary]
 	rows, err := s.db.Query(selectWithPagination(s.dbname, "Contact", "ID", "ID", strconv.Itoa(id), 0, 0))
 	if err != nil {
@@ -212,7 +215,7 @@ func (s SQLServer) GetContact(id int) (*domain.Contact, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var contact domain.Contact
+	var contact contract.Contact
 	for rows.Next() {
 		var (
 			ID            int
@@ -228,7 +231,7 @@ func (s SQLServer) GetContact(id int) (*domain.Contact, error) {
 			return nil, err
 		}
 
-		contact = domain.Contact{
+		contact = contract.Contact{
 			Key:   ID,
 			Value: value,
 			Type:  *contactType,
@@ -239,7 +242,7 @@ func (s SQLServer) GetContact(id int) (*domain.Contact, error) {
 }
 
 //UpdatePerson обновляет данные Потребителя
-func (s SQLServer) UpdatePerson(Person *domain.Person) error {
+func (s SQLServer) UpdatePerson(Person *contract.Person) error {
 	var sex string
 
 	if Person.Sex == true {
@@ -259,7 +262,7 @@ func (s SQLServer) UpdatePerson(Person *domain.Person) error {
 }
 
 //DeletePerson удаляет Потребителя
-func (s SQLServer) DeletePerson(Person *domain.Person) error {
+func (s SQLServer) DeletePerson(Person *contract.Person) error {
 	_, err := s.db.Query(fmt.Sprintf("DELETE FROM %s.dbo.Persons WHERE ID =  %s",
 		s.dbname, strconv.Itoa(Person.Key)))
 	if err != nil {

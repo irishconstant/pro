@@ -1,13 +1,13 @@
 package sqlserver
 
 import (
-	"domain"
+	"domain/auth"
 	"fmt"
 	"strconv"
 )
 
 //CreateUser создает нового Пользователя с ролью
-func (s *SQLServer) CreateUser(u domain.User) error {
+func (s *SQLServer) CreateUser(u auth.User) error {
 	// Создаём самого пользователя
 	hashedPassword, err := HashPassword(u.Password)
 	query := fmt.Sprintf("INSERT INTO %s.dbo.Users (Login, Password, C_Family_Name, C_Name) SELECT '%s', '%s', '%s', '%s'",
@@ -31,8 +31,8 @@ func (s *SQLServer) CreateUser(u domain.User) error {
 }
 
 // GetUser получает данные Пользователя из БД
-func (s SQLServer) GetUser(login string) (*domain.User, error) {
-	user := domain.User{Key: login}
+func (s SQLServer) GetUser(login string) (*auth.User, error) {
+	user := auth.User{Key: login}
 	s.GetUserAttributes(&user)
 	s.GetUserRoles(&user)
 
@@ -40,7 +40,7 @@ func (s SQLServer) GetUser(login string) (*domain.User, error) {
 }
 
 // GetUserRoles возвращает все роли Пользователя из БД
-func (s *SQLServer) GetUserRoles(user *domain.User) error {
+func (s *SQLServer) GetUserRoles(user *auth.User) error {
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT TOP 1 r.ID, r.C_Name FROM [%s].dbo.User_Roles AS ur INNER JOIN [%s].dbo.Roles AS r ON r.ID = ur.F_Roles  WHERE ur.F_Users = '%s'",
 		s.dbname, s.dbname, user.Key))
@@ -56,7 +56,7 @@ func (s *SQLServer) GetUserRoles(user *domain.User) error {
 			b string
 		)
 		rows.Scan(&a, &b)
-		role := domain.Role{Key: a, Name: b}
+		role := auth.Role{Key: a, Name: b}
 		user.Role = &role
 	}
 
@@ -67,7 +67,7 @@ func (s *SQLServer) GetUserRoles(user *domain.User) error {
 }
 
 // GetUserAttributes выдает атрибуты пользователя из БД
-func (s SQLServer) GetUserAttributes(user *domain.User) error {
+func (s SQLServer) GetUserAttributes(user *auth.User) error {
 	rows, err := s.db.Query(fmt.Sprintf("SELECT u.C_Name, u.C_Family_Name FROM [%s].dbo.Users AS u WHERE u.Login = '%s'",
 		s.dbname, user.Key))
 
@@ -85,14 +85,14 @@ func (s SQLServer) GetUserAttributes(user *domain.User) error {
 }
 
 //GetAllUsers возвращает всех Пользователей
-func (s *SQLServer) GetAllUsers() ([]domain.User, error) {
+func (s *SQLServer) GetAllUsers() ([]auth.User, error) {
 	rows, err := s.db.Query(fmt.Sprintf("SELECT Login FROM %s.dbo.Users WHERE Login != ''", s.dbname))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом в GetAllUsers: ", err)
 		return nil, err
 	}
-	var users []domain.User
+	var users []auth.User
 
 	defer rows.Close()
 

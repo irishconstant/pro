@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"domain"
+	"domain/auth"
+	"domain/contract"
 	"net/http"
 	"strconv"
 )
@@ -9,13 +10,13 @@ import (
 // PersonCreate обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
 func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) {
 	// Работа с куками
-	session, err := domain.Store.Get(r, "cookie-name")
+	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
-	user := domain.GetUser(session)
+	user := auth.GetUser(session)
 	err = h.connection.GetUserAttributes(&user)
 	check(err)
 
-	var userBook domain.UserBook
+	var userBook auth.UserBook
 	userBook.Users, err = h.connection.GetAllUsers()
 	check(err)
 
@@ -34,7 +35,7 @@ func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) 
 
 		User, err := h.connection.GetUser(userID)
 
-		newPerson := domain.Person{
+		newPerson := contract.Person{
 			Name:           name,
 			FamilyName:     familyName,
 			PatronymicName: patronymicName,

@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"domain"
+	"domain/auth"
+	"domain/contract"
 	"net/http"
 	"strconv"
 	"time"
@@ -12,9 +13,9 @@ func (h *DecoratedHandler) personUpdate(w http.ResponseWriter, r *http.Request) 
 
 	Person, err := h.connection.GetPerson(keyPerson)
 
-	session, err := domain.Store.Get(r, "cookie-name")
+	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
-	user := domain.GetUser(session)
+	user := auth.GetUser(session)
 	err = h.connection.GetUserAttributes(&user)
 	check(err)
 
@@ -38,7 +39,7 @@ func (h *DecoratedHandler) personUpdate(w http.ResponseWriter, r *http.Request) 
 		dateDeathG, _ := time.Parse("2006-01-02", dateDeath)
 
 		user, err := h.connection.GetUser(userLogin)
-		newPerson := domain.Person{
+		newPerson := contract.Person{
 			Key:            Person.Key,
 			Name:           name,
 			FamilyName:     familyName,

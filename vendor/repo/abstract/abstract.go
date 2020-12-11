@@ -1,7 +1,8 @@
 package abstract
 
 import (
-	"domain"
+	"domain/auth"
+	"domain/contract"
 )
 
 //DatabaseConnection обеспечивает интерфейс для соединения с СУБД (набор методов, который должен быть реализован для утиной типизации)
@@ -12,27 +13,27 @@ type DatabaseConnection interface {
 	GetConnectionParams(filePath string) error
 
 	// Работа со справочными данными
-	GetContactType(int) (*domain.ContactType, error)
-	GetAllContactTypes() ([]*domain.ContactType, error)
-	GetCitizenship(int) (*domain.Citizenship, error)
-	GetAllCitizenship() ([]*domain.Citizenship, error)
+	GetContactType(int) (*contract.ContactType, error)
+	GetAllContactTypes() ([]*contract.ContactType, error)
+	GetCitizenship(int) (*contract.Citizenship, error)
+	GetAllCitizenship() ([]*contract.Citizenship, error)
 
 	// Работа с Потребителями
-	GetUserFiltredPersonsPagination(domain.User, int, int, int, string, string, string, string) (map[int]*domain.Person, error)
-	GetUserFiltredResultsQuantity(domain.User, int, int, int, string, string, string, string) (int, error)
-	CreatePerson(*domain.Person) error
-	GetPerson(int) (*domain.Person, error)
-	UpdatePerson(*domain.Person) error
-	DeletePerson(*domain.Person) error
+	GetUserFiltredPersonsPagination(auth.User, int, int, int, string, string, string, string) (map[int]*contract.Person, error)
+	GetUserFiltredResultsQuantity(auth.User, int, int, int, string, string, string, string) (int, error)
+	CreatePerson(*contract.Person) error
+	GetPerson(int) (*contract.Person, error)
+	UpdatePerson(*contract.Person) error
+	DeletePerson(*contract.Person) error
 
 	// Подсистема авторизации и аутентификации
-	CreateUser(domain.User) error
-	GetUser(string) (*domain.User, error)
-	GetAllUsers() ([]domain.User, error)
+	CreateUser(auth.User) error
+	GetUser(string) (*auth.User, error)
+	GetAllUsers() ([]auth.User, error)
 	CheckPassword(string, b string) bool
-	GetUserRoles(*domain.User) error
-	GetAllRoles() (map[int]*domain.Role, error)
-	GetRoleAbilities(*domain.Role) error
-	GetRoleByID(int) (*domain.Role, error)
-	GetUserAttributes(*domain.User) error
+	GetUserRoles(*auth.User) error
+	GetAllRoles() (map[int]*auth.Role, error)
+	GetRoleAbilities(*auth.Role) error
+	GetRoleByID(int) (*auth.Role, error)
+	GetUserAttributes(*auth.User) error
 }

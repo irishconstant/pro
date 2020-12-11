@@ -10,11 +10,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="shortcut icon" href="../static/img/favicon.ico" />
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
 </head>
 
 <body>
     <div class="jumbotron text-center">
         <h1>Самая лучшая Система на свете</h1>
+
         <img src="./static/img/boobs.jpg" class="mx-auto d-block">
         {{if .Authenticated }}
         <div class="alert alert-primary">
@@ -39,6 +43,10 @@
     </div>
     <div class="text-center">Забыл логин или пароль? <a href="/user/reg">Вспомнить всё</a></div>
     {{ end }}
+
+    $$d = b^2 - 4ac$$
+    When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+    $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
 </body>
 
 </html>
