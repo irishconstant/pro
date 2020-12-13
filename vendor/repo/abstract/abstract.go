@@ -3,22 +3,29 @@ package abstract
 import (
 	"auth"
 	"core/contract"
+	"core/ref"
 )
 
-//DatabaseConnection обеспечивает интерфейс для соединения с СУБД (набор методов, который должен быть реализован для утиной типизации)
+//DatabaseConnection обеспечивает интерфейс для соединения с СУБД
 type DatabaseConnection interface {
 	// Работа с соединением БД
 	ConnectToDatabase() error
 	CloseConnect() error
 	GetConnectionParams(filePath string) error
 
-	// Работа со справочными данными
+	// Работа со справочниками
 	GetContactType(int) (*contract.ContactType, error)
 	GetAllContactTypes() ([]*contract.ContactType, error)
 	GetCitizenship(int) (*contract.Citizenship, error)
 	GetAllCitizenship() ([]*contract.Citizenship, error)
+	GetSeasonMode(int) (*ref.SeasonMode, error)
+	GetFuelType(int) (*ref.FuelType, error)
 
-	// Работа с Потребителями
+	// Работа с Техническими данными
+
+	// Работа с Юридическими лицами
+
+	// Работа с Физическими лицами
 	GetUserFiltredPersonsPagination(auth.User, int, int, int, string, string, string, string) (map[int]*contract.Person, error)
 	GetUserFiltredResultsQuantity(auth.User, int, int, int, string, string, string, string) (int, error)
 	CreatePerson(*contract.Person) error

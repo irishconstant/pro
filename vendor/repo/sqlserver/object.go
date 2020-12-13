@@ -1,0 +1,44 @@
+package sqlserver
+
+import (
+	"core/tech"
+	"fmt"
+	"strconv"
+)
+
+// GetObject возвращает Объект с подобъектами
+func (s SQLServer) GetObject(id int) (*tech.Object, error) {
+
+	rows, err := s.db.Query(selectWithPagination(s.dbname, "Object", "ID", "ID", strconv.Itoa(id), 0, 0))
+	if err != nil {
+		fmt.Println("Ошибка c запросом: ", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			ID       int
+			Name     string
+			Address  string
+			Region   string
+			District string
+			City     string
+			Town     string
+			Street   string
+			House    string
+			Building string
+			FIAS     string
+		)
+		rows.Scan(&ID, &Name, &Address, &Region, &District, &City, &Town, &Street, &House, &Building, &FIAS)
+
+		object := tech.Object{
+			Key:          ID,
+			Name:         Name,
+			BuildAddress: Address}
+
+		return &object, nil
+	}
+
+	return nil, err
+}

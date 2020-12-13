@@ -139,7 +139,6 @@ func (s SQLServer) GetPerson(id int) (*contract.Person, error) {
 			UserLogin      string
 			CitizenshipKey int
 			Sex            int
-			sexBool        bool
 			DateBirth      string
 			DateDeath      string
 		)
@@ -150,12 +149,6 @@ func (s SQLServer) GetPerson(id int) (*contract.Person, error) {
 			return nil, err
 		}
 
-		// Неудобно, конечно, но не писать же целый конструктор
-		if Sex == 1 {
-			sexBool = true
-		} else {
-			sexBool = false
-		}
 		citizenship, _ := s.GetCitizenship(CitizenshipKey)
 		DateBirthG, _ := time.Parse(time.RFC3339, DateBirth)
 		DateDeathG, _ := time.Parse(time.RFC3339, DateDeath)
@@ -165,7 +158,7 @@ func (s SQLServer) GetPerson(id int) (*contract.Person, error) {
 			Name:           Name,
 			PatronymicName: PatronymicName,
 			FamilyName:     FamilyName,
-			Sex:            sexBool,
+			Sex:            getBoolValue(Sex),
 			DateBirth:      DateBirthG,
 			DateDeath:      DateDeathG,
 			Citizenship:    *citizenship,

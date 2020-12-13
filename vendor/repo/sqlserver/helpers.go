@@ -38,6 +38,18 @@ func selectWithPagination(databaseName string, sourceName string, orderParam str
 	case "Citizenships":
 		return fmt.Sprintf("SELECT [ID], [C_Name] FROM [%s].[dbo].[Citizenships] WHERE %s = %s ORDER BY %s",
 			databaseName, whereParam, whereValue, orderParam)
+	case "Source":
+		return fmt.Sprintf("SELECT [ID], [F_Object], [F_Season_Mode], [F_Fuel_Type], [N_Norm_Supply_Value], [F_Supplier_Electricity], [F_Voltage_Nominal], [F_Transport_Gas]"+
+			", [F_Supplier_Gas], [F_Supplier_TechWater], [F_Supplier_HotWater], [F_Supplier_Canalisation], [F_Supplier_Heat] FROM [%s].dbo.Sources WHERE %s = %s",
+			databaseName, whereParam, whereValue)
+	case "Entity":
+		return fmt.Sprintf("[ID], [F_User], [C_Name], [C_Short_Name], [INN], [KPP], [OGRN], [F_Entity_Type], [D_Date_Reg]"+
+			" FROM [%s].dbo.Legal_Entities WHERE %s = %s",
+			databaseName, whereParam, whereValue)
+	case "Object":
+		return fmt.Sprintf("[ID], [C_Name], [C_Address], [F_Region], [F_District], [F_City], [F_Town], [F_Street], [C_House], [C_Building], [U_FIAS]"+
+			" FROM [%s].dbo.Objects WHERE %s = %s",
+			databaseName, whereParam, whereValue)
 	}
 	return ""
 }

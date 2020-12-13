@@ -2,6 +2,7 @@ package sqlserver
 
 import (
 	"core/contract"
+	"core/ref"
 	"fmt"
 )
 
@@ -108,4 +109,62 @@ func (s SQLServer) GetAllCitizenship() ([]*contract.Citizenship, error) {
 		citizenships = append(citizenships, newCitizenship)
 	}
 	return citizenships, err
+}
+
+// GetFuelType возвращает Тип топлива
+func (s SQLServer) GetFuelType(id int) (*ref.FuelType, error) {
+	if id == 0 {
+		id = 1
+	}
+
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID, C_Name FROM %s.dbo.Fuel_Types WHERE ID = %d", s.dbname, id))
+	if err != nil {
+		fmt.Printf("Ошибка с получением Типа топлива")
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			ID   int
+			name string
+		)
+		rows.Scan(
+			&ID,
+			&name)
+
+		fuelType := ref.FuelType{
+			Key:  ID,
+			Name: name}
+		return &fuelType, nil
+	}
+	return nil, err
+}
+
+// GetSeasonMode возвращает Тип топлива
+func (s SQLServer) GetSeasonMode(id int) (*ref.SeasonMode, error) {
+	if id == 0 {
+		id = 1
+	}
+
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID, C_Name FROM %s.dbo.Season_Modes WHERE ID = %d", s.dbname, id))
+	if err != nil {
+		fmt.Printf("Ошибка с получением Типа топлива")
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			ID   int
+			name string
+		)
+		rows.Scan(
+			&ID,
+			&name)
+
+		seasonMode := ref.SeasonMode{
+			Key:  ID,
+			Name: name}
+		return &seasonMode, nil
+	}
+	return nil, err
 }

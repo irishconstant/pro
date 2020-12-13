@@ -15,23 +15,25 @@ type SupplyDistrict struct {
 
 // Source теплоисточник
 type Source struct {
+	Key int
+
 	Object Object
 	nodes  []SourceNode // Элементы схемы энергоснабжения, непосредственно относящиеся к теплоисточнику. Например, коллекторы отпуска тепловой энергии
 
-	Season   ref.SeasonMode // Сезонность котельной: •	Круглогодичное; •	Сезонное.
-	FuelType ref.FuelType   // Вид топлива
+	SeasonMode ref.SeasonMode // Сезонность котельной: •	Круглогодичное; •	Сезонное.
+	FuelType   ref.FuelType   // Вид топлива
 
 	NormSupplyValue float32 // Нормативная подпитка тепловых сетей (м3)
 
-	supplierElectricity contract.LegalEntity // Организация-поставщик электрической энергии на котельную
+	SupplierElectricity contract.LegalEntity // Организация-поставщик электрической энергии на котельную
 	VoltageNominal      ref.VoltageNominal   // Уровень напряжения по договору (ВН, СН1, СН2, НН)
 
-	transportGas         contract.LegalEntity // Организация-транспортировщик природного газа на котельную
-	supplierGas          contract.LegalEntity // Организация-поставщик природного газа на котельную
-	supplierTechWater    contract.LegalEntity // Организация-поставщик воды на технологические нужды котельной
-	supplierHotWater     contract.LegalEntity // Организация-поставщик воды на ГВС
-	supplierCanalisation contract.LegalEntity // Организация, оказывающая услугу водоотведения на котельной
-	supplierHeat         contract.LegalEntity // Организация-поставщик покупного тепла на котельную (ЦТП)
+	TransportGas         contract.LegalEntity // Организация-транспортировщик природного газа на котельную
+	SupplierGas          contract.LegalEntity // Организация-поставщик природного газа на котельную
+	SupplierTechWater    contract.LegalEntity // Организация-поставщик воды на технологические нужды котельной
+	SupplierHotWater     contract.LegalEntity // Организация-поставщик воды на ГВС
+	SupplierCanalisation contract.LegalEntity // Организация, оказывающая услугу водоотведения на котельной
+	SupplierHeat         contract.LegalEntity // Организация-поставщик покупного тепла на котельную (ЦТП)
 
 	params []SourceParam // Утвержденные параметры с разбивкой по месяцам
 
