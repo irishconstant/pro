@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"domain/auth"
+	"auth"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -15,7 +15,7 @@ func (h *DecoratedHandler) reg(w http.ResponseWriter, r *http.Request) {
 	}
 	user := auth.GetUser(session)
 	possibleRoles, err := h.connection.GetAllRoles() // TODO: Изменить в будущем на возможность присваивать определенные роли в зависимости от роли авторизованного пользователя
-	roleBook := auth.RoleBook{RoleCount: len(possibleRoles)}
+	roleBook := RoleBook{RoleCount: len(possibleRoles)}
 	for _, value := range possibleRoles {
 		roleBook.Roles = append(roleBook.Roles, *value)
 	}
@@ -49,7 +49,6 @@ func (h *DecoratedHandler) reg(w http.ResponseWriter, r *http.Request) {
 			Role:          role,
 			Authenticated: false,
 		}
-		//result := h.connection.CreateUser(login, password)
 		err = h.connection.CreateUser(newUser)
 
 		if err != nil {

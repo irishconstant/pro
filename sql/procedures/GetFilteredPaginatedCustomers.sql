@@ -1,6 +1,3 @@
-USE [Administratum]
-GO
-/****** Object:  StoredProcedure [dbo].[GetFilteredPaginatedPersons]    Script Date: 07.12.2020 19:13:21 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -48,7 +45,7 @@ BEGIN
 				AND p.C_Family_Name LIKE CONCAT('%',ISNULL(@FamilyName, p.C_Family_Name),'%')
 				AND p.C_Name LIKE CONCAT('%',ISNULL(@Name, p.C_Name),'%') 
 				AND p.C_Patronymic_Name LIKE CONCAT('%',ISNULL(@PatrName,p.C_Patronymic_Name),'%') 
-			--	AND B_Sex = ISNULL(@Sex, B_Sex)
+				AND B_Sex = ISNULL(@Sex, B_Sex)
 
 		ORDER BY 1,2
 	END

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"domain/auth"
+	"auth"
 	"net/http"
 )
 

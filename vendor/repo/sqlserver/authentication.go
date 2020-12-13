@@ -1,8 +1,7 @@
 package sqlserver
 
 import (
-	"domain/auth"
-	"domain/sys"
+	"auth"
 	"fmt"
 	"strconv"
 
@@ -119,10 +118,10 @@ func (s SQLServer) GetRoleAbilities(role *auth.Role) error {
 	}
 	defer rows.Close()
 
-	createMap := make(map[int]*sys.Area)
-	readMap := make(map[int]*sys.Area)
-	updateMap := make(map[int]*sys.Area)
-	deleteMap := make(map[int]*sys.Area)
+	createMap := make(map[int]*auth.Area)
+	readMap := make(map[int]*auth.Area)
+	updateMap := make(map[int]*auth.Area)
+	deleteMap := make(map[int]*auth.Area)
 
 	for rows.Next() {
 		var (
@@ -135,7 +134,7 @@ func (s SQLServer) GetRoleAbilities(role *auth.Role) error {
 		)
 		rows.Scan(&ID, &name, &create, &read, &update, &delete)
 
-		area := sys.Area{
+		area := auth.Area{
 			Key:  ID,
 			Name: name,
 		}

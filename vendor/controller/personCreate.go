@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"domain/auth"
-	"domain/contract"
+	"auth"
+	"core/contract"
 	"net/http"
 	"strconv"
 )
@@ -16,7 +16,7 @@ func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) 
 	err = h.connection.GetUserAttributes(&user)
 	check(err)
 
-	var userBook auth.UserBook
+	var userBook UserBook
 	userBook.Users, err = h.connection.GetAllUsers()
 	check(err)
 

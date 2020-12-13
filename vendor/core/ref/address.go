@@ -13,6 +13,10 @@ type Address struct {
 	FIAS     string
 }
 
+/*
+[dbo].[Location_Types]
+*/
+
 // Region Регион
 type Region struct {
 	FIAS  string

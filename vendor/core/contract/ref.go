@@ -18,8 +18,8 @@ type DocType struct {
 	IsDateEnd      bool
 }
 
-// PersonType Тип потребителя. Справочник
-type PersonType struct {
+// EntityType Тип ОПФ. Справочник
+type EntityType struct {
 	Key  int
 	Name string
 }
@@ -31,3 +31,4 @@ type ContactType struct {
 	Validation string
 	IsAddress  bool
 }
+

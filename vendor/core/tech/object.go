@@ -1,6 +1,9 @@
 package tech
 
-import "domain/ref"
+import (
+	"core/contract"
+	"core/ref"
+)
 
 //Object Объект
 type Object struct {
@@ -11,12 +14,15 @@ type Object struct {
 
 //SubObject Помещение в Объекте
 type SubObject struct {
+	Name   string
+	Number string
 }
 
 //ObjectType Тип объекта
 type ObjectType struct {
-	Name  string
-	is354 bool
+	Name     string
+	is354    bool
+	isEnergy bool
 }
 
 //SubObjectType Тип Подобъекта
@@ -27,6 +33,7 @@ type SubObjectType struct {
 
 //SupplyPoint отражает Точку поставки
 type SupplyPoint struct {
-	Number   int
-	resource ref.EnergyResource
+	Number         int
+	resource       ref.EnergyResource
+	registerPoints []contract.RegisterPoint
 }

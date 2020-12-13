@@ -1,8 +1,8 @@
 package abstract
 
 import (
-	"domain/auth"
-	"domain/contract"
+	"auth"
+	"core/contract"
 )
 
 //DatabaseConnection обеспечивает интерфейс для соединения с СУБД (набор методов, который должен быть реализован для утиной типизации)

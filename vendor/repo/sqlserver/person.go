@@ -1,8 +1,8 @@
 package sqlserver
 
 import (
-	"domain/auth"
-	"domain/contract"
+	"auth"
+	"core/contract"
 	"fmt"
 	"strconv"
 	"time"
@@ -115,7 +115,7 @@ func (s SQLServer) CreatePerson(c *contract.Person) error {
 	for rows.Next() {
 		rows.Scan(&c.Key)
 	}
-	fmt.Println("Создан Пользователь с идентификатором:", c.Key)
+	fmt.Println("Создан Потребитель с идентификатором:", c.Key)
 	return nil
 }
 

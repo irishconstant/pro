@@ -1,7 +1,7 @@
 package sqlserver
 
 import (
-	"domain/contract"
+	"core/contract"
 	"fmt"
 )
 

@@ -1,13 +1,12 @@
 package controller
 
 import (
-	"domain/auth"
+	"auth"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 )
 
 // executeHTML инкапсулирует работу с шаблонами и генерацию html
@@ -44,12 +43,4 @@ type sessionInformation struct {
 	User      auth.User
 	Attribute interface{}
 	Error     string
-}
-
-func caselessMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = strings.ToLower(r.URL.Path)
-		//	log.Println(r.RequestURI)
-		next.ServeHTTP(w, r)
-	})
 }

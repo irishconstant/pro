@@ -1,13 +1,12 @@
 package contract
 
 import (
-	"domain/auth"
-	"domain/ref"
-	"domain/sys"
+	"auth"
+	"core/ref"
 	"time"
 )
 
-//Person представляет из себя типичного Потребителя
+//Person Физическое лицо
 type Person struct {
 	Key int
 
@@ -42,25 +41,4 @@ type Contact struct {
 	Type    ContactType
 	Value   string
 	Address ref.Address
-}
-
-// ContactBook представляет из себя набор Контактов определённого Потребителя или Пользователя
-type ContactBook struct {
-	ContactCount int
-	Contacts     []Contact
-}
-
-// DocBook представляет из себя набор Документов определённого Потребителя или Пользователя
-type DocBook struct {
-	DocCount int
-	Docs     []Doc
-}
-
-//PersonsBook представляет из себя набор Потребителей определённого Пользователя
-type PersonsBook struct {
-	PersonCount int // Сколько Потребителей всего в книге
-	CurrentPage int // Текущая страница
-
-	Pages   []sys.Page
-	Persons []Person
 }

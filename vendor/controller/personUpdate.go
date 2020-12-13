@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"domain/auth"
-	"domain/contract"
+	"auth"
+	"core/contract"
 	"net/http"
 	"strconv"
 	"time"

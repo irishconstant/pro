@@ -28,11 +28,30 @@ func Router(dbc abstract.DatabaseConnection) {
 	// Те, кто попадают под middleware проверку аутентификации
 	api := router.PathPrefix("/").Subrouter()
 	api.Use(authMiddleware)
+	// Потребители
 	api.HandleFunc("/person/", h.person)
 	api.HandleFunc("/person", h.person)
 	api.HandleFunc("/person/update", h.personUpdate)
 	api.HandleFunc("/person/create", h.personCreate)
 	api.HandleFunc("/person/delete", h.personDelete)
+
+	/* ----------------------------------------------------------
+	ПОДСИСТЕМА УПРАВЛЕНИЯ ТЕХНИЧЕСКИМИ ДАННЫМИ
+	------------------------------------------------------------*/
+	// Работа с источниками
+	api.HandleFunc("/source/", h.source)
+	api.HandleFunc("/source", h.source)
+	api.HandleFunc("/source/scheme", h.source)
+	api.HandleFunc("/source/equipment", h.sourceEquipment)
+	api.HandleFunc("/source/update", h.sourceUpdate)
+	api.HandleFunc("/source/create", h.sourceCreate)
+	api.HandleFunc("/source/delete", h.sourceDelete)
+	// Работа с оборудованием
+	api.HandleFunc("/equipment/update", h.equipmentUpdate)
+	api.HandleFunc("/equipment/create", h.equipmentCreate)
+	api.HandleFunc("/equipment/delete", h.equipmentDelete)
+	// Работа с событиями схемы сети
+
 	http.ListenAndServe(":8080", router)
 	//corsOrigins := handlers.AllowedOrigins([]string{"*"}) // TODO: для работы с AJAX
 	// handlers.CORS(corsOrigins)(router))

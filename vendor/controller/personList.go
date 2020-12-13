@@ -1,9 +1,7 @@
 package controller
 
 import (
-	"domain/auth"
-	"domain/contract"
-	"domain/sys"
+	"auth"
 	"fmt"
 	"math"
 	"net/http"
@@ -48,7 +46,7 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 	check(err)
 	quantity, err := h.connection.GetUserFiltredResultsQuantity(user, 0, page, h.pageSize, name, familyName, patrName, sex)
 	check(err)
-	PersonBook := contract.PersonsBook{PersonCount: quantity}
+	PersonBook := PersonsBook{PersonCount: quantity}
 
 	// Если необходима пагинация
 	if PersonBook.PersonCount > h.pageSize {
@@ -73,7 +71,7 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 		if sex != "" {
 			sex = "&sex=" + sex
 		}
-		PersonBook.Pages = sys.MakePages(1, int(math.Ceil(float64(PersonBook.PersonCount)/float64(h.pageSize))), page)
+		PersonBook.Pages = MakePages(1, int(math.Ceil(float64(PersonBook.PersonCount)/float64(h.pageSize))), page)
 		for key := range PersonBook.Pages {
 			PersonBook.Pages[key].URL = fmt.Sprintf("/person?%s%s%s%s", name, familyName, patrName, sex)
 		}
