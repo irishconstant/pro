@@ -12,17 +12,18 @@ import (
 func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 
 	if r.Method == http.MethodPost {
+		// Получаем данные фильтров из формы и формируем параметры для вызова
 		params := make(map[string]string)
 		params["name"] = r.FormValue("name")
 		params["familyname"] = r.FormValue("familyname")
 		params["patrname"] = r.FormValue("patrname")
 		params["sex"] = r.FormValue("sex")
 		filteredAddress := makeURLWithAttributes("person", params)
+		// Переходим на этот урл
 		http.Redirect(w, r, filteredAddress, http.StatusFound)
 	}
 
-	// Получаем страницу из параметров
-	//fmt.Println(r.URL)
+	// Получаем текущую страницу из параметров
 	key := r.URL.Query().Get("page")
 	var page int
 	if key != "" {
@@ -31,26 +32,28 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 		page = 1
 	}
 
-	// Получаем параметры фильтрации
+	// Получаем параметры фильтрации из урла
 	name := r.URL.Query().Get("name")
 	familyName := r.URL.Query().Get("familyname")
 	patrName := r.URL.Query().Get("patrname")
 	sex := r.URL.Query().Get("sex")
 
+	// Работа с пользователями
 	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
-
 	user := auth.GetUser(session)
 	check(err)
 	err = h.connection.GetUserAttributes(&user)
 	check(err)
-	quantity, err := h.connection.GetUserFiltredResultsQuantity(user, 0, page, h.pageSize, name, familyName, patrName, sex)
+
+	// Работа с ФЛ
+	quantity, err := h.connection.GetPersonQuantityFiltered(user, name, familyName, patrName, sex)
 	check(err)
-	PersonBook := PersonsBook{PersonCount: quantity}
+	PersonBook := PersonBook{PersonCount: quantity}
 
 	// Если необходима пагинация
 	if PersonBook.PersonCount > h.pageSize {
-		PersonsPerPage, err := h.connection.GetUserFiltredPersonsPagination(user, 1, page, h.pageSize, name, familyName, patrName, sex) //h.connection.GetUserPersonsPagination(user, page, h.pageSize)
+		PersonsPerPage, err := h.connection.GetPersonsFiltered(user, 1, page, h.pageSize, name, familyName, patrName, sex)
 		check(err)
 		for _, value := range PersonsPerPage {
 			PersonBook.Persons = append(PersonBook.Persons, *value)
@@ -58,7 +61,7 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 		PersonBook.CurrentPage = page
 
 		// Создаем страницы для показа (1, одна слева от текущей, одна справа от текущей, последняя)
-		// Здесь и далее инициализируем фильтры, которые к нам ранее пришли в POST запросе
+		// Инициализируем фильтры для кнопок пагинации, которые к нам ранее пришли в POST запросе
 		if name != "" {
 			name = "&name=" + name
 		}
@@ -79,7 +82,7 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 		executeHTML("person", "list", w, currentInformation)
 
 	} else {
-		Persons, _ := h.connection.GetUserFiltredPersonsPagination(user, 0, page, h.pageSize, name, familyName, patrName, sex)
+		Persons, _ := h.connection.GetPersonsFiltered(user, 0, page, h.pageSize, name, familyName, patrName, sex)
 		for _, value := range Persons {
 			PersonBook.Persons = append(PersonBook.Persons, *value)
 		}

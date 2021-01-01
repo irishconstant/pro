@@ -47,6 +47,8 @@ func Router(dbc abstract.DatabaseConnection) {
 	api.HandleFunc("/source/create", h.sourceCreate)
 	api.HandleFunc("/source/delete", h.sourceDelete)
 	// Работа с оборудованием
+	api.HandleFunc("/equipment/", h.equipment)
+	api.HandleFunc("/equipment", h.equipment)
 	api.HandleFunc("/equipment/update", h.equipmentUpdate)
 	api.HandleFunc("/equipment/create", h.equipmentCreate)
 	api.HandleFunc("/equipment/delete", h.equipmentDelete)

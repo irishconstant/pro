@@ -3,6 +3,7 @@ package controller
 import (
 	"auth"
 	"core/contract"
+	"core/tech"
 	"math"
 )
 
@@ -32,13 +33,22 @@ type DocBook struct {
 	Docs     []contract.Doc
 }
 
-//PersonsBook представляет из себя набор Потребителей определённого Пользователя
-type PersonsBook struct {
+//PersonBook представляет из себя набор Потребителей определённого Пользователя
+type PersonBook struct {
 	PersonCount int // Сколько Потребителей всего в книге
 	CurrentPage int // Текущая страница
 
 	Pages   []Page
 	Persons []contract.Person
+}
+
+//SourceBook представляет из себя набор тепло-электро-водоисточников
+type SourceBook struct {
+	Count       int
+	CurrentPage int
+
+	Pages   []Page
+	Sources []tech.Source
 }
 
 //Page представляет страницу любых представлений

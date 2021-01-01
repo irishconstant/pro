@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Добро пожаловать</title>
+    <title>Omni-ПТО</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -23,9 +23,30 @@
             Ваш логин: {{.Key}}. Ваша роль: {{.Role.Name}}.
         </div>
         <p>Помните, что жизнь без старых товарищей и горилки стоит столько же, сколько баба без жопы</p>
-        <a class="nav-link" href="/person">Потребители</a>
-        <a class="nav-link" href="/person">Источники</a>
-        <a class="nav-link" href="/logout">Выйти</a>
+        <nav class="navbar navbar-expand-sm bg-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="../person">Текущие потребители</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../source">Источники теплоснабжения</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../network">Схема теплоснабжения</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../object">Объекты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../network">Сводная и детализированная отчётость</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../ref">Справочники</a>
+                </li>
+
+            </ul>
+
+        </nav>
         {{end}}
         {{ if not .Authenticated }}
         <p>Вежливо просим ввести логин и пароль, ибо пить в одиночку - это как срать в компании</p>

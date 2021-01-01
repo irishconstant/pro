@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Добро пожаловать</title>
+    <title>Изменить ФЛ</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -33,7 +33,6 @@
             </li>
         </ol>
     </nav>
-
 
     <div class="jumbotron text-center">
         <h1>Редактирование Потребителя</h1>
@@ -77,33 +76,34 @@
                             placeholder="Отчество" name="patronymicname" required>
                         <div class="invalid-feedback">Пожалуйста укажите отчество</div>
                     </div>
+
                     <div class="card-body">
                         Пол:
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sex" id="sex" value="true"
-                                {{ if eq .Attribute.Sex true}} checked {{ end}}>
+                            <input class="form-check-input" type="radio" {{ if eq .Attribute.Sex true}} checked {{ end}}
+                                name="sex" id="sex" value="true">
                             <label class="form-check-label" for="sex">Мужской</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sex" id="sex" value="false"
-                                {{ if eq .Attribute.Sex false}} checked {{ end}}>
+                            <input class="form-check-input" {{ if eq .Attribute.Sex false}} checked {{ end}}
+                                type="radio" name="sex" id="sex" value="false">
                             <label class="form-check-label" for="sex">Женский</label>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        Дата рождения:<input value={{.Attribute.DateBirth.Format "2006-01-02"}} type="date"
+                        Дата рождения:<input value={{.Attribute.DateBirth.Format "2006-01-02" }} type="date"
                             class="form-control" placeholder="Дата рождения" name="datebirth" required>
                         <div class="invalid-feedback">Пожалуйста укажите Дату рождения</div>
                     </div>
                     <div class="form-group">
-                        Дата смерти:<input value={{.Attribute.DateDeath.Format "2006-01-02"}} type="date"
+                        Дата смерти:<input value={{.Attribute.DateDeath.Format "2006-01-02" }} type="date"
                             class="form-control" placeholder="Дата смерти" name="datedeath">
                     </div>
                     <div name="user" class="form-group" data-width='auto'>
                         Выберите Пользователя:
-                        <select name="user" id="user" required class="custom-select my-select" data-live-search="true"
-                            title="Ничего не выбрано" noneResultsText="Нет совпадений" data-size="10" width="auto">
+                        <select name="user" id="user" required class="selectpicker" data-live-search="true"
+                            title={{.Attribute.User.Key}} noneResultsText="Нет совпадений" data-size="10" width="auto">
                             {{range .Attribute.PossibleUsers}}
                             <option value={{.Key}}>{{.Name}} {{.FamilyName}} (Логин {{.Key}})
 
@@ -111,9 +111,8 @@
                             {{ end }}
                         </select>
                     </div>
-                    <a href="/person" class="btn btn-outline-danger">Отменить</a> <button type="submit"
-                        class="btn btn-outline-success">Применить</button>
-
+                    <a href="/person" class="btn btn-outline-danger">Отменить</a>
+                    <button type="submit" class="btn btn-outline-success">Применить</button>
                 </form>
                 {{ if eq .Error "Ошибка при создании Потребителя" }}
                 <div class="alert alert-danger alert-dismissible">
@@ -127,7 +126,6 @@
                 <img src="../static/img/ciri.png" class="mx-auto d-block">
             </div>
         </div>
-
     </div>
 
     <!-- Modal -->
@@ -220,6 +218,7 @@
             </div>
         </div>
     </div>
+
     <script>
         $(document).ready(function () {
             $('select option[value="{{.Attribute.User.Key}}"]').attr("selected", true);
@@ -242,6 +241,7 @@
             }, false);
         })();
     </script>
+
 </body>
 
 </html>

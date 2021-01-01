@@ -9,9 +9,9 @@ import (
 // GetObject возвращает Объект с подобъектами
 func (s SQLServer) GetObject(id int) (*tech.Object, error) {
 
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "Object", "ID", "ID", strconv.Itoa(id), 0, 0))
+	rows, err := s.db.Query(creatorSelect(s.dbname, "Object", "ID", "ID", strconv.Itoa(id)))
 	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
+		fmt.Println("Ошибка c запросом в GetObject: ", err)
 		return nil, err
 	}
 	defer rows.Close()

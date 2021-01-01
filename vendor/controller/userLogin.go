@@ -2,7 +2,6 @@ package controller
 
 import (
 	"auth"
-	"fmt"
 	"net/http"
 )
 
@@ -37,9 +36,9 @@ func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 		}
 		h.connection.GetUserRoles(user)
 
-		session.Values["user"] = user
+		session.Values["SystemUser"] = user
 
-		fmt.Println("значение куков (логин)", session.Values)
+		//	fmt.Println("значение куков (логин)", session.Values)
 		//		session.Values["authenticated"] = true
 		err = session.Save(r, w)
 
@@ -47,6 +46,6 @@ func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/person", http.StatusFound)
+		http.Redirect(w, r, "/source", http.StatusFound)
 	}
 }

@@ -1,6 +1,8 @@
 package controller
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func (h *DecoratedHandler) equipmentCreate(w http.ResponseWriter, r *http.Request) { //
 

@@ -2,7 +2,6 @@ package controller
 
 import (
 	"auth"
-	"fmt"
 	"net/http"
 )
 
@@ -14,11 +13,12 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session.Values["user"] = auth.User{}
-	session.Values["authenticated"] = false
+	//session.Values["SystemUser"] = nil //auth.User{}
+	session.Values["Authenticated"] = false
 	session.Options.MaxAge = -1
 
 	err = session.Save(r, w)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -26,6 +26,6 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusFound)
 
-	fmt.Println("значение куков (логаут)", session.Values)
+	//fmt.Println("значение куков (логаут)", session.Values)
 
 }

@@ -26,7 +26,7 @@ func main() {
 	//TODO: dep init
 }
 
-//GetDependency создаёт привязку между интерфейсом и реализацией (IoC)
+//getDependency создаёт привязку между интерфейсом и реализацией (IoC)
 func getDependency() abstract.DatabaseConnection {
 
 	// Если надо изменить реализацию на другую БД, достаточно реализовать её в repo и сослаться на новую реализацию здесь

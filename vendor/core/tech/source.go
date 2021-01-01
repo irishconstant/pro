@@ -7,18 +7,20 @@ import (
 
 //SupplyDistrict район теплоснабжения [dbo].[Supply_Districts]
 type SupplyDistrict struct {
-	Key       int
-	Name      string
-	Location  ref.Region
-	pipelines []Edge
+	Key      int
+	Name     string
+	Location ref.Region
+
+	Pipelines []Edge
+	Sources   []Source
 }
 
 // Source теплоисточник
 type Source struct {
-	Key int
+	Key  int
+	Name string
 
 	Object Object
-	nodes  []SourceNode // Элементы схемы энергоснабжения, непосредственно относящиеся к теплоисточнику. Например, коллекторы отпуска тепловой энергии
 
 	SeasonMode ref.SeasonMode // Сезонность котельной: •	Круглогодичное; •	Сезонное.
 	FuelType   ref.FuelType   // Вид топлива
@@ -35,9 +37,9 @@ type Source struct {
 	SupplierCanalisation contract.LegalEntity // Организация, оказывающая услугу водоотведения на котельной
 	SupplierHeat         contract.LegalEntity // Организация-поставщик покупного тепла на котельную (ЦТП)
 
-	params []SourceParam // Утвержденные параметры с разбивкой по месяцам
-
-	SourceFact []SourceFact // Фактические параметры работы котельной по расчётным периодам
+	Params []SourceParam // Утвержденные параметры с разбивкой по месяцам
+	Facts  []SourceFact  // Фактические параметры работы котельной по расчётным периодам
+	Nodes  []SourceNode  // Элементы схемы энергоснабжения, непосредственно относящиеся к теплоисточнику. Например, коллекторы отпуска тепловой энергии
 }
 
 // SourceParam месячный параметр котельной

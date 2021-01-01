@@ -8,17 +8,17 @@ import (
 	"time"
 )
 
-//GetUserFiltredResultsQuantity возвращает КОЛИЧЕСТВО Потребителей конкретного Пользователя с учётом переданных фильтров
-func (s *SQLServer) GetUserFiltredResultsQuantity(u auth.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (int, error) {
+//GetPersonQuantityFiltered возвращает КОЛИЧЕСТВО Потребителей конкретного Пользователя с учётом переданных фильтров
+func (s *SQLServer) GetPersonQuantityFiltered(u auth.User, name string, familyname string, patrname string, sex string) (int, error) {
 	var query string
 	if sex == "" {
 		query =
-			fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredPaginatedPersons  '%s', '%s', '%s', '%s', NULL, %d, %d, %d",
-				s.dbname, u.Key, familyname, name, patrname, pageSize*currentPage-pageSize, pageSize, regime)
+			fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredPersons  '%s', '%s', '%s', '%s', NULL",
+				s.dbname, u.Key, familyname, name, patrname)
 	} else {
 		query =
-			fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredPaginatedPersons  '%s', '%s', '%s', '%s', %s, %d, %d, %d",
-				s.dbname, u.Key, familyname, name, patrname, sex, pageSize*currentPage-pageSize, pageSize, regime)
+			fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredPersons  '%s', '%s', '%s', '%s', %s",
+				s.dbname, u.Key, familyname, name, patrname, sex)
 	}
 
 	rows, err := s.db.Query(query)
@@ -41,8 +41,8 @@ func (s *SQLServer) GetUserFiltredResultsQuantity(u auth.User, regime int, curre
 	return 0, err
 }
 
-//GetUserFiltredPersonsPagination возвращает всех Потребителей конкретного Пользователя для страницы с учётом переданных фильтров
-func (s *SQLServer) GetUserFiltredPersonsPagination(u auth.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*contract.Person, error) {
+//GetPersonsFiltered возвращает всех Потребителей конкретного Пользователя для страницы с учётом переданных фильтров
+func (s *SQLServer) GetPersonsFiltered(u auth.User, regime int, currentPage int, pageSize int, name string, familyname string, patrname string, sex string) (map[int]*contract.Person, error) {
 	Persons := make(map[int]*contract.Person)
 
 	var query string
@@ -122,7 +122,7 @@ func (s SQLServer) CreatePerson(c *contract.Person) error {
 //GetPerson возвращает пользователя по первичному ключу
 func (s SQLServer) GetPerson(id int) (*contract.Person, error) {
 
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "Person", "ID", "ID", strconv.Itoa(id), 0, 0))
+	rows, err := s.db.Query(creatorSelect(s.dbname, "Person", "ID", "ID", strconv.Itoa(id)))
 
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
@@ -179,7 +179,7 @@ func (s SQLServer) GetPerson(id int) (*contract.Person, error) {
 // GetPersonContacts получает Контакты для Пользователя
 func (s SQLServer) GetPersonContacts(Person *contract.Person) error {
 	var contacts []contract.Contact
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "PersonContacts", "ID", "F_Person", strconv.Itoa(Person.Key), 0, 0))
+	rows, err := s.db.Query(creatorSelect(s.dbname, "ContactList", "ID", "F_Person", strconv.Itoa(Person.Key)))
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
 		return err
@@ -202,7 +202,7 @@ func (s SQLServer) GetPersonContacts(Person *contract.Person) error {
 //GetContact возвращает Контакт по его идентификатору
 func (s SQLServer) GetContact(id int) (*contract.Contact, error) {
 	//[ID], [F_Contact_Type], [C_Value], [B_Primary]
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "Contact", "ID", "ID", strconv.Itoa(id), 0, 0))
+	rows, err := s.db.Query(creatorSelect(s.dbname, "Contact", "ID", "ID", strconv.Itoa(id)))
 	if err != nil {
 		fmt.Println("Ошибка c запросом: ", err)
 		return nil, err

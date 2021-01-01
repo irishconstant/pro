@@ -31,7 +31,7 @@ func init() {
 
 //GetUser получает пользователя текущей сессии и проверяет авторизован он или нет (TODO: добавить получение ролей и проверку)
 func GetUser(s *sessions.Session) User {
-	val := s.Values["user"]
+	val := s.Values["SystemUser"]
 	var user = User{}
 	user, ok := val.(User)
 	if !ok {

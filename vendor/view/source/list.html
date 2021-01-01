@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Теплоисточники ({{.User.Key}})</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="shortcut icon" href="../static/img/favicon.ico" />
+</head>
+
+<body>
+    <div class="alert alert-primary">
+        <strong>Добро пожаловать,</strong> <a href="/" class="alert-link">{{.User.Name}} {{.User.FamilyName}} (роль
+            "{{.User.Role.Name}}")!</a>
+        <a href="/logout" class="link">Выйти</a>
+    </div>
+    <nav class="navbar navbar-expand-sm bg-light">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="../">Стартовая страница</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../person">Физические лица</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../network">Схема теплоснабжения</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../object">Объекты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../network">Сводная и детализированная отчётость</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="../ref">Справочники</a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+    <table id="myTable" class="table table-hover">
+        <thead class="thead-dark">
+            <tr style="cursor: pointer;">
+                <th onclick="sortTable(0)" scope="col">Идентификатор</th>
+                <th onclick="sortTable(1)" scope="col">Наименование</th>
+                <th onclick="sortTable(2)" scope="col">Нормативная подпитка, м3</th>
+                <th onclick="sortTable(3)" scope="col">Вид топлива</th>
+                <th onclick="sortTable(4)" scope="col">Сезонность котельной</th>
+                <th onclick="sortTable(5)" scope="col">Адрес</th>
+                <th scope="col">Действия</th>
+            </tr>
+        </thead>
+        <h2>Теплоисточники</h2>
+        <tbody>
+            <tr>
+                <div class="card text-left">
+                    <div class="card-body">
+                        <button type="button" class="btn btn-outline-info" data-toggle="modal"
+                            data-target="#ModalFilters">
+                            Отфильтровать
+                        </button>
+                        <a href="/source/create" class="btn btn-outline-success">Добавить</a>
+                    </div>
+                </div>
+            </tr>
+            <div class="modal fade" id="ModalFilters" tabindex="-1" role="dialog"
+                aria-labelledby="contactModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="contactModalLongTitle">Искать теплоисточники</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/source" method="POST">
+                                <div class="form-group">
+                                    По названию:<input type="text" class="form-control" placeholder="Наименование"
+                                        name="name">
+                                </div>
+                                <div class="form-group">
+                                    По адресу:<input type="text" class="form-control" placeholder="Адрес"
+                                        name="address">
+                                </div>
+                                <div class="form-group">
+                                    По типу топлива:<input type="text" class="form-control" placeholder="Тип топлива"
+                                        name="fuelType">
+                                </div>
+                                <div class="form-group">
+                                    По сезонности:<input type="text" class="form-control" placeholder="Сезонность"
+                                        name="fuelType">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-danger"
+                                        data-dismiss="modal">Закрыть</button>
+                                    <button type="submit" class="btn btn-outline-success">Применить</button>
+
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {{range .Attribute.Sources}}
+            <tr class=" = " onclick="location.href = '/source/update?key={{ .Key }}'" style="cursor: pointer;">
+                <td>{{ .Key }}</td>
+                <td>{{ .Name }}</td>
+                <td>{{ .NormSupplyValue }}</td>
+                <td>{{ .FuelType.Name }}</td>
+                <td>{{ .SeasonMode.Name }}</td>
+                <td>{{ .Object.BuildAddress }}</td>
+                <td><a href="/source/delete?key={{ .Key }}" class="btn btn-outline-danger" role="button">Удалить</a>
+                </td>
+            </tr>
+            {{else}}
+            <tr>
+                <td>Отсутствуют теплоисточники</td>
+            </tr>
+            {{ end }}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="text-success"> Всего теплоисточников: {{.Attribute.Count}}</td>
+                <td>Страницы:
+                    {{range .Attribute.Pages}}
+
+                    {{if .PreviousPage}}
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
+                    {{end}}
+
+                    {{if .NextPage}}
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
+                    {{end}}
+
+                    {{if .CurrentPage}}
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-success">{{.Number}}</a>
+                    {{end}}
+
+                    {{if ne .NextPage true}}
+                    {{if ne .PreviousPage true}}
+                    {{if .FirstPage}}
+                    <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>...
+                    {{end}}
+                    {{if .LastPage}}
+                    ...<a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-primary">{{.Number}}</a>
+                    {{end}}
+                    {{end}}
+                    {{end}}
+
+                    {{else}}
+                    Нет деления на страницы
+                    {{end}}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable");
+            switching = true;
+            //Set the sorting direction to ascending:
+            dir = "asc";
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+                //start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /*Loop through all table rows (except the
+                first, which contains table headers):*/
+                for (i = 1; i < (rows.length - 1); i++) {
+                    //start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /*Get the two elements you want to compare,
+                    one from current row and one from the next:*/
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /*check if the two rows should switch place,
+                    based on the direction, asc or desc:*/
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /*If a switch has been marked, make the switch
+                    and mark that a switch has been done:*/
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    //Each time a switch is done, increase this count by 1:
+                    switchcount++;
+                } else {
+                    /*If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again.*/
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>

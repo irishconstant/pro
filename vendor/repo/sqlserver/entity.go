@@ -10,10 +10,10 @@ import (
 // GetEntity возвращает Юридическое лицо
 func (s SQLServer) GetEntity(id int) (*contract.LegalEntity, error) {
 
-	rows, err := s.db.Query(selectWithPagination(s.dbname, "Entity", "ID", "ID", strconv.Itoa(id), 0, 0))
+	rows, err := s.db.Query(creatorSelect(s.dbname, "Entity", "ID", "ID", strconv.Itoa(id)))
 
 	if err != nil {
-		fmt.Println("Ошибка c запросом: ", err)
+		fmt.Println("Ошибка c запросом GetEntity: ", err)
 		return nil, err
 	}
 	defer rows.Close()
