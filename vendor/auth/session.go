@@ -15,6 +15,7 @@ func init() {
 	// Временно закомментировал. Надоело куки чистить. Для продакшн версии - раскомментировать!
 	authKeyOne := securecookie.GenerateRandomKey(64)       // []byte("1234546789012345678901234567890121234546789012345678901234567890") // securecookie.GenerateRandomKey(64)
 	encryptionKeyOne := securecookie.GenerateRandomKey(32) // []byte("12345467890123456789012345678901")                           //securecookie.GenerateRandomKey(32)
+
 	Store =
 		sessions.NewCookieStore(
 			authKeyOne,
@@ -26,17 +27,17 @@ func init() {
 		HttpOnly: true,
 	}
 
-	gob.Register(User{})
+	gob.Register(&User{})
 }
 
-//GetUser получает пользователя текущей сессии и проверяет авторизован он или нет (TODO: добавить получение ролей и проверку)
-func GetUser(s *sessions.Session) User {
+//GetUser возвращает указатель на пользователя из текущей сессии в куках
+func GetUser(s *sessions.Session) *User {
 	val := s.Values["SystemUser"]
-	var user = User{}
-	user, ok := val.(User)
+	var user = &User{}
+	user, ok := val.(*User)
 	if !ok {
-		return User{Authenticated: false}
+		user = &User{Authenticated: false}
+		return user
 	}
-
 	return user
 }

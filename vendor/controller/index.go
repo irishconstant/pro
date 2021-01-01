@@ -13,10 +13,12 @@ func (h *DecoratedHandler) index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user := auth.GetUser(session)
-	if user.Authenticated {
-		h.connection.GetUserAttributes(&user)
-	}
+	/*
+		if user.Authenticated {
+			h.connection.GetUserAttributes(&user)
+		}
+	*/
 
-	executeHTML("index", "index", w, user)
+	executeHTML("index", "index", w, *user)
 
 }

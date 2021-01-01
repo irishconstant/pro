@@ -2,6 +2,7 @@ package controller
 
 import (
 	"auth"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -16,6 +17,8 @@ func authMiddleware(next http.Handler) http.Handler {
 			return
 		}
 		user := auth.GetUser(session)
+		fmt.Println("Юзер в мидл", user)
+
 		//fmt.Println("значение куков (мидл)", session.Values)
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")

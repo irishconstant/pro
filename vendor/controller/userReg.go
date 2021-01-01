@@ -22,7 +22,7 @@ func (h *DecoratedHandler) reg(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 
-		currentInformation := sessionInformation{user, roleBook, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: roleBook}
 
 		if auth := user.Authenticated; auth {
 			http.Redirect(w, r, "/", http.StatusFound)
@@ -52,8 +52,7 @@ func (h *DecoratedHandler) reg(w http.ResponseWriter, r *http.Request) {
 		err = h.connection.CreateUser(newUser)
 
 		if err != nil {
-			errorUser := auth.User{Key: login, Password: password, Name: "", FamilyName: "", Authenticated: false, Role: role}
-			currentInformation := sessionInformation{errorUser, roleBook, "Ошибка при создании пользователя"}
+			currentInformation := sessionInformation{Attribute: roleBook, Error: "Ошибка при создании пользователя"}
 			executeHTML("user", "reg", w, currentInformation)
 		}
 

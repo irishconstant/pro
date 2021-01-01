@@ -30,16 +30,17 @@ func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/forbidden", http.StatusFound)
 			return
 		}
+
 		user := &auth.User{
 			Key:           login,
 			Authenticated: true,
+			Comment:       "Создан на этапе логина и не изменялся",
 		}
 		h.connection.GetUserRoles(user)
+		err = h.connection.GetUserAttributes(user)
 
 		session.Values["SystemUser"] = user
 
-		//	fmt.Println("значение куков (логин)", session.Values)
-		//		session.Values["authenticated"] = true
 		err = session.Save(r, w)
 
 		if err != nil {

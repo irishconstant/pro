@@ -40,7 +40,11 @@ func check(err error) {
 
 // sessionInformation общая структура для шаблонов html
 type sessionInformation struct {
-	User      auth.User
-	Attribute interface{}
-	Error     string
+	User auth.User
+
+	// Возможные расширения для сессии
+	Attribute    interface{}
+	AttributeExt map[interface{}]interface{}
+
+	Error string
 }

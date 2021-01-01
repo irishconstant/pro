@@ -2,6 +2,7 @@ package controller
 
 import (
 	"auth"
+	"fmt"
 	"net/http"
 )
 
@@ -12,13 +13,17 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	//session.Values["SystemUser"] = nil //auth.User{}
-	session.Values["Authenticated"] = false
 	session.Options.MaxAge = -1
-
 	err = session.Save(r, w)
 
+	fmt.Println("Данные в куках до логаута", session)
+	user := auth.GetUser(session)
+	user.Authenticated = false
+	user.Comment = "Изменил состояние авторизации в логауте"
+
+	fmt.Println("Пользователь в логауте", user)
+
+	fmt.Println("Данные в куках после логаута", session)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

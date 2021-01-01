@@ -8,6 +8,7 @@ type User struct {
 	FamilyName    string
 	Authenticated bool
 	Role          *Role
+	Comment       string
 }
 
 // Role хранит информацию о конкретной Роли

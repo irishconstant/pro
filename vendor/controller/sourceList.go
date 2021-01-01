@@ -31,11 +31,11 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 	check(err)
 	user := auth.GetUser(session)
 	check(err)
-	err = h.connection.GetUserAttributes(&user)
-	check(err)
+	//err = h.connection.GetUserAttributes(&user)
+	//check(err)
 
 	// Работаем с источниками
-	quantity, err := h.connection.GetSourceQuantityFiltered(user, "")
+	quantity, err := h.connection.GetSourceQuantityFiltered(*user, "")
 	check(err)
 	sourceBook := SourceBook{Count: quantity}
 
@@ -57,7 +57,7 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 		for key := range sourceBook.Pages {
 			sourceBook.Pages[key].URL = fmt.Sprintf("/source?%s%s%s%s", name, "", "", "")
 		}
-		currentInformation := sessionInformation{user, sourceBook, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: sourceBook}
 		executeHTML("source", "list", w, currentInformation)
 
 	} else {
@@ -68,7 +68,7 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 			sourceBook.Sources = append(sourceBook.Sources, *value)
 		}
 
-		currentInformation := sessionInformation{user, sourceBook, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: sourceBook}
 
 		executeHTML("source", "list", w, currentInformation)
 	}

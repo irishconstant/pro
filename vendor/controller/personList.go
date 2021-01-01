@@ -43,17 +43,17 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 	check(err)
 	user := auth.GetUser(session)
 	check(err)
-	err = h.connection.GetUserAttributes(&user)
-	check(err)
+	//err = h.connection.GetUserAttributes(&user)
+	//check(err)
 
 	// Работа с ФЛ
-	quantity, err := h.connection.GetPersonQuantityFiltered(user, name, familyName, patrName, sex)
+	quantity, err := h.connection.GetPersonQuantityFiltered(*user, name, familyName, patrName, sex)
 	check(err)
 	PersonBook := PersonBook{PersonCount: quantity}
 
 	// Если необходима пагинация
 	if PersonBook.PersonCount > h.pageSize {
-		PersonsPerPage, err := h.connection.GetPersonsFiltered(user, 1, page, h.pageSize, name, familyName, patrName, sex)
+		PersonsPerPage, err := h.connection.GetPersonsFiltered(*user, 1, page, h.pageSize, name, familyName, patrName, sex)
 		check(err)
 		for _, value := range PersonsPerPage {
 			PersonBook.Persons = append(PersonBook.Persons, *value)
@@ -78,16 +78,16 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 		for key := range PersonBook.Pages {
 			PersonBook.Pages[key].URL = fmt.Sprintf("/person?%s%s%s%s", name, familyName, patrName, sex)
 		}
-		currentInformation := sessionInformation{user, PersonBook, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: PersonBook}
 		executeHTML("person", "list", w, currentInformation)
 
 	} else {
-		Persons, _ := h.connection.GetPersonsFiltered(user, 0, page, h.pageSize, name, familyName, patrName, sex)
+		Persons, _ := h.connection.GetPersonsFiltered(*user, 0, page, h.pageSize, name, familyName, patrName, sex)
 		for _, value := range Persons {
 			PersonBook.Persons = append(PersonBook.Persons, *value)
 		}
 
-		currentInformation := sessionInformation{user, PersonBook, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: PersonBook}
 
 		executeHTML("person", "list", w, currentInformation)
 	}

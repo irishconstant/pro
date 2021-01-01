@@ -13,7 +13,7 @@ func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) 
 	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
 	user := auth.GetUser(session)
-	err = h.connection.GetUserAttributes(&user)
+	//err = h.connection.GetUserAttributes(&user)
 	check(err)
 
 	var userBook UserBook
@@ -21,7 +21,7 @@ func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) 
 	check(err)
 
 	if r.Method == http.MethodGet {
-		currentInformation := sessionInformation{user, userBook, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: userBook}
 		executeHTML("person", "create", w, currentInformation)
 	}
 

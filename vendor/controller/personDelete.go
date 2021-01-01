@@ -14,13 +14,13 @@ func (h *DecoratedHandler) personDelete(w http.ResponseWriter, r *http.Request) 
 	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
 	user := auth.GetUser(session)
-	err = h.connection.GetUserAttributes(&user)
+	//err = h.connection.GetUserAttributes(&user)
 	check(err)
 
 	if r.Method == http.MethodGet {
 		Person.PossibleUsers, err = h.connection.GetAllUsers()
 		check(err)
-		currentInformation := sessionInformation{user, Person, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: Person}
 		executeHTML("Person", "update", w, currentInformation)
 	}
 

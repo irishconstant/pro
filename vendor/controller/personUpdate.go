@@ -16,13 +16,11 @@ func (h *DecoratedHandler) personUpdate(w http.ResponseWriter, r *http.Request) 
 	session, err := auth.Store.Get(r, "cookie-name")
 	check(err)
 	user := auth.GetUser(session)
-	err = h.connection.GetUserAttributes(&user)
-	check(err)
 
 	if r.Method == http.MethodGet {
 		Person.PossibleUsers, err = h.connection.GetAllUsers()
 		check(err)
-		currentInformation := sessionInformation{user, Person, ""}
+		currentInformation := sessionInformation{User: *user, Attribute: Person}
 		executeHTML("person", "update", w, currentInformation)
 	}
 
@@ -38,7 +36,7 @@ func (h *DecoratedHandler) personUpdate(w http.ResponseWriter, r *http.Request) 
 		dateBirthG, _ := time.Parse("2006-01-02", dateBirth)
 		dateDeathG, _ := time.Parse("2006-01-02", dateDeath)
 
-		user, err := h.connection.GetUser(userLogin)
+		newUser, err := h.connection.GetUser(userLogin)
 		newPerson := contract.Person{
 			Key:            Person.Key,
 			Name:           name,
@@ -47,12 +45,11 @@ func (h *DecoratedHandler) personUpdate(w http.ResponseWriter, r *http.Request) 
 			Sex:            sex,
 			DateBirth:      dateBirthG,
 			DateDeath:      dateDeathG,
-			User:           *user,
+			User:           *newUser,
 		}
 
 		err = h.connection.UpdatePerson(&newPerson)
 
-		err = session.Save(r, w)
 		if err != nil {
 			executeHTML("person", "update", w, nil)
 		}
