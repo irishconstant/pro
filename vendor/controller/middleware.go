@@ -2,7 +2,6 @@ package controller
 
 import (
 	"auth"
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -11,15 +10,13 @@ import (
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := auth.Store.Get(r, "cookie-name")
-		//	fmt.Println("Сессия в мидл", *session)
+
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		user := auth.GetUser(session)
-		fmt.Println("Юзер в мидл", user)
 
-		//fmt.Println("значение куков (мидл)", session.Values)
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")
 			err = session.Save(r, w)
