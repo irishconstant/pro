@@ -56,7 +56,6 @@ func (h *DecoratedHandler) reg(w http.ResponseWriter, r *http.Request) {
 			executeHTML("user", "reg", w, currentInformation)
 		}
 
-		err = session.Save(r, w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
