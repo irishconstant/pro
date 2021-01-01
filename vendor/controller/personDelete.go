@@ -41,7 +41,6 @@ func (h *DecoratedHandler) personDelete(w http.ResponseWriter, r *http.Request) 
 
 		err = h.connection.UpdatePerson(&newPerson)
 
-		err = session.Save(r, w)
 		if err != nil {
 			executeHTML("person", "update", w, nil)
 		}
