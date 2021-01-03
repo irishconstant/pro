@@ -14,6 +14,24 @@ import (
 */
 func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 
+	// Работаем с текущим пользователем
+	session, err := auth.Store.Get(r, "cookie-name")
+	check(err)
+	user := auth.GetUser(session)
+	check(err)
+
+	if r.Method == http.MethodPost {
+		// Получаем данные фильтров из формы и формируем параметры для вызова
+		params := make(map[string]string)
+		params["name"] = r.FormValue("name")
+		params["address"] = r.FormValue("address")
+		params["seasonmode"] = r.FormValue("seasonmode")
+		params["fueltype"] = r.FormValue("fueltype")
+		filteredAddress := makeURLWithAttributes("source", params)
+		// Переходим на этот урл
+		http.Redirect(w, r, filteredAddress, http.StatusFound)
+	}
+
 	// Получаем текущую страницу из параметров
 	key := r.URL.Query().Get("page")
 	var page int
@@ -25,23 +43,33 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 
 	// Получаем параметры фильтрации из урла
 	name := r.URL.Query().Get("name")
+	address := r.URL.Query().Get("address")
+	seasonMode := r.URL.Query().Get("seasonmode")
+	fuelType := r.URL.Query().Get("fueltype")
 
-	// Работаем с текущим пользователем
-	session, err := auth.Store.Get(r, "cookie-name")
-	check(err)
-	user := auth.GetUser(session)
-	check(err)
-	//err = h.connection.GetUserAttributes(&user)
-	//check(err)
+	seasonModeI, err := strconv.Atoi(seasonMode)
+	fuelTypeI, err := strconv.Atoi(fuelType)
 
-	// Работаем с источниками
-	quantity, err := h.connection.GetSourceQuantityFiltered(*user, "")
+	// Справочники
+	fuelTypes, err := h.connection.GetAllFuelTypes()
+	seasonModes, err := h.connection.GetAllSeasonModes()
+	refBox := map[interface{}]interface{}{
+		"FuelTypes":   fuelTypes,
+		"SeasonModes": seasonModes,
+	}
+	check(err)
+
+	/*-------------------------------------------
+	 Работаем с теплоисточниками
+	--------------------------------------------*/
+	// Получаем количество теплоисточников
+	quantity, err := h.connection.GetSourceQuantityFiltered(*user, name, address, seasonModeI, fuelTypeI)
 	check(err)
 	sourceBook := SourceBook{Count: quantity}
 
 	// Если необходима пагинация
 	if sourceBook.Count > h.pageSize {
-		sourcePerPage, err := h.connection.GetAllSources(1, page, h.pageSize)
+		sourcePerPage, err := h.connection.GetAllSources(1, page, h.pageSize, name, address, seasonModeI, fuelTypeI)
 		check(err)
 		for _, value := range sourcePerPage {
 			sourceBook.Sources = append(sourceBook.Sources, *value)
@@ -50,25 +78,37 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 
 		// Создаем страницы для показа (1, одна слева от текущей, одна справа от текущей, последняя)
 		// Инициализируем фильтры для кнопок пагинации, которые к нам ранее пришли в POST запросе
+
 		if name != "" {
 			name = "&name=" + name
 		}
+		if address != "" {
+			address = "&address=" + address
+		}
+
+		if fuelType != "" {
+			fuelType = "&fueltype=" + fuelType
+		}
+		if seasonMode != "" {
+			seasonMode = "&seasonmode=" + seasonMode
+		}
+
 		sourceBook.Pages = MakePages(1, int(math.Ceil(float64(sourceBook.Count)/float64(h.pageSize))), page)
 		for key := range sourceBook.Pages {
-			sourceBook.Pages[key].URL = fmt.Sprintf("/source?%s%s%s%s", name, "", "", "")
+			sourceBook.Pages[key].URL = fmt.Sprintf("/source?%s%s%s%s", name, address, fuelType, seasonMode)
 		}
-		currentInformation := sessionInformation{User: *user, Attribute: sourceBook}
+		currentInformation := sessionInformation{User: *user, Attribute: sourceBook, AttributeMap: refBox}
 		executeHTML("source", "list", w, currentInformation)
 
 	} else {
-		sourcePerPage, err := h.connection.GetAllSources(0, 1, h.pageSize)
+		sourcePerPage, err := h.connection.GetAllSources(0, page, h.pageSize, name, address, seasonModeI, fuelTypeI)
 		check(err)
 
 		for _, value := range sourcePerPage {
 			sourceBook.Sources = append(sourceBook.Sources, *value)
 		}
 
-		currentInformation := sessionInformation{User: *user, Attribute: sourceBook}
+		currentInformation := sessionInformation{User: *user, Attribute: sourceBook, AttributeMap: refBox}
 
 		executeHTML("source", "list", w, currentInformation)
 	}

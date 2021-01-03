@@ -140,6 +140,29 @@ func (s SQLServer) GetFuelType(id int) (*ref.FuelType, error) {
 	return nil, err
 }
 
+// GetAllFuelTypes возвращает все возможные типы топлива
+func (s SQLServer) GetAllFuelTypes() ([]*ref.FuelType, error) {
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID FROM %s.dbo.Fuel_Types", s.dbname))
+	if err != nil {
+		fmt.Printf("Ошибка с получением типов топлива")
+		return nil, err
+	}
+	defer rows.Close()
+
+	var fuelTypes []*ref.FuelType
+	for rows.Next() {
+		var (
+			ID int
+		)
+		rows.Scan(
+			&ID)
+
+		newFuelType, _ := s.GetFuelType(ID)
+		fuelTypes = append(fuelTypes, newFuelType)
+	}
+	return fuelTypes, err
+}
+
 // GetSeasonMode возвращает Тип топлива
 func (s SQLServer) GetSeasonMode(id int) (*ref.SeasonMode, error) {
 	if id == 0 {
@@ -167,4 +190,27 @@ func (s SQLServer) GetSeasonMode(id int) (*ref.SeasonMode, error) {
 		return &seasonMode, nil
 	}
 	return nil, err
+}
+
+// GetAllSeasonModes возвращает все возможные категории сезонности
+func (s SQLServer) GetAllSeasonModes() ([]*ref.SeasonMode, error) {
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID FROM %s.dbo.Season_Modes", s.dbname))
+	if err != nil {
+		fmt.Printf("Ошибка с получением категорий сезонности")
+		return nil, err
+	}
+	defer rows.Close()
+
+	var seasonModes []*ref.SeasonMode
+	for rows.Next() {
+		var (
+			ID int
+		)
+		rows.Scan(
+			&ID)
+
+		newSeasonMode, _ := s.GetSeasonMode(ID)
+		seasonModes = append(seasonModes, newSeasonMode)
+	}
+	return seasonModes, err
 }

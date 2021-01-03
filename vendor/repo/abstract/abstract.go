@@ -20,12 +20,14 @@ type DatabaseConnection interface {
 	GetCitizenship(int) (*contract.Citizenship, error)
 	GetAllCitizenship() ([]*contract.Citizenship, error)
 	GetSeasonMode(int) (*ref.SeasonMode, error)
+	GetAllSeasonModes() ([]*ref.SeasonMode, error)
 	GetFuelType(int) (*ref.FuelType, error)
+	GetAllFuelTypes() ([]*ref.FuelType, error)
 
 	// Работа с Техническими данными
-	GetSource(id int) (*tech.Source, error)
-	GetAllSources(regime int, currentPage int, pageSize int) (map[int]*tech.Source, error)
-	GetSourceQuantityFiltered(u auth.User, name string) (int, error)
+	GetSource(int) (*tech.Source, error)
+	GetAllSources(int, int, int, string, string, int, int) (map[int]*tech.Source, error)
+	GetSourceQuantityFiltered(u auth.User, name string, address string, fuelType int, seasonMode int) (int, error)
 
 	// Работа с Юридическими лицами
 	GetEntity(id int) (*contract.LegalEntity, error)

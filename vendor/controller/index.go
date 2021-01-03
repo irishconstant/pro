@@ -20,5 +20,4 @@ func (h *DecoratedHandler) index(w http.ResponseWriter, r *http.Request) {
 	*/
 
 	executeHTML("index", "index", w, *user)
-
 }

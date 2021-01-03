@@ -17,7 +17,7 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 
 	user := auth.GetUser(session)
 	user.Authenticated = false
-	user.Comment = "Изменил состояние авторизации в логауте"
+	user.Comment = "Изменил состояние в логауте"
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

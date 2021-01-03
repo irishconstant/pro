@@ -7,11 +7,12 @@ GO
 -- =============================================
 -- Author:		ai
 -- Create date: 2021.01.01
--- Alter date: 
--- Description:	Âîçâðàùàåò îòôèëüòðîâàííûå èñòî÷íèêè òåïëî-ýëåêòðî-âîäîñíàáæåíèÿ â ïðåäåëàõ îäíîé ñòðàíèöû
+-- Alter date:	2021.01.03; 2021.01.02
+-- Description:	Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Ð¾Ñ‚Ñ„Ð¸Ð»ÑŒÑ‚Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ðµ Ð¸ÑÑ‚Ð¾Ñ‡Ð½Ð¸ÐºÐ¸ Ñ‚ÐµÐ¿Ð»Ð¾-ÑÐ»ÐµÐºÑ‚Ñ€Ð¾-Ð²Ð¾Ð´Ð¾ÑÐ½Ð°Ð±Ð¶ÐµÐ½Ð¸Ñ Ð² Ð¿Ñ€ÐµÐ´ÐµÐ»Ð°Ñ… Ð¾Ð´Ð½Ð¾Ð¹ ÑÑ‚Ñ€Ð°Ð½Ð¸Ñ†Ñ‹
 -- =============================================
-ALTER PROCEDURE [dbo].[GetQuantityFilteredSources]	-- EXEC  [dbo].[GetQuantityFilteredSources] NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0
-	@F_Object int					   NULL
+ALTER PROCEDURE [dbo].[GetQuantityFilteredSources]	-- EXEC  [dbo].[GetQuantityFilteredSources] NULL, 'ÐšÐ°Ð·Ð°Ñ‡ÑŒÑ', NULL, NULL, NULL, NULL, NULL, NULL,  0
+	@C_Name nvarchar(1000)			   NULL
+	, @C_Address nvarchar(1000)		   NULL
 	, @F_Season_Mode tinyint 		   NULL
 	, @F_Fuel_Type tinyint 			   NULL
 	, @N_Norm_Supply_Value_Min money   NULL
@@ -34,13 +35,13 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SELECT COUNT(*)
-	FROM [dbo].[Sources]
-	WHERE	(F_Object = @F_Object OR @F_Object IS NULL)
-				AND (F_Season_Mode = @F_Season_Mode OR @F_Season_Mode IS NULL) 
-				AND (F_Fuel_Type = @F_Fuel_Type OR @F_Fuel_Type IS NULL) 
+	FROM [dbo].[Sources] AS s
+			LEFT JOIN [dbo].[Objects] AS o ON s.F_Object = o.ID
+		WHERE	(s.C_Name LIKE CONCAT('%', @C_Name, '%') OR @C_Name IS NULL)
+				AND (o.C_Address LIKE CONCAT('%', @C_Address, '%') OR @C_Address IS NULL)
+				AND (F_Season_Mode = @F_Season_Mode OR ISNULL(@F_Season_Mode, NULL) = 0) 
+				AND (F_Fuel_Type = @F_Fuel_Type OR ISNULL(@F_Fuel_Type, NULL) = 0) 
 				AND (N_Norm_Supply_Value >= @N_Norm_Supply_Value_Min OR @N_Norm_Supply_Value_Min IS NULL) 
 				AND (N_Norm_Supply_Value <= @N_Norm_Supply_Value_Max OR @N_Norm_Supply_Value_Max IS NULL) 
 	
 END
-
---EXEC dbo.GetFilteredPaginatedPersons 'tial', '', '', '', true, 0, 7, 0

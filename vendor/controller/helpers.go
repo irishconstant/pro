@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"auth"
 	"fmt"
 	"html/template"
 	"log"
@@ -36,15 +35,4 @@ func check(err error) {
 		fmt.Println("Ошибочка", err)
 		log.Fatal(err)
 	}
-}
-
-// sessionInformation общая структура для шаблонов html
-type sessionInformation struct {
-	User auth.User
-
-	// Возможные расширения для сессии
-	Attribute    interface{}
-	AttributeExt map[interface{}]interface{}
-
-	Error string
 }

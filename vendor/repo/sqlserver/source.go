@@ -8,11 +8,11 @@ import (
 )
 
 //GetAllSources возвращает все Источники
-func (s SQLServer) GetAllSources(regime int, currentPage int, pageSize int) (map[int]*tech.Source, error) {
+func (s SQLServer) GetAllSources(regime int, currentPage int, pageSize int, name string, address string, seasonMode int, fuelType int) (map[int]*tech.Source, error) {
 	Sources := make(map[int]*tech.Source)
 	var query string
-	query = fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedSources NULL, NULL, NULL, NULL, NULL, %d, %d, %d",
-		s.dbname, pageSize*currentPage-pageSize, pageSize, regime)
+	query = fmt.Sprintf("EXEC %s.dbo.GetFilteredPaginatedSources '%s','%s', %d, %d, NULL, NULL, %d, %d, %d",
+		s.dbname, name, address, seasonMode, fuelType, pageSize*currentPage-pageSize, pageSize, regime)
 
 	rows, err := s.db.Query(query)
 
@@ -141,9 +141,9 @@ func (s SQLServer) GetSource(id int) (*tech.Source, error) {
 }
 
 //GetSourceQuantityFiltered возвращает КОЛИЧЕСТВО источников с учётом переданных фильтров
-func (s *SQLServer) GetSourceQuantityFiltered(u auth.User, name string) (int, error) {
+func (s *SQLServer) GetSourceQuantityFiltered(u auth.User, name string, address string, seasonMode int, fuelType int) (int, error) {
 	var query string
-	query = fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredSources  NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0", s.dbname)
+	query = fmt.Sprintf("EXEC %s.dbo.GetQuantityFilteredSources '%s', '%s', %d, %d, NULL, NULL, NULL, NULL, 0", s.dbname, name, address, seasonMode, fuelType)
 	rows, err := s.db.Query(query)
 
 	if err != nil {
