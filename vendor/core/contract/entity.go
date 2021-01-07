@@ -1,7 +1,8 @@
 package contract
 
 import (
-	"auth"
+	"core/auth"
+	"core/ref"
 	"time"
 )
 
@@ -17,7 +18,7 @@ type LegalEntity struct {
 	KPP  string // КПП
 	OGRN string // ОГРН
 
-	EntityType
+	ref.EntityType
 
 	roles []EntityRole
 

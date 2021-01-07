@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"auth"
+	"core/auth"
 	"net/http"
 )
 
 // login обрабатывает попытку залогиниться
 func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
-	session, err := auth.Store.Get(r, "cookie-name")
+	session, err := Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

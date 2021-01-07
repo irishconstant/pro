@@ -1,4 +1,4 @@
-package contract
+package ref
 
 // Citizenship Гражданство. Справочник
 type Citizenship struct {
@@ -23,12 +23,3 @@ type EntityType struct {
 	Key  int
 	Name string
 }
-
-// ContactType Тип контакта. Справочник
-type ContactType struct {
-	Key        int
-	Name       string
-	Validation string
-	IsAddress  bool
-}
-

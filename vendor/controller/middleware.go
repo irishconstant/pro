@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"auth"
 	"net/http"
 	"strings"
 )
@@ -9,13 +8,13 @@ import (
 // authMiddleware выполняется для проверки аутентифицирован ли пользователь. TODO: сделать доступ к определенным разделам по ролям
 func authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := auth.Store.Get(r, "cookie-name")
+		session, err := Store.Get(r, "cookie-name")
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		user := auth.GetUser(session)
+		user := GetUser(session)
 
 		if user.Authenticated == false {
 			session.AddFlash("Доступ запрещён (пройдите авторизацию и аутентификацию)!")

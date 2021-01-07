@@ -44,12 +44,16 @@ func creatorSelect(databaseName string, sourceName string, orderParam string, wh
 	// Source
 	case "Source":
 		return fmt.Sprintf("SELECT [ID], [C_Name], [F_Object], [F_Season_Mode], [F_Fuel_Type], [N_Norm_Supply_Value], [F_Supplier_Electricity], [F_Voltage_Nominal], [F_Transport_Gas]"+
-			", [F_Supplier_Gas], [F_Supplier_TechWater], [F_Supplier_HotWater], [F_Supplier_Canalisation], [F_Supplier_Heat] FROM [%s].dbo.Sources WHERE %s = %s",
+			", [F_Supplier_Gas], [F_Supplier_TechWater], [F_Supplier_HotWater], [F_Supplier_Canalisation], [F_Supplier_Heat], [F_Division] FROM [%s].dbo.Sources WHERE %s = %s",
 			databaseName, whereParam, whereValue)
 	case "SourceList":
 		return fmt.Sprintf("SELECT [ID]"+
 			" FROM [%s].dbo.Sources WHERE %s = %s",
 			databaseName, whereParam, whereValue)
+	// CalcPeriod
+	case "CalcPeriod":
+		return fmt.Sprintf("SELECT  [ID], [C_Name], [N_Year], [N_Month], [B_Current], [D_Date_Close] FROM [%s].[dbo].[Calc_Periods] WHERE %s = %s ORDER BY %s",
+			databaseName, whereParam, whereValue, orderParam)
 	// Entity
 	case "Entity":
 		return fmt.Sprintf("SELECT [ID], [F_User], [C_Name], [C_Short_Name], [INN], [KPP], [OGRN], [F_Entity_Type], [D_Date_Reg] "+
@@ -77,7 +81,8 @@ func creatorSelect(databaseName string, sourceName string, orderParam string, wh
 	return ""
 }
 
-func getBoolValue(i int) bool {
+// GetBoolValue конвертирует дату из формата db (возвращается как int) в формат golang bool
+func GetBoolValue(i int) bool {
 	if i == 1 {
 		return true
 	}
@@ -87,4 +92,14 @@ func getBoolValue(i int) bool {
 // ConvertDate конвертирует дату из формата golang time.Time в формат для записи в БД
 func ConvertDate(d time.Time) string {
 	return d.Format("2006.01.02 15:04:05")
+}
+
+//ConvertSDBToTime конвертирует дату из формата sqlserver в формат golang time.time
+func ConvertSDBToTime(s string) time.Time {
+	date, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		t := new(time.Time)
+		return *t
+	}
+	return date
 }

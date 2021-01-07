@@ -36,14 +36,6 @@ type VoltageNominal struct {
 	Name string
 }
 
-// CalcPeriod расчётный период
-type CalcPeriod struct {
-	Key   int
-	Name  string
-	Year  int
-	Month int
-}
-
 //Diameter справочник диаметров
 type Diameter struct {
 	Key         int

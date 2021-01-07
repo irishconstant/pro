@@ -1,13 +1,12 @@
 package controller
 
 import (
-	"auth"
 	"net/http"
 )
 
 // logout обрабывает попытку разлогиниться
 func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
-	session, err := auth.Store.Get(r, "cookie-name")
+	session, err := Store.Get(r, "cookie-name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -15,7 +14,7 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 	session.Options.MaxAge = -1
 	err = session.Save(r, w)
 
-	user := auth.GetUser(session)
+	user := GetUser(session)
 	user.Authenticated = false
 	user.Comment = "Изменил состояние в логауте"
 

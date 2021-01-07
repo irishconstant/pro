@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"auth"
 	"core/contract"
 	"net/http"
 	"strconv"
@@ -11,9 +10,9 @@ func (h *DecoratedHandler) personDelete(w http.ResponseWriter, r *http.Request) 
 	keyPerson, err := strconv.Atoi(r.URL.Query().Get("key"))
 
 	Person, err := h.connection.GetPerson(keyPerson)
-	session, err := auth.Store.Get(r, "cookie-name")
+	session, err := Store.Get(r, "cookie-name")
 	check(err)
-	user := auth.GetUser(session)
+	user := GetUser(session)
 	//err = h.connection.GetUserAttributes(&user)
 	check(err)
 

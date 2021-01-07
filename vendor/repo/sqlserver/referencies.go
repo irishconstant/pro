@@ -31,7 +31,7 @@ func (s SQLServer) GetContactType(id int) (*contract.ContactType, error) {
 			Key:        ID,
 			Name:       name,
 			Validation: validationMask,
-			IsAddress:  getBoolValue(isAddress)}
+			IsAddress:  GetBoolValue(isAddress)}
 		return &contactType, nil
 	}
 	return nil, err
@@ -60,7 +60,7 @@ func (s SQLServer) GetAllContactTypes() ([]*contract.ContactType, error) {
 }
 
 // GetCitizenship возвращает гражданство по его ид
-func (s SQLServer) GetCitizenship(id int) (*contract.Citizenship, error) {
+func (s SQLServer) GetCitizenship(id int) (*ref.Citizenship, error) {
 	if id == 0 {
 		id = 1
 	}
@@ -80,7 +80,7 @@ func (s SQLServer) GetCitizenship(id int) (*contract.Citizenship, error) {
 			&ID,
 			&name)
 
-		citizenship := contract.Citizenship{
+		citizenship := ref.Citizenship{
 			Key:  ID,
 			Name: name}
 		return &citizenship, nil
@@ -89,7 +89,7 @@ func (s SQLServer) GetCitizenship(id int) (*contract.Citizenship, error) {
 }
 
 // GetAllCitizenship возвращает все возможные варианты гражданства
-func (s SQLServer) GetAllCitizenship() ([]*contract.Citizenship, error) {
+func (s SQLServer) GetAllCitizenship() ([]*ref.Citizenship, error) {
 	rows, err := s.db.Query(fmt.Sprintf("SELECT ID FROM %s.dbo.Citizenships", s.dbname))
 	if err != nil {
 		fmt.Printf("Ошибка с получением Гражданств")
@@ -97,7 +97,7 @@ func (s SQLServer) GetAllCitizenship() ([]*contract.Citizenship, error) {
 	}
 	defer rows.Close()
 
-	var citizenships []*contract.Citizenship
+	var citizenships []*ref.Citizenship
 	for rows.Next() {
 		var (
 			ID int
@@ -213,4 +213,107 @@ func (s SQLServer) GetAllSeasonModes() ([]*ref.SeasonMode, error) {
 		seasonModes = append(seasonModes, newSeasonMode)
 	}
 	return seasonModes, err
+}
+
+//GetCalcPeriod возвращает расчётный период по идентификатору
+func (s SQLServer) GetCalcPeriod(id int) (*ref.CalcPeriod, error) {
+	if id == 0 {
+		id = 1
+	}
+
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID, C_Name, N_Year, N_Month, ISNULL(D_Date_Close,'20790606'),  CAST(B_Current AS TINYINT) FROM %s.dbo.Calc_Periods WHERE ID = %d", s.dbname, id))
+	if err != nil {
+		fmt.Printf("Ошибка с получением Расчётного периода")
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			ID        int
+			name      string
+			year      int
+			month     int
+			iscurrent int
+			dateclose string
+		)
+		rows.Scan(
+			&ID,
+			&name,
+			&year,
+			&month,
+			&dateclose,
+			&iscurrent,
+		)
+
+		calcPeriod := ref.CalcPeriod{
+			Key:       ID,
+			Name:      name,
+			Year:      year,
+			Month:     month,
+			IsCurrent: GetBoolValue(iscurrent),
+		}
+
+		if dateclose != "2079-06-06T00:00:00Z" {
+			calcPeriod.DateClose = ConvertSDBToTime(dateclose)
+		}
+		return &calcPeriod, nil
+	}
+	return nil, err
+}
+
+// GetAllCalcPeriods возвращает все возможные расчётные периоды
+func (s SQLServer) GetAllCalcPeriods() ([]*ref.CalcPeriod, error) {
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID FROM %s.dbo.Calc_Periods  ORDER BY ID DESC", s.dbname))
+	if err != nil {
+		fmt.Printf("Ошибка с получением расчётных периодов")
+		return nil, err
+	}
+	defer rows.Close()
+
+	var calcPeriods []*ref.CalcPeriod
+	for rows.Next() {
+		var (
+			ID int
+		)
+		rows.Scan(
+			&ID)
+
+		newPeriod, _ := s.GetCalcPeriod(ID)
+		calcPeriods = append(calcPeriods, newPeriod)
+	}
+	return calcPeriods, err
+}
+
+//GetCurrentPeriod возвращает расчётный период по идентификатору
+func (s SQLServer) GetCurrentPeriod() (*ref.CalcPeriod, error) {
+	rows, err := s.db.Query(fmt.Sprintf("SELECT ID, C_Name, N_Year, N_Month FROM %s.dbo.Calc_Periods WHERE B_Current = 1", s.dbname))
+	if err != nil {
+		fmt.Printf("Ошибка с получением текущего Расчётного периода")
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var (
+			ID    int
+			name  string
+			year  int
+			month int
+		)
+		rows.Scan(
+			&ID,
+			&name,
+			&year,
+			&month,
+		)
+
+		calcPeriod := ref.CalcPeriod{
+			Key:       ID,
+			Name:      name,
+			Year:      year,
+			Month:     month,
+			IsCurrent: true,
+		}
+		return &calcPeriod, nil
+	}
+	return nil, err
 }

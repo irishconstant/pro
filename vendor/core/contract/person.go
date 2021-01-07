@@ -1,7 +1,7 @@
 package contract
 
 import (
-	"auth"
+	"core/auth"
 	"core/ref"
 	"time"
 )
@@ -14,7 +14,7 @@ type Person struct {
 	Name           string
 	PatronymicName string
 	FamilyName     string
-	Citizenship    Citizenship
+	Citizenship    ref.Citizenship
 	Sex            bool
 	DateBirth      time.Time
 	DateDeath      time.Time
@@ -41,4 +41,12 @@ type Contact struct {
 	Type    ContactType
 	Value   string
 	Address ref.Address
+}
+
+// ContactType Тип контакта. Справочник
+type ContactType struct {
+	Key        int
+	Name       string
+	Validation string
+	IsAddress  bool
 }

@@ -1,7 +1,7 @@
 package sqlserver
 
 import (
-	"auth"
+	"core/auth"
 	"fmt"
 	"strconv"
 

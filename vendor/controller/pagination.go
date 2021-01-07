@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"auth"
+	"core/auth"
 	"core/contract"
 	"core/tech"
 	"math"

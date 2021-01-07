@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"auth"
+	"core/ref"
 	"fmt"
 	"math"
 	"net/http"
@@ -15,9 +15,9 @@ import (
 func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 
 	// Работаем с текущим пользователем
-	session, err := auth.Store.Get(r, "cookie-name")
+	session, err := Store.Get(r, "cookie-name")
 	check(err)
-	user := auth.GetUser(session)
+	user := GetUser(session)
 	check(err)
 
 	if r.Method == http.MethodPost {
@@ -27,6 +27,7 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 		params["address"] = r.FormValue("address")
 		params["seasonmode"] = r.FormValue("seasonmode")
 		params["fueltype"] = r.FormValue("fueltype")
+		params["period"] = r.FormValue("period")
 		filteredAddress := makeURLWithAttributes("source", params)
 		// Переходим на этот урл
 		http.Redirect(w, r, filteredAddress, http.StatusFound)
@@ -41,6 +42,19 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 		page = 1
 	}
 
+	// Получаем текущий период из параметров
+	var calcPeriod *ref.CalcPeriod
+	period := r.URL.Query().Get("period")
+	if period == "" {
+		calcPeriod, err = h.connection.GetCurrentPeriod()
+	} else {
+		calcPeriodID, err := strconv.Atoi(period)
+		calcPeriod, err = h.connection.GetCalcPeriod(calcPeriodID)
+		if err != nil {
+			fmt.Println("Передано ошибочное значение расчётного периода")
+		}
+	}
+
 	// Получаем параметры фильтрации из урла
 	name := r.URL.Query().Get("name")
 	address := r.URL.Query().Get("address")
@@ -53,9 +67,18 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 	// Справочники
 	fuelTypes, err := h.connection.GetAllFuelTypes()
 	seasonModes, err := h.connection.GetAllSeasonModes()
+	calcPeriods, err := h.connection.GetAllCalcPeriods()
+	for _, value := range calcPeriods {
+		if calcPeriod.Key == value.Key {
+			value.IsSelected = true
+		}
+	}
+
 	refBox := map[interface{}]interface{}{
-		"FuelTypes":   fuelTypes,
-		"SeasonModes": seasonModes,
+		"FuelTypes":     fuelTypes,
+		"SeasonModes":   seasonModes,
+		"CalcPeriods":   calcPeriods,
+		"CurrentPeriod": calcPeriod.Key,
 	}
 	check(err)
 
@@ -63,13 +86,13 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 	 Работаем с теплоисточниками
 	--------------------------------------------*/
 	// Получаем количество теплоисточников
-	quantity, err := h.connection.GetSourceQuantityFiltered(*user, name, address, seasonModeI, fuelTypeI)
+	quantity, err := h.connection.GetSourceQuantityFiltered(*user, name, address, seasonModeI, fuelTypeI, calcPeriod)
 	check(err)
 	sourceBook := SourceBook{Count: quantity}
 
 	// Если необходима пагинация
 	if sourceBook.Count > h.pageSize {
-		sourcePerPage, err := h.connection.GetAllSources(1, page, h.pageSize, name, address, seasonModeI, fuelTypeI)
+		sourcePerPage, err := h.connection.GetAllSources(1, page, h.pageSize, name, address, seasonModeI, fuelTypeI, calcPeriod)
 		check(err)
 		for _, value := range sourcePerPage {
 			sourceBook.Sources = append(sourceBook.Sources, *value)
@@ -78,30 +101,31 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 
 		// Создаем страницы для показа (1, одна слева от текущей, одна справа от текущей, последняя)
 		// Инициализируем фильтры для кнопок пагинации, которые к нам ранее пришли в POST запросе
-
 		if name != "" {
 			name = "&name=" + name
 		}
 		if address != "" {
 			address = "&address=" + address
 		}
-
 		if fuelType != "" {
 			fuelType = "&fueltype=" + fuelType
 		}
 		if seasonMode != "" {
 			seasonMode = "&seasonmode=" + seasonMode
 		}
+		if period != "" {
+			period = "&period=" + period
+		}
 
 		sourceBook.Pages = MakePages(1, int(math.Ceil(float64(sourceBook.Count)/float64(h.pageSize))), page)
 		for key := range sourceBook.Pages {
-			sourceBook.Pages[key].URL = fmt.Sprintf("/source?%s%s%s%s", name, address, fuelType, seasonMode)
+			sourceBook.Pages[key].URL = fmt.Sprintf("/source?%s%s%s%s%s", name, address, fuelType, seasonMode, period)
 		}
 		currentInformation := sessionInformation{User: *user, Attribute: sourceBook, AttributeMap: refBox}
 		executeHTML("source", "list", w, currentInformation)
 
 	} else {
-		sourcePerPage, err := h.connection.GetAllSources(0, page, h.pageSize, name, address, seasonModeI, fuelTypeI)
+		sourcePerPage, err := h.connection.GetAllSources(0, page, h.pageSize, name, address, seasonModeI, fuelTypeI, calcPeriod)
 		check(err)
 
 		for _, value := range sourcePerPage {
@@ -109,7 +133,6 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 		}
 
 		currentInformation := sessionInformation{User: *user, Attribute: sourceBook, AttributeMap: refBox}
-
 		executeHTML("source", "list", w, currentInformation)
 	}
 }

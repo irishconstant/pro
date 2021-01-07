@@ -22,17 +22,33 @@
             <li class="nav-item active">
                 <a class="nav-link" href="../source">Теплоисточники</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../person">Физические лица</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="../person" id="navbardrop" data-toggle="dropdown">
+                    Контрагенты
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="../person">Физические лица</a>
+                    <a class="dropdown-item" href="#">Юридические лица</a>
+                    <a class="dropdown-item" href="#">Индивидуальные предприниматели</a>
+                </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../object">Объекты</a>
+                <a class="nav-link" href="../object">Схема теплоснабжения</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="../network">Сводная и детализированная отчётость</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="../ref">Справочники</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="../ref" id="navbardrop" data-toggle="dropdown">
+                    Справочники
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Вид топлива</a>
+                    <a class="dropdown-item" href="#">Сезонность котельной</a>
+                    <a class="dropdown-item" href="#">Температуры фактические</a>
+                    <a class="dropdown-item" href="#">Температуры СНиП</a>
+                    <a class="dropdown-item" href="#">Температурные графики</a>
+                </div>
             </li>
         </ul>
         <div class="navbar-collapse collapse w-250 order-3 dual-collapse2">
@@ -50,88 +66,86 @@
         </div>
 
     </nav>
+
     <table id="myTable" class="table table-hover">
         <thead class="thead-dark">
             <tr style="cursor: pointer;">
-                <th onclick="sortTable(0)" scope="col">Идентификатор</th>
-                <th onclick="sortTable(1)" scope="col">Наименование</th>
-                <th onclick="sortTable(2)" scope="col">Нормативная подпитка, м3</th>
-                <th onclick="sortTable(3)" scope="col">Вид топлива</th>
-                <th onclick="sortTable(4)" scope="col">Сезонность котельной</th>
-                <th onclick="sortTable(5)" scope="col">Адрес</th>
-                <th scope="col">Действия</th>
+                <th scope="col">Теплоисточник </th>
+                <th scope="col">Адрес</th>
+                <th scope="col">Время работы (ч)</th>
+                <th scope="col">t°х.воды</th>
+                <th scope="col">t°возд</th>
+                <th scope="col">Отопление, час</th>
+                <th scope="col">Отопление, град</th>
+                <th scope="col">Расход натурального топлива, тыс.м3, тн</th>
+                <th scope="col">Эл.энергия, тыс. кВт*час</th>
+                <th scope="col">Вода на технологические нужды, тыс. м3</th>
+                <th scope="col">Вода на ГВС, тыс. м3</th>
+                <th scope="col">Канализирование, тыс. м3</th>
+                <th scope="col">Покупное тепло, Гкал</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <div class="card text-left">
-                    <div class="card-body">
-                        <button type="button" class="btn btn-outline-info" data-toggle="modal"
-                            data-target="#ModalFilters">
-                            Отфильтровать
-                        </button>
-                        <a href="/source/create" class="btn btn-outline-success">Добавить</a>
+                    <div class="form-row">
+                        <div class="form-group col-md-1"> <button type="button" class="btn btn-outline-info"
+                                data-toggle="modal" data-target="#ModalFilters">
+                                Отфильтровать
+                            </button></div>
+
+                        <div class="form-group col-md-1">
+                            <a href="../source/create" class="btn btn-outline-success">Добавить</a>
+                        </div>
+                        <div class="form-group col-md-1">
+
+                            <select class="form-control" id="period" style="width:auto" onchange=" this.options[this.selectedIndex].value &&
+                        (window.location=this.options[this.selectedIndex].value);">
+                                {{range $foo := index $.AttributeMap "CalcPeriods"}}
+                                <option {{if .IsSelected}} selected {{end}} value="../source/?period={{.Key}}">
+                                    {{.Name}}
+                                </option>
+                                {{end}}
+                            </select>
+                        </div>
                     </div>
-                </div>
             </tr>
-            <div class="modal fade" id="ModalFilters" tabindex="-1" role="dialog"
-                aria-labelledby="contactModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="contactModalLongTitle">Искать теплоисточники</h5>
-                        </div>
-                        <div class="modal-body">
-                            <form action="/source" method="POST">
-                                <div class="form-group">По названию:
-                                    <input type="text" class="form-control" placeholder="Наименование" name="name">
-                                </div>
-                                <div class="form-group">По адресу:
-                                    <input type="text" class="form-control" placeholder="Адрес" name="address">
-                                </div>
-                                <div class="form-group">По типу топлива:
-                                    <select class="form-control" data-live-search="true" title="Тип топлива"
-                                        name="fueltype" noneResultsText="Нет совпадений" data-size="10" width="auto">
-                                        <option value=0>Любой</option>
-                                        {{range $foo := index $.AttributeMap "FuelTypes"}}
-                                        <option value={{.Key}}>{{.Name}}</option>
-                                        {{end}}
-                                    </select>
-                                </div>
-                                <div class="form-group"> По сезонности:
-                                    <select name="seasonmode" id="seasonmode" class="form-control"
-                                        data-live-search="true" title="Сезонность" noneResultsText="Нет совпадений"
-                                        data-size="10" width="auto">
-                                        <option value=0>Любой режим</option>
-                                        {{range $foo := index $.AttributeMap "SeasonModes"}}
-                                        <option value={{.Key}}>{{.Name}}</option>
-                                        {{end}}
-                                    </select>
-                                </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="btn btn-outline-success">Применить</button>
 
-                        </div>
-                        </form>
+            <form action="/source" method="POST">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Время работы">
+                    <input type="text" class="form-control" placeholder="t°х.воды">
+                    <input type="text" class="form-control" placeholder="t°возд">
+                    <input type="text" class="form-control" placeholder="Отопление, час">
+                    <input type="text" class="form-control" placeholder="Отопление, град">
+                    <input type="text" class="form-control" placeholder="Покупное тепло">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-primary" type="submit">Задать значение всем
+                            теплоисточникам</button>
                     </div>
-
                 </div>
-            </div>
-            </div>
+            </form>
+
+
             {{range .Attribute.Sources}}
             <tr class=" = " onclick="location.href = '/source/update?key={{ .Key }}'" style="cursor: pointer;">
-                <td>{{ .Key }}</td>
-                <td>{{ .Name }}</td>
-                <td>{{ .NormSupplyValue }}</td>
-                <td>{{ .FuelType.Name }}</td>
-                <td>{{ .SeasonMode.Name }}</td>
-                <td>{{ .Object.BuildAddress }}</td>
-                <td><a href="/source/update?key={{ .Key }}" class="btn btn-outline-info" role="button">Редактировать</a>
-                    <a href="/source/delete?key={{ .Key }}" class="btn btn-outline-danger" role="button">Удалить</a>
-
-                </td>
+                <td scope="col">{{.Name}}</td>
+                <td scope="col">{{.Object.BuildAddress}}</td>
+                {{range .Facts}}
+                <td scope="col">{{.WorkDuration}}</td>
+                <td scope="col">{{.TempWater}}</td>
+                <td scope="col">{{.TempAir}}</td>
+                <td scope="col">{{.HeatDuration}}</td>
+                <td scope="col">{{.TempHeat}}</td>
+                <td scope="col">{{.FuelConsumption}}</td>
+                <td scope="col">{{.ElectricityConsumption}}</td>
+                <td scope="col">{{.TechWaterConstumption}}</td>
+                <td scope="col">{{.HotWaterConsumption}}</td>
+                <td scope="col">{{.Canalisation}}</td>
+                <td scope="col">{{.PaidHeat}}</td>
+                {{else}}
+                <td scope="col">Нет фактов</td>
+                {{ end }}
             </tr>
             {{else}}
             <tr>
@@ -139,10 +153,52 @@
             </tr>
             {{ end }}
         </tbody>
-        <tfoot></tfoot>
+        <div class="modal fade" id="ModalFilters" tabindex="-1" role="dialog" aria-labelledby="contactModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="contactModalLongTitle">Искать теплоисточники</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/source" method="POST">
+                            <div class="form-group">По названию:
+                                <input type="text" class="form-control" placeholder="Наименование" name="name">
+                            </div>
+                            <div class="form-group">По адресу:
+                                <input type="text" class="form-control" placeholder="Адрес" name="address">
+                            </div>
+                            <div class="form-group">По типу топлива:
+                                <select class="form-control" data-live-search="true" title="Тип топлива" name="fueltype"
+                                    noneResultsText="Нет совпадений" data-size="10" width="auto">
+                                    <option value=0>Любой</option>
+                                    {{range $foo := index $.AttributeMap "FuelTypes"}}
+                                    <option value={{.Key}}>{{.Name}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                            <div class="form-group"> По сезонности:
+                                <select name="seasonmode" id="seasonmode" class="form-control" data-live-search="true"
+                                    title="Сезонность" noneResultsText="Нет совпадений" data-size="10" width="auto">
+                                    <option value=0>Любой режим</option>
+                                    {{range $foo := index $.AttributeMap "SeasonModes"}}
+                                    <option value={{.Key}}>{{.Name}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-outline-success">Применить</button>
+
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div>
             <tr>
-                <td class="text-success"> Всего теплоисточников: {{.Attribute.Count}}</td>
+                <td class="text-success"> Всего: {{.Attribute.Count}}</td>
                 <td>Страницы:
                     {{range .Attribute.Pages}}
 
@@ -168,7 +224,6 @@
                     {{end}}
                     {{end}}
                     {{end}}
-
                     {{else}}
                     Нет деления на страницы
                     {{end}}
@@ -176,6 +231,8 @@
             </tr>
         </div>
     </table>
+
+
 </body>
 
 </html>

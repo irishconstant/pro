@@ -1,6 +1,6 @@
 package controller
 
-import "auth"
+import "core/auth"
 
 // sessionInformation общая структура для шаблонов html
 type sessionInformation struct {

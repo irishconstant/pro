@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"auth"
 	"core/contract"
 	"net/http"
 	"strconv"
@@ -10,9 +9,9 @@ import (
 // PersonCreate обработчик доступен только авторизованным пользователям, прошедшим аутентификацию. Контроллируется middleware Auth
 func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) {
 	// Работа с куками
-	session, err := auth.Store.Get(r, "cookie-name")
+	session, err := Store.Get(r, "cookie-name")
 	check(err)
-	user := auth.GetUser(session)
+	user := GetUser(session)
 	//err = h.connection.GetUserAttributes(&user)
 	check(err)
 

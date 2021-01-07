@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"auth"
 	"fmt"
 	"math"
 	"net/http"
@@ -39,9 +38,9 @@ func (h *DecoratedHandler) person(w http.ResponseWriter, r *http.Request) { //
 	sex := r.URL.Query().Get("sex")
 
 	// Работа с пользователями
-	session, err := auth.Store.Get(r, "cookie-name")
+	session, err := Store.Get(r, "cookie-name")
 	check(err)
-	user := auth.GetUser(session)
+	user := GetUser(session)
 	check(err)
 	//err = h.connection.GetUserAttributes(&user)
 	//check(err)

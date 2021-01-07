@@ -1,7 +1,7 @@
 package sqlserver
 
 import (
-	"auth"
+	"core/auth"
 	"core/contract"
 	"fmt"
 	"strconv"
@@ -158,7 +158,7 @@ func (s SQLServer) GetPerson(id int) (*contract.Person, error) {
 			Name:           Name,
 			PatronymicName: PatronymicName,
 			FamilyName:     FamilyName,
-			Sex:            getBoolValue(Sex),
+			Sex:            GetBoolValue(Sex),
 			DateBirth:      DateBirthG,
 			DateDeath:      DateDeathG,
 			Citizenship:    *citizenship,

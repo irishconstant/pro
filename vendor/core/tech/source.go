@@ -17,8 +17,9 @@ type SupplyDistrict struct {
 
 // Source теплоисточник
 type Source struct {
-	Key  int
-	Name string
+	Key      int
+	Name     string
+	Division *contract.Division
 
 	Object Object
 
@@ -37,9 +38,9 @@ type Source struct {
 	SupplierCanalisation contract.LegalEntity // Организация, оказывающая услугу водоотведения на котельной
 	SupplierHeat         contract.LegalEntity // Организация-поставщик покупного тепла на котельную (ЦТП)
 
-	Params []SourceParam // Утвержденные параметры с разбивкой по месяцам
-	Facts  []SourceFact  // Фактические параметры работы котельной по расчётным периодам
-	Nodes  []SourceNode  // Элементы схемы энергоснабжения, непосредственно относящиеся к теплоисточнику. Например, коллекторы отпуска тепловой энергии
+	Params []*SourceParam // Утвержденные параметры с разбивкой по месяцам
+	Facts  []*SourceFact  // Фактические параметры работы котельной по расчётным периодам
+	Nodes  []*SourceNode  // Элементы схемы энергоснабжения, непосредственно относящиеся к теплоисточнику. Например, коллекторы отпуска тепловой энергии
 }
 
 // SourceParam месячный параметр котельной
@@ -51,7 +52,7 @@ type SourceParam struct {
 
 // SourceFact параметры котельной в расчётном периоде
 type SourceFact struct {
-	ref.CalcPeriod
+	Period                 ref.CalcPeriod
 	WorkDuration           int     // Продолжительность работы источника (в часах)
 	TempWater              float32 // t°х.воды
 	TempAir                float32 // t°возд

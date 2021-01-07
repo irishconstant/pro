@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"auth"
 	"core/contract"
 	"net/http"
 	"strconv"
@@ -13,9 +12,9 @@ func (h *DecoratedHandler) personUpdate(w http.ResponseWriter, r *http.Request) 
 
 	Person, err := h.connection.GetPerson(keyPerson)
 
-	session, err := auth.Store.Get(r, "cookie-name")
+	session, err := Store.Get(r, "cookie-name")
 	check(err)
-	user := auth.GetUser(session)
+	user := GetUser(session)
 
 	if r.Method == http.MethodGet {
 		Person.PossibleUsers, err = h.connection.GetAllUsers()

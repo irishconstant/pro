@@ -1,7 +1,7 @@
 package abstract
 
 import (
-	"auth"
+	"core/auth"
 	"core/contract"
 	"core/ref"
 	"core/tech"
@@ -17,17 +17,21 @@ type DatabaseConnection interface {
 	// Работа со справочниками
 	GetContactType(int) (*contract.ContactType, error)
 	GetAllContactTypes() ([]*contract.ContactType, error)
-	GetCitizenship(int) (*contract.Citizenship, error)
-	GetAllCitizenship() ([]*contract.Citizenship, error)
+	GetCitizenship(int) (*ref.Citizenship, error)
+	GetAllCitizenship() ([]*ref.Citizenship, error)
 	GetSeasonMode(int) (*ref.SeasonMode, error)
 	GetAllSeasonModes() ([]*ref.SeasonMode, error)
 	GetFuelType(int) (*ref.FuelType, error)
 	GetAllFuelTypes() ([]*ref.FuelType, error)
+	GetDivision(id int) (*contract.Division, error)
+	GetCalcPeriod(id int) (*ref.CalcPeriod, error)
+	GetAllCalcPeriods() ([]*ref.CalcPeriod, error)
+	GetCurrentPeriod() (*ref.CalcPeriod, error)
 
 	// Работа с Техническими данными
-	GetSource(int) (*tech.Source, error)
-	GetAllSources(int, int, int, string, string, int, int) (map[int]*tech.Source, error)
-	GetSourceQuantityFiltered(u auth.User, name string, address string, fuelType int, seasonMode int) (int, error)
+	GetSource(id int, period *ref.CalcPeriod) (*tech.Source, error)
+	GetAllSources(int, int, int, string, string, int, int, *ref.CalcPeriod) (map[int]*tech.Source, error)
+	GetSourceQuantityFiltered(u auth.User, name string, address string, fuelType int, seasonMode int, period *ref.CalcPeriod) (int, error)
 
 	// Работа с Юридическими лицами
 	GetEntity(id int) (*contract.LegalEntity, error)
