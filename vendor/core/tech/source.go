@@ -23,7 +23,7 @@ type Source struct {
 
 	Object Object
 
-	SeasonMode ref.SeasonMode // Сезонность котельной: •	Круглогодичное; •	Сезонное.
+	SeasonMode ref.SeasonMode // Сезонность котельной: Круглогодичная; Cезонная.
 	FuelType   ref.FuelType   // Вид топлива
 
 	NormSupplyValue float32 // Нормативная подпитка тепловых сетей (м3)
@@ -76,8 +76,8 @@ type SourceNode struct {
 	HWSLoad   float32 //ГВС
 	SteamLoad float32 //пар
 
-	TempGraphHP  TempGraph //Температурный график теплоснабжения в ОП
-	TempGraphNHP TempGraph //Температурный график теплоснабжения в МОП
+	TempGraphHP  ref.TempGraph //Температурный график теплоснабжения в ОП
+	TempGraphNHP ref.TempGraph //Температурный график теплоснабжения в МОП
 
 	isDevice bool // Наличие коммерческого узла учета тепловой энергии
 }

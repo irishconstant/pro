@@ -18,7 +18,7 @@ type LegalEntity struct {
 	KPP  string // КПП
 	OGRN string // ОГРН
 
-	ref.EntityType
+	Form ref.OrganistaionForm
 
 	roles []EntityRole
 

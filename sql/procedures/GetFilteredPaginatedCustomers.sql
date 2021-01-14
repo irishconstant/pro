@@ -22,7 +22,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	IF @Regime = 1
+	IF @Regime = 1 
 	BEGIN
 		SELECT p.[ID], p.[C_Family_Name], p.[C_Name], p.[C_Patronymic_Name], p.[F_Users], c.[C_Name] AS [Cit_Name], p.[B_Sex], p.[D_Date_Birth], p.[D_Date_Death]
 		FROM dbo.Persons  AS p

@@ -1,21 +1,21 @@
-package tech
+package ref
 
-import "core/ref"
-
-// Temperatures cправочник фактических температур
+// Temperatures cправочник фактических температур для местности
 type Temperatures struct {
-	Key        int
-	Location   ref.Address // Если температуры заданы в привязке к адресу
-	Source     Node        // Если температуры заданы в привязке к теплоисточнику
-	Year       int
+	Key  int
+	Year int
+
+	Location Address // Если температуры заданы в привязке к адресу
+
 	tempMonths []TemperaturesMonth // Температуры помесячно
 	tempDaily  []TemperaturesDaily // Температуры посуточно
 }
 
 // TemperaturesSNIP справочник температура по СНиП
 type TemperaturesSNIP struct {
-	Key        int
-	Location   ref.Address
+	Key int
+
+	Location   Address
 	tempMonths []TemperaturesMonth
 }
 

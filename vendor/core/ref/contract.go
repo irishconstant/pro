@@ -6,20 +6,8 @@ type Citizenship struct {
 	Name string
 }
 
-// DocType Тип документа. Справочник
-type DocType struct {
-	Key            int
-	Name           string
-	Citizenship    Citizenship
-	IsSerialNumber bool
-	IsNumber       bool
-	IsFromCode     bool
-	IsDateBegin    bool
-	IsDateEnd      bool
-}
-
-// EntityType Тип ОПФ. Справочник
-type EntityType struct {
+// OrganistaionForm Тип ОПФ. Справочник
+type OrganistaionForm struct {
 	Key  int
 	Name string
 }
