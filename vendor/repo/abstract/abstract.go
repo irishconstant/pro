@@ -31,7 +31,7 @@ type DatabaseConnection interface {
 	// Работа с Техническими данными
 	GetSource(id int, period *ref.CalcPeriod) (*tech.Source, error)
 	GetAllSources(int, int, int, string, string, int, int, *ref.CalcPeriod) (map[int]*tech.Source, error)
-	GetSourceQuantityFiltered(u auth.User, name string, address string, fuelType int, seasonMode int, period *ref.CalcPeriod) (int, error)
+	GetSourceQuantityFiltered(u auth.User, name string, address string, seasonMode int, fuelType int, period *ref.CalcPeriod) (int, error)
 
 	// Работа с Юридическими лицами
 	GetEntity(id int) (*contract.LegalEntity, error)

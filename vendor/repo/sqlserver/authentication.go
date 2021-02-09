@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//CheckPassword проверят пароль
+//CheckPassword проверяет пароль
 func (s *SQLServer) CheckPassword(login string, password string) bool {
 
 	rows, err := s.db.Query(fmt.Sprintf("SELECT TOP 1 Password FROM %s.dbo.Users WHERE Login = '%s'", s.dbname, login))

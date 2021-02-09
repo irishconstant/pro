@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-
 	/*
 		Всё началось тогда, когда были выкованы мега-кольца
 		Три первых кольца задарили бесссмертным эльфам - чисто для проверки, не передохнут ли
@@ -18,6 +17,7 @@ func main() {
 	*/
 
 	dbc := getDependency()
+
 	dbc.GetConnectionParams("config.ini")
 	dbc.ConnectToDatabase()
 	defer dbc.CloseConnect()

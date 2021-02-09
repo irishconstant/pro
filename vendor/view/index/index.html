@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="../static/img/favicon.ico" />
 </head>
 <header>
-
+    {{if .Authenticated }}
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 
         <div class="navbar-header">
@@ -53,7 +53,6 @@
                 </div>
             </li>
         </ul>
-        {{if .Authenticated }}
         <div class="navbar-collapse collapse w-250 order-3 dual-collapse2">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
@@ -76,7 +75,7 @@
 
     {{if .Authenticated }}
     <div class="text-center">
-        <img src="./static/img/profile.png" style="width:50%;">
+        <img src="./static/img/mvp.jpg" style="width:30%;">
     </div>
     {{end}}
 
@@ -86,7 +85,7 @@
     </div>
     <div class="jumbotron text-center">
 
-        <p>Вежливо просим ввести логин и пароль, ибо пить в одиночку - это как срать в компании</p>
+        <p>Авторизуйтесь в Системе</p>
         <form action="/login" method="POST">
             <input type="text" name="login" placeholder="Имя пользователя">
             <input type="password" name="password" placeholder="Пароль" required>
@@ -95,10 +94,10 @@
 
         {{ end }}
         {{ if not .Authenticated }}
-        <div class="text-center">Внезапно оказалось, что нет логина? <a href="/user/reg">Немедленно
+        <div class="text-center">Внезапно оказалось, что не зарегистированы? <a href="/user/reg">Немедленно
                 зарегистрироваться</a>
         </div>
-        <div class="text-center">Забыл логин или пароль? <a href="/user/reg">Вспомнить всё</a></div>
+        <div class="text-center">Забыли имя пользователя или пароль? <a href="/user/reg">Вспомнить всё</a></div>
     </div>
     {{ end }}
 

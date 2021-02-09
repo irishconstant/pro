@@ -19,17 +19,19 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 	check(err)
 	user := GetUser(session)
 	check(err)
+	params := make(map[string]string)
 
 	if r.Method == http.MethodPost {
-		// Получаем данные фильтров из формы и формируем параметры для вызова
-		params := make(map[string]string)
+		// Получаем данные фильтров из формы(!!!) и формируем параметры для вызова
+
 		params["name"] = r.FormValue("name")
 		params["address"] = r.FormValue("address")
 		params["seasonmode"] = r.FormValue("seasonmode")
 		params["fueltype"] = r.FormValue("fueltype")
 		params["period"] = r.FormValue("period")
 		filteredAddress := makeURLWithAttributes("source", params)
-		// Переходим на этот урл
+
+		// Переходим на этот урл фильтрации
 		http.Redirect(w, r, filteredAddress, http.StatusFound)
 	}
 
@@ -55,11 +57,19 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 		}
 	}
 
-	// Получаем параметры фильтрации из урла
+	// Получаем параметры фильтрации из урла(!!!)
 	name := r.URL.Query().Get("name")
 	address := r.URL.Query().Get("address")
 	seasonMode := r.URL.Query().Get("seasonmode")
 	fuelType := r.URL.Query().Get("fueltype")
+
+	// Получаем данные для массового задания параметров теплоисточников из формы
+	params["time"] = r.FormValue("time")
+	params["tempcoldwater"] = r.FormValue("tempcoldwater")
+	params["tempair"] = r.FormValue("tempair")
+	params["timeheat"] = r.FormValue("timeheat")
+	params["tempheat"] = r.FormValue("tempheat")
+	params["heatbought"] = r.FormValue("heatbought")
 
 	seasonModeI, err := strconv.Atoi(seasonMode)
 	fuelTypeI, err := strconv.Atoi(fuelType)
@@ -90,8 +100,10 @@ func (h *DecoratedHandler) source(w http.ResponseWriter, r *http.Request) { //
 	check(err)
 	sourceBook := SourceBook{Count: quantity}
 
+	// Массово обновляем данные с учётом фильтров
+
 	// Если необходима пагинация
-	if sourceBook.Count > h.pageSize {
+	if sourceBook.Count > h.pageSize && page != 0 {
 		sourcePerPage, err := h.connection.GetAllSources(1, page, h.pageSize, name, address, seasonModeI, fuelTypeI, calcPeriod)
 		check(err)
 		for _, value := range sourcePerPage {

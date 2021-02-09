@@ -34,7 +34,6 @@ func (h *DecoratedHandler) login(w http.ResponseWriter, r *http.Request) {
 		user := &auth.User{
 			Key:           login,
 			Authenticated: true,
-			Comment:       "Создан на этапе логина и не изменялся",
 		}
 		h.connection.GetUserRoles(user)
 		err = h.connection.GetUserAttributes(user)

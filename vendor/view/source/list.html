@@ -12,6 +12,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" href="../static/img/favicon.ico" />
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
 </head>
 
 <body>
@@ -60,7 +63,7 @@
                         ("{{.User.Role.Name}}")</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../"> <i class="fa fa-child" style="font-size:14px;color:grey"></i>
+                    <a class="nav-link" href="../logout"> <i class="fa fa-child" style="font-size:14px;color:grey"></i>
                         Выйти</a>
                 </li>
             </ul>
@@ -114,12 +117,12 @@
 
             <form action="/source" method="POST">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Время работы">
-                    <input type="text" class="form-control" placeholder="t°х.воды">
-                    <input type="text" class="form-control" placeholder="t°возд">
-                    <input type="text" class="form-control" placeholder="Отопление, час">
-                    <input type="text" class="form-control" placeholder="Отопление, град">
-                    <input type="text" class="form-control" placeholder="Покупное тепло">
+                    <input type="text" class="form-control" placeholder="Время работы" name="time">
+                    <input type="text" class="form-control" placeholder="t°х.воды" name="tempcoldwater">
+                    <input type="text" class="form-control" placeholder="t°возд" name="tempair">
+                    <input type="text" class="form-control" placeholder="Отопление, час" name="timeheat">
+                    <input type="text" class="form-control" placeholder="Отопление, град" name="tempheat">
+                    <input type="text" class="form-control" placeholder="Покупное тепло" name="heatbought">
                     <div class="input-group-prepend">
                         <button class="btn btn-outline-primary" type="submit">Задать значение всем
                             теплоисточникам</button>
@@ -197,10 +200,15 @@
                 </div>
             </div>
         </div>
+        </div>
+    </table>
+    <table id="pages">
         <div>
+            <td class="text-success"> Всего записей: {{.Attribute.Count}}</td>
             <tr>
-                <td class="text-success"> Всего: {{.Attribute.Count}}</td>
-                <td>Страницы:
+
+                <td>
+                    Страницы:
                     {{range .Attribute.Pages}}
 
                     {{if .PreviousPage}}
@@ -208,6 +216,7 @@
                     {{end}}
 
                     {{if .NextPage}}
+
                     <a href="{{.URL}}&page={{.Number}}" class="btn btn-outline-secondary">{{.Number}}</a>
                     {{end}}
 
@@ -225,15 +234,24 @@
                     {{end}}
                     {{end}}
                     {{end}}
+
                     {{else}}
                     Нет деления на страницы
                     {{end}}
                 </td>
             </tr>
-        </div>
+            <td>
+                {{range .Attribute.Pages}}
+                {{if .CurrentPage}}
+                <a href="{{.URL}}&page=0" class="btn btn-outline-info">Без деления на страницы</a>
+                {{end}}
+                {{end}}
+            </td>
     </table>
 
-
+    $$d = b^2 - 4ac$$
+    When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+    $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
 </body>
 
 </html>

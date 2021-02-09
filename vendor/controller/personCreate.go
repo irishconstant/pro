@@ -49,5 +49,4 @@ func (h *DecoratedHandler) personCreate(w http.ResponseWriter, r *http.Request) 
 		http.Redirect(w, r, "/person", http.StatusFound)
 
 	}
-
 }

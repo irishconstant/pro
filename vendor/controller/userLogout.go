@@ -16,7 +16,6 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 
 	user := GetUser(session)
 	user.Authenticated = false
-	user.Comment = "Изменил состояние в логауте"
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -24,7 +23,5 @@ func (h *DecoratedHandler) logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusFound)
-
-	//fmt.Println("значение куков (логаут)", session.Values)
 
 }

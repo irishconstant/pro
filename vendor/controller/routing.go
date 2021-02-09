@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"core/auth"
 	"net/http"
 	"repo/abstract"
 
@@ -64,4 +65,15 @@ func Router(dbc abstract.DatabaseConnection) {
 type DecoratedHandler struct {
 	connection abstract.DatabaseConnection
 	pageSize   int //Максимальное количество записей на странице
+}
+
+// sessionInformation реализует передачу информации в шаблоны
+type sessionInformation struct {
+	User auth.User
+
+	// Возможные расширения для сессии
+	Attribute    interface{}
+	AttributeMap map[interface{}]interface{}
+
+	Error string
 }

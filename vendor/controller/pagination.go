@@ -42,7 +42,7 @@ type PersonBook struct {
 	Persons []contract.Person
 }
 
-//SourceBook представляет из себя набор тепло-электро-водоисточников
+//SourceBook представляет из себя набор тепло-электро-водо-источников
 type SourceBook struct {
 	Count       int
 	CurrentPage int
@@ -62,7 +62,7 @@ type Page struct {
 	URL          string
 }
 
-//MakePages генерирует последовательности страниц для отображения
+//MakePages генерирует последовательности страниц для отображения (принимает номер первой страницы (практически всегда = 1), последней (в зависимости от количества записей и размера страницы) и текущей)
 func MakePages(first, last, current int) []Page {
 	var pages []Page
 
